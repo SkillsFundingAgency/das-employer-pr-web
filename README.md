@@ -74,19 +74,24 @@ This utility uses the standard Apprenticeship Service configuration. All configu
 AppSettings.Development.json file
 ```json
 {
-    "Logging": {
-      "LogLevel": {
-        "Default": "Information",
-        "Microsoft": "Warning",
-        "Microsoft.Hosting.Lifetime": "Information"
-      }
-    },
-    "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
-    "ConfigNames": "SFA.DAS.Tools.Servicebus.Support,SFA.DAS.AuditApiClient",
-    "EnvironmentName": "LOCAL",
-    "Version": "1.0",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": ""
-  }  
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
+  "ConfigNames": "SFA.DAS.EmployerPR.Web,SFA.DAS.Employer.GovSignIn",
+  "EnvironmentName": "LOCAL",
+  "Version": "1.0",
+  "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+  "cdn": {
+    "url": "https://das-at-frnt-end.azureedge.net"
+  },
+  "ResourceEnvironmentName": "LOCAL",
+  "StubAuth": true
+} 
 ```
 
 Azure Table Storage config
