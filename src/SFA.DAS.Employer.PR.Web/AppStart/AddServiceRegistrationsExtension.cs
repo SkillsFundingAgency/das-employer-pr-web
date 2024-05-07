@@ -1,9 +1,10 @@
-﻿using RestEase.HttpClientFactory;
+﻿using System.Diagnostics.CodeAnalysis;
+using RestEase.HttpClientFactory;
 using SFA.DAS.Employer.PR.Application.Services;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Configuration;
+using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Http.Configuration;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Employer.PR.Web.AppStart;
 
@@ -15,6 +16,7 @@ public static class AddServiceRegistrationsExtension
         var outerApiConfiguration = configuration.GetSection(nameof(EmployerPROuterApiConfiguration)).Get<EmployerPROuterApiConfiguration>();
         AddOuterApi(services, outerApiConfiguration!);
         services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
+        services.AddTransient<ISessionService, SessionService>();
 
         return services;
     }
