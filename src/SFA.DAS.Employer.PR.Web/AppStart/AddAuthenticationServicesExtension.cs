@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.Employer.PR.Web.Authentication;
-using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Authentication;
 using SFA.DAS.GovUK.Auth.Services;

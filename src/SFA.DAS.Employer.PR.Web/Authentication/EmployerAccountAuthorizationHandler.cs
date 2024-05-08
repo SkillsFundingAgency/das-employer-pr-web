@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
-using System.Diagnostics.CodeAnalysis;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace SFA.DAS.Employer.PR.Web.Authentication;
 
@@ -81,7 +81,7 @@ public class EmployerAccountAuthorizationHandler : AuthorizationHandler<Employer
 
             var result = _outerApiClient.GetUserAccounts(userId, email!, CancellationToken.None).Result;
 
-            var accountsAsJson = JsonConvert.SerializeObject(result.UserAccountResponse.ToDictionary(k => k.EncodedAccountId));
+            var accountsAsJson = JsonConvert.SerializeObject(result.UserAccounts.ToDictionary(k => k.EncodedAccountId));
 
             var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
 

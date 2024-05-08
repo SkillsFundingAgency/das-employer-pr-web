@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Web.AppStart;
+using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.Shared.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,27 +15,20 @@ builder.Services
     .AddServiceRegistrations(rootConfiguration)
     .AddAuthenticationServices(rootConfiguration)
     .AddSession(rootConfiguration)
-    // .AddValidatorsFromAssembly(typeof(RegionsSubmitModelValidator).Assembly)
-    // .AddValidatorsFromAssembly(typeof(ConnectWithMemberSubmitModelValidator).Assembly)
-    // .AddMaMenuConfiguration(RouteNames.SignOut, rootConfiguration["ResourceEnvironmentName"]);
-    ;
-
+    .AddMaMenuConfiguration(RouteNames.SignOut, rootConfiguration["ResourceEnvironmentName"]);
 
 builder.Services.AddHealthChecks();
 
-// This does not look like it is needed
-// builder.Services
-//     .Configure<RouteOptions>(options => { options.LowercaseUrls = false; })
-//     .AddMvc(options =>
-//     {
-//         options.Filters.Add<RequiresExistingMemberAttribute>();
-//         options.Filters.Add<RequiredSessionModelAttribute>();
-//         options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
-//     })
-//     .AddSessionStateTempDataProvider();
+builder.Services
+     .Configure<RouteOptions>(options => { options.LowercaseUrls = false; })
+     .AddMvc(options =>
+     {
+         options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+     })
+     .AddSessionStateTempDataProvider();
 
 #if DEBUG
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+builder.Services.AddControllersWithViews().AddControllersAsServices().AddRazorRuntimeCompilation();
 #endif
 
 if (!builder.Environment.IsDevelopment())
@@ -50,7 +46,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    /// app.UseStatusCodePagesWithReExecute("/error/{0}"); 
+    app.UseStatusCodePagesWithReExecute("/error/{0}");
     app.UseExceptionHandler("/error");
     app.UseHsts();
 }
@@ -91,14 +87,5 @@ app
             "default",
             "{controller=Home}/{action=Index}/{id?}");
     });
-
-// app.UseHttpsRedirection();
-// app.UseStaticFiles();
-//
-// app.UseRouting();
-//
-// app.UseAuthorization();
-//
-// app.MapRazorPages();
 
 app.Run();

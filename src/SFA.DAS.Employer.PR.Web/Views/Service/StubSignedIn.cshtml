@@ -1,0 +1,38 @@
+@using System.Security.Claims
+@using SFA.DAS.Employer.PR.Web.Models.StubAuth
+
+@model AccountStubViewModel
+<div class="govuk-grid-row"  id="estimate-start-transfer">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
+            You've signed in
+        </h1>
+
+            <p>Id: @Model.Id</p>
+            <p>Email: @Model.Email</p>
+            <table class="govuk-table">
+                <caption>Employer accounts associated with the user</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Account ID</th>
+                        <th scope="col" class="govuk-table__header">Role</th>
+                        <th scope="col" class="govuk-table__header">Employer name</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+            @foreach (var account in Model.Accounts)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@account.AccountId</td>
+                    <td class="govuk-table__cell">@account.Role</td>
+                    <td class="govuk-table__cell">@account.EmployerName</td>
+                </tr>
+            }
+            </tbody>
+            </table>
+        <p>
+            <a href="@Model.ReturnUrl" class="govuk-button">Continue</a>
+        </p>
+        
+    </div>
+</div>

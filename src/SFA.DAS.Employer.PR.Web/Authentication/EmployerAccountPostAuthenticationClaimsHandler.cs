@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Newtonsoft.Json;
-using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Web.Infrastructure;
-using SFA.DAS.GovUK.Auth.Services;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using SFA.DAS.Employer.PR.Domain.Interfaces;
+using SFA.DAS.GovUK.Auth.Services;
 
 namespace SFA.DAS.Employer.PR.Web.Authentication;
 
@@ -31,7 +30,7 @@ public class EmployerAccountPostAuthenticationClaimsHandler : ICustomClaims
 
         var result = await _employerAccountsService.GetEmployerUserAccounts(userId!, email!);
 
-        var accountsAsJson = JsonConvert.SerializeObject(result.UserAccounts.ToDictionary(k => k.AccountId));
+        var accountsAsJson = JsonSerializer.Serialize(result.UserAccounts.ToDictionary(k => k.AccountId));
         var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson,
             JsonClaimValueTypes.Json);
 

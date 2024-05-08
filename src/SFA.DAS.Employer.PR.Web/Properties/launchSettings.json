@@ -11,9 +11,9 @@
     "SFA.DAS.Employer.PR.Web": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true, //false
+      "launchBrowser": true, 
       "applicationUrl": "https://localhost:7169;http://localhost:5047",
-      //"launchUrl": "https://localhost:7169/accounts/v6gr7d/",
+      "launchUrl": "https://localhost:7169/accounts/v6gr7d/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

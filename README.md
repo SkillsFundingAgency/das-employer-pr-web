@@ -85,7 +85,6 @@ AppSettings.Development.json file
   "ConfigNames": "SFA.DAS.EmployerPR.Web,SFA.DAS.Employer.GovSignIn",
   "EnvironmentName": "LOCAL",
   "Version": "1.0",
-  "APPINSIGHTS_INSTRUMENTATIONKEY": "",
   "cdn": {
     "url": "https://das-at-frnt-end.azureedge.net"
   },
