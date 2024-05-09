@@ -5,19 +5,18 @@ using SFA.DAS.Employer.Shared.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var rootConfiguration = builder.Configuration.LoadConfiguration(builder.Services);
+var configuration = builder.Configuration.LoadConfiguration(builder.Services);
 
 builder.Services
     .AddOptions()
     .AddLogging()
     .AddApplicationInsightsTelemetry()
     .AddHttpContextAccessor()
-    .AddServiceRegistrations(rootConfiguration)
-    .AddAuthenticationServices(rootConfiguration)
-    .AddSession(rootConfiguration)
-    .AddMaMenuConfiguration(RouteNames.SignOut, rootConfiguration["ResourceEnvironmentName"]);
-
-builder.Services.AddHealthChecks();
+    .AddServiceRegistrations(configuration)
+    .AddAuthenticationServices(configuration)
+    .AddSession(configuration)
+    .AddHealthChecks(configuration)
+    .AddMaMenuConfiguration(RouteNames.SignOut, configuration["ResourceEnvironmentName"]);
 
 builder.Services
      .Configure<RouteOptions>(options => { options.LowercaseUrls = false; })
@@ -33,9 +32,8 @@ builder.Services.AddControllersWithViews().AddControllersAsServices().AddRazorRu
 
 if (!builder.Environment.IsDevelopment())
 {
-    builder.Services.AddDataProtection(rootConfiguration);
+    builder.Services.AddDataProtection(configuration);
 }
-
 
 var app = builder.Build();
 
