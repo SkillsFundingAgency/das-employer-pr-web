@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -22,11 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Employer.PR.Application\SFA.DAS.Employer.PR.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.Employer.PR.Domain\SFA.DAS.Employer.PR.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Views\Service\" />
   </ItemGroup>
 
 </Project>

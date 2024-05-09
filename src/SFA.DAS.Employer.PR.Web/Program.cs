@@ -46,31 +46,11 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseStatusCodePagesWithReExecute("/error/{0}");
-    app.UseExceptionHandler("/error");
-    app.UseHsts();
+    app
+        .UseHsts()
+        .UseExceptionHandler("/error")
+        .UseStatusCodePagesWithRedirects("/error/{0}");
 }
-
-app.Use(async (context, next) =>
-{
-    if (context.Response.Headers.ContainsKey("X-Frame-Options"))
-    {
-        context.Response.Headers.Remove("X-Frame-Options");
-    }
-
-    context.Response.Headers!.Append("X-Frame-Options", "SAMEORIGIN");
-
-    await next();
-
-    if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
-    {
-        //Re-execute the request so the user gets the error page
-        var originalPath = context.Request.Path.Value;
-        context.Items["originalPath"] = originalPath;
-        context.Request.Path = "/error/404";
-        await next();
-    }
-});
 
 app
     .UseHealthChecks("/ping")
@@ -81,6 +61,7 @@ app
     .UseAuthentication()
     .UseAuthorization()
     .UseSession()
+    .UseMiddleware<SecurityHeadersMiddleware>()
     .UseEndpoints(endpoints =>
     {
         endpoints.MapControllerRoute(

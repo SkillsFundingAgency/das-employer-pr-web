@@ -1,5 +1,5 @@
-﻿using SFA.DAS.Configuration.AzureTableStorage;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using SFA.DAS.Configuration.AzureTableStorage;
 
 namespace SFA.DAS.Employer.PR.Web.AppStart;
 
@@ -13,20 +13,15 @@ public static class LoadConfigurationExtension
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddEnvironmentVariables();
 
-
-        if (!config["EnvironmentName"]!.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        configBuilder.AddAzureTableStorage(options =>
         {
-            configBuilder.AddAzureTableStorage(options =>
-            {
-                options.ConfigurationKeys = config["ConfigNames"]!.Split(",");
-                options.StorageConnectionString = config["ConfigurationStorageConnectionString"];
-                options.EnvironmentName = config["EnvironmentName"];
-                options.PreFixConfigurationKeys = false;
-            });
-        }
+            options.ConfigurationKeys = config["ConfigNames"]!.Split(",");
+            options.StorageConnectionString = config["ConfigurationStorageConnectionString"];
+            options.EnvironmentName = config["EnvironmentName"];
+            options.PreFixConfigurationKeys = false;
+        });
 
         var configuration = configBuilder.Build();
-
 
         return configuration;
     }
