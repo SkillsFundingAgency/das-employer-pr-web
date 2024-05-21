@@ -6,13 +6,13 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: __SolutionBaseName__ #PLACEHOLDER
+  value: SFA.DAS.EmployerPR.Web
 - name: BuildConfiguration
   value: release
 - name: BuildPlatform
   value: any cpu
 - group: RELEASE Management Resources
-- group: __ReleaseVariableGroupName__ #PLACEHOLDER
+- group: RELEASE das-employer-pr-web
 - name: Deploy
   value: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'))]
 
@@ -23,12 +23,12 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/tags/__LATESTRELEASETAG__ #PLACEHOLDER
+    ref: refs/tags/2.1.18
     endpoint: SkillsFundingAgency
   - repository: das-platform-automation
     type: github
     name: SkillsFundingAgency/das-platform-automation
-    ref: refs/tags/__LATESTRELEASETAG__ #PLACEHOLDER
+    ref: refs/tags/5.1.7
     endpoint: SkillsFundingAgency
   pipelines:
   - pipeline: das-employer-config
