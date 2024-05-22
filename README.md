@@ -82,7 +82,7 @@ AppSettings.Development.json file
   },
   "AllowedHosts": "*",
   "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true;",
-  "ConfigNames": "SFA.DAS.EmployerPR.Web,SFA.DAS.Employer.GovSignIn",
+  "ConfigNames": "SFA.DAS.Employer.PR.Web,SFA.DAS.Employer.GovSignIn",
   "EnvironmentName": "LOCAL",
   "Version": "1.0",
   "cdn": {
