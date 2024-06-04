@@ -7,6 +7,7 @@ public class YourTrainingProvidersViewModel
     public bool IsOwner { get; set; }
 
     public List<LegalEntityModel> LegalEntities { get; set; } = [];
+    public string AddTrainingProviderUrl { get; set; } = null!;
 
     public static implicit operator YourTrainingProvidersViewModel(List<AccountLegalEntity> legalEntities)
     {

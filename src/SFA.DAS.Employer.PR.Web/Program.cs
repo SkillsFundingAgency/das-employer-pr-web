@@ -1,6 +1,8 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Web.AppStart;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,7 @@ builder.Services
     .AddServiceRegistrations(configuration)
     .AddAuthenticationServices(configuration)
     .AddSession(configuration)
+    .AddValidatorsFromAssembly(typeof(SelectLegalEntitySubmitModelValidator).Assembly)
     .AddHealthChecks(configuration)
     .AddMaMenuConfiguration(RouteNames.SignOut, configuration["ResourceEnvironmentName"]);
 

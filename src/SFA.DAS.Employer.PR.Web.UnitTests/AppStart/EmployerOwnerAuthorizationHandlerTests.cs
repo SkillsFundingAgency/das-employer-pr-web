@@ -6,22 +6,21 @@ using SFA.DAS.Testing.AutoFixture;
 using System.Text.Json;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.AppStart;
-
-public class EmployerAccountAuthorizationHandlerTests
+public class EmployerOwnerAuthorizationHandlerTests
 {
     [Test, MoqAutoData]
     public void EmployerAuthorizedOwner_Succeeded(
-        EmployerIdentifier employerIdentifier,
-        EmployerAccountRequirement requirement,
-        [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        EmployerAccountAuthorizationHandler authorizationHandler)
+     EmployerIdentifier employerIdentifier,
+     EmployerOwnerRoleRequirement requirement,
+     [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
+     EmployerOwnerAuthorizationHandler authorizationHandler)
     {
         var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", "Owner");
+
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
         var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
-        var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
-
-        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrincipal, null);
+        var claimsPrinciple = new ClaimsPrincipal(new[] { new ClaimsIdentity(new[] { claim }) });
+        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrinciple, null);
         var httpContext = new DefaultHttpContext(new FeatureCollection());
         httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId, employerIdentifier.AccountId);
         httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
@@ -34,43 +33,43 @@ public class EmployerAccountAuthorizationHandlerTests
     [Test]
     [MoqInlineAutoData("Transactor")]
     [MoqInlineAutoData("Viewer")]
-    public void CheckViewerAndTransactorAgainstRoles_Succeeded(
+    public void CheckViewerAndTransactorAgainstOwner_DidNotSucceed(
         string role,
         EmployerIdentifier employerIdentifier,
-        EmployerAccountRequirement requirement,
+        EmployerOwnerRoleRequirement requirement,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        EmployerAccountAuthorizationHandler authorizationHandler)
+        EmployerOwnerAuthorizationHandler authorizationHandler)
     {
         var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", role);
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
         var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
-        var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
-        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrincipal, null);
+        var claimsPrinciple = new ClaimsPrincipal(new[] { new ClaimsIdentity(new[] { claim }) });
+        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrinciple, null);
         var httpContext = new DefaultHttpContext(new FeatureCollection());
         httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId, employerIdentifier.AccountId);
         httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
 
         var response = authorizationHandler.HandleAsync(context);
 
-        context.HasSucceeded.Should().BeTrue();
+        context.HasSucceeded.Should().BeFalse();
     }
 
     [Test, MoqAutoData]
-    public void EmployerNotAuthorised_DidNotSucceed(
-        string accountId,
+    public void EmployerNotAuthorised_DifferentAccountInRoute_DidNotSucceed(
+        string differentAccountId,
         EmployerIdentifier employerIdentifier,
-        EmployerAccountRequirement requirement,
+        EmployerOwnerRoleRequirement requirement,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        EmployerAccountAuthorizationHandler authorizationHandler)
+        EmployerOwnerAuthorizationHandler authorizationHandler)
     {
         var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", "Owner");
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
         var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
-        var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
-        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrincipal, null);
+        var claimsPrinciple = new ClaimsPrincipal(new[] { new ClaimsIdentity(new[] { claim }) });
+        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrinciple, null);
         var responseMock = new FeatureCollection();
         var httpContext = new DefaultHttpContext(responseMock);
-        httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId, accountId.ToUpper());
+        httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId, differentAccountId.ToUpper());
         httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
 
         var response = authorizationHandler.HandleAsync(context);
@@ -81,15 +80,16 @@ public class EmployerAccountAuthorizationHandlerTests
     [Test, MoqAutoData]
     public void EmployerAuthorisedButInvalidRole_DidNotSucceed(
         EmployerIdentifier employerIdentifier,
-        EmployerAccountRequirement requirement,
+        EmployerOwnerRoleRequirement requirement,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        EmployerAccountAuthorizationHandler authorizationHandler)
+        EmployerOwnerAuthorizationHandler authorizationHandler)
     {
+
         var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", "Viewer-Owner-Transactor");
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
         var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
-        var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
-        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrincipal, null);
+        var claimsPrinciple = new ClaimsPrincipal(new[] { new ClaimsIdentity(new[] { claim }) });
+        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrinciple, null);
         var responseMock = new FeatureCollection();
         var httpContext = new DefaultHttpContext(responseMock);
         httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId, employerIdentifier.AccountId);
@@ -103,16 +103,15 @@ public class EmployerAccountAuthorizationHandlerTests
     [Test, MoqAutoData]
     public void AccountIdNotInUrl_DidNotSucceed(
         EmployerIdentifier employerIdentifier,
-        EmployerAccountRequirement requirement,
+        EmployerOwnerRoleRequirement requirement,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        EmployerAccountAuthorizationHandler authorizationHandler)
+        EmployerOwnerAuthorizationHandler authorizationHandler)
     {
         var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", "Owner");
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
-
         var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
-        var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
-        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrincipal, null);
+        var claimsPrinciple = new ClaimsPrincipal(new[] { new ClaimsIdentity(new[] { claim }) });
+        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrinciple, null);
         var responseMock = new FeatureCollection();
         var httpContext = new DefaultHttpContext(responseMock);
         httpContext.Request.RouteValues.Clear();
@@ -126,16 +125,15 @@ public class EmployerAccountAuthorizationHandlerTests
     [Test, MoqAutoData]
     public void NoMatchingAccountIdentifier_DidNotSucceed(
         EmployerIdentifier employerIdentifier,
-        EmployerAccountRequirement requirement,
+        EmployerOwnerRoleRequirement requirement,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        EmployerAccountAuthorizationHandler authorizationHandler)
+        EmployerOwnerAuthorizationHandler authorizationHandler)
     {
         var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", "Viewer-Owner-Transactor");
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
-
         var claim = new Claim("SomeOtherClaim", JsonSerializer.Serialize(employerAccounts));
-        var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
-        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrincipal, null);
+        var claimsPrinciple = new ClaimsPrincipal(new[] { new ClaimsIdentity(new[] { claim }) });
+        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrinciple, null);
         var responseMock = new FeatureCollection();
         var httpContext = new DefaultHttpContext(responseMock);
         httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId, employerIdentifier.AccountId);
@@ -149,17 +147,15 @@ public class EmployerAccountAuthorizationHandlerTests
     [Test, MoqAutoData]
     public void ClaimCannotBeDeserialized_DidNotSucceed(
         EmployerIdentifier employerIdentifier,
-        EmployerAccountRequirement requirement,
+        EmployerOwnerRoleRequirement requirement,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        EmployerAccountAuthorizationHandler authorizationHandler)
+        EmployerOwnerAuthorizationHandler authorizationHandler)
     {
-        var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerIdentifier));
         var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", "Owner");
-        var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
 
-
-        var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
-        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrincipal, null);
+        var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerIdentifierToUse));
+        var claimsPrinciple = new ClaimsPrincipal(new[] { new ClaimsIdentity(new[] { claim }) });
+        var context = new AuthorizationHandlerContext(new[] { requirement }, claimsPrinciple, null);
         var responseMock = new FeatureCollection();
         var httpContext = new DefaultHttpContext(responseMock);
         httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId, employerIdentifier.AccountId);

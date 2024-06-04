@@ -9,6 +9,8 @@ public class LegalEntityModel
 
     public string Name { get; set; } = null!;
     public long AccountId { get; set; }
+    public bool IsSelected { get; set; }
+
     public List<PermissionModel> Permissions { get; set; } = new();
 
     public static implicit operator LegalEntityModel(AccountLegalEntity legalEntity)

@@ -5,26 +5,31 @@ using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Controllers;
+using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
+using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
+using Operation = SFA.DAS.Employer.PR.Domain.Models.Operation;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 public class YourTrainingProvidersControllerTests
 {
+    static readonly string SelectLegalEntityUrl = Guid.NewGuid().ToString();
+
     [Test, MoqAutoData]
-    public void GetAccountLegalEntities_CallsOuterApiEndpoint(
-     [Frozen] Mock<IOuterApiClient> outerApiMock,
-     GetEmployerRelationshipsQueryResponse response,
-     string employerAccountId
+    public void Index_CallsOuterApiEndpoint(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        GetEmployerRelationshipsQueryResponse response,
+        string employerAccountId
      )
     {
-
         outerApiMock.Setup(o => o.GetAccountLegalEntities(employerAccountId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        YourTrainingProvidersController sut = new(outerApiMock.Object)
+        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -48,7 +53,7 @@ public class YourTrainingProvidersControllerTests
         var roleToTest = !isOwner ? EmployerUserRole.Viewer : EmployerUserRole.Owner;
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, roleToTest);
-        YourTrainingProvidersController sut = new(outerApiMock.Object)
+        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -57,16 +62,7 @@ public class YourTrainingProvidersControllerTests
         permission.Operations.Add(Operation.CreateCohort);
 
         List<Permission> permissions = new List<Permission> { permission };
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
-        {
-            new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions}
-        };
-
-        GetEmployerRelationshipsQueryResponse response = new GetEmployerRelationshipsQueryResponse(accountLegalEntities);
-
-        outerApiMock.Setup(o => o.GetAccountLegalEntities(employerAccountId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut);
         Task<IActionResult> result = sut.Index(employerAccountId, new CancellationToken());
 
         ViewResult? viewResult = result.Result.As<ViewResult>();
@@ -88,37 +84,32 @@ public class YourTrainingProvidersControllerTests
     [MoqInlineAutoData(Operation.RecruitmentRequiresReview, null, PermissionModel.NoPermissionToAddRecordsText, PermissionModel.PermissionToRecruitReviewAdvertsText)]
     [MoqInlineAutoData(null, null, PermissionModel.NoPermissionToAddRecordsText, PermissionModel.NoPermissionToRecruitText)]
     public void ReturnsExpectedPermissionTexts(
-       Operation? operation1,
-       Operation? operation2,
-       string expectedPermissionToAddApprenticesText,
-       string expectedPermissionToRecruitApprenticesText,
-       [Frozen] Mock<IOuterApiClient> outerApiMock,
-       string employerAccountId,
-       string providerName,
-       long ukprn
+        Operation? operation1,
+        Operation? operation2,
+        string expectedPermissionToAddApprenticesText,
+        string expectedPermissionToRecruitApprenticesText,
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        string employerAccountId,
+        string providerName,
+        long ukprn
     )
     {
+        var accountId = 1123;
+        var accountName = "account name";
+        var publicHashedId = "12123232";
+
         var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
         if (operation1 != null) permission.Operations.Add(operation1.Value);
         if (operation2 != null) permission.Operations.Add(operation2.Value);
 
-        var permissions = new List<Permission> { permission };
-        var accountLegalEntities = new List<AccountLegalEntity>
-        {
-            new() {AccountId = 1123,Id=1, Name="account name", PublicHashedId = "12123232", Permissions = permissions}
-        };
-
-        GetEmployerRelationshipsQueryResponse response = new GetEmployerRelationshipsQueryResponse(accountLegalEntities);
-
-        outerApiMock.Setup(o => o.GetAccountLegalEntities(employerAccountId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(response);
-
-
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        YourTrainingProvidersController sut = new YourTrainingProvidersController(outerApiMock.Object)
+        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
+        var permissions = new List<Permission> { permission };
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
 
@@ -134,5 +125,86 @@ public class YourTrainingProvidersControllerTests
         actualPermissionDetails.PermissionToAddRecords.Should().Be(expectedPermissionToAddApprenticesText);
         actualPermissionDetails.PermissionToRecruitApprentices.Should().Be(expectedPermissionToRecruitApprenticesText);
         actualPermissionDetails.ChangePermissionsLink.Should().Be("#");
+    }
+
+    [Test, MoqInlineAutoData]
+    public void CallsSessionServiceDelete(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        string employerAccountId,
+        string providerName,
+        long ukprn
+    )
+    {
+        var accountId = 1123;
+        var accountName = "account name";
+        var publicHashedId = "12123232";
+
+        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        permission.Operations.Add(Operation.CreateCohort);
+        permission.Operations.Add(Operation.Recruitment);
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+        YourTrainingProvidersController sut = new(outerApiMock.Object, sessionServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
+        var permissions = new List<Permission> { permission };
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut);
+
+        var result = sut.Index(employerAccountId, new CancellationToken());
+        sessionServiceMock.Verify(s => s.Delete<AddTrainingProvidersSessionModel>(), Times.Once);
+    }
+
+    [Test, MoqInlineAutoData]
+    public void SetsSelectLegalEntitiesUrl(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        string employerAccountId,
+        string providerName,
+        long ukprn
+  )
+    {
+        var accountId = 1123;
+        var accountName = "account name";
+        var publicHashedId = "12123232";
+
+        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        permission.Operations.Add(Operation.CreateCohort);
+        permission.Operations.Add(Operation.Recruitment);
+
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>())
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
+        var permissions = new List<Permission> { permission };
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut);
+
+        var result = sut.Index(employerAccountId, new CancellationToken());
+
+        var viewResult = result.Result.As<ViewResult>();
+        var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
+        viewModel!.AddTrainingProviderUrl.Should().Be(SelectLegalEntityUrl);
+    }
+    private static void SetupControllerAndClasses(Mock<IOuterApiClient> outerApiMock, string employerAccountId, int accountId, string accountName,
+        string publicHashedId, List<Permission> permissions, YourTrainingProvidersController sut)
+    {
+        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        {
+            new()
+            {
+                AccountId = accountId, Id = 1, Name = accountName, PublicHashedId = publicHashedId,
+                Permissions = permissions
+            }
+        };
+
+        GetEmployerRelationshipsQueryResponse response = new GetEmployerRelationshipsQueryResponse(accountLegalEntities);
+
+        outerApiMock.Setup(o => o.GetAccountLegalEntities(employerAccountId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.SelectLegalEntity, SelectLegalEntityUrl);
     }
 }

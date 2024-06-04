@@ -1,0 +1,53 @@
+﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model SelectLegalEntitiesViewModel
+@{
+    ViewData["Title"] = "select legal entity";
+    var legalEntitiesOrdered = Model.LegalEntities.OrderBy(x => x.Name).ToList();
+}
+@section breadcrumb {
+    <a href="@Model.BackLink" class="govuk-back-link">Back</a>
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <form asp-route="@RouteNames.SelectLegalEntity" method="POST">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            Select the organisation you want to add a training provider to
+                        </h1>
+                    </legend>
+                    <p class="govuk-body">
+                        You have multiple organisations on your account. Confirm the organisation you want to add
+                        the
+                        training provider to.
+                    </p>
+                    <div class="govuk-form-group" id="LegalEntityId" esfa-validation-marker-for="@Model.LegalEntityId">
+
+                        <span asp-validation-for="LegalEntityId" class="govuk-error-message"></span>
+                        <div class="govuk-radios" data-module="govuk-radios">
+                            @for (var index = 0; index < legalEntitiesOrdered.Count; index++)
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="legalEntity-{@index}" name="legalEntityId"
+                                        type="radio" value="@legalEntitiesOrdered[index].LegalEntityId"
+                                        Checked="@legalEntitiesOrdered[index].IsSelected">
+                                    <label class="govuk-label govuk-radios__label" for="legalEntity-{@index}">
+                                        @legalEntitiesOrdered[index].Name
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Confirm</button>
+                <a class="govuk-link" href="@Model.CancelUrl">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

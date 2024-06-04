@@ -14,7 +14,9 @@ public static class AddAuthenticationServicesExtension
     {
         services.AddHttpContextAccessor();
         services.AddTransient<ICustomClaims, EmployerAccountPostAuthenticationClaimsHandler>();
+
         services.AddSingleton<IAuthorizationHandler, EmployerAccountAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationHandler, EmployerOwnerAuthorizationHandler>();
 
         services.Configure<IISServerOptions>(options => options.AutomaticAuthentication = false);
 
@@ -27,6 +29,14 @@ public static class AddAuthenticationServicesExtension
                 {
                     policy.RequireClaim(EmployerClaims.AccountsClaimsTypeIdentifier);
                     policy.Requirements.Add(new EmployerAccountRequirement());
+                    policy.RequireAuthenticatedUser();
+                    policy.Requirements.Add(new AccountActiveRequirement());
+                })
+            .AddPolicy(
+                PolicyNames.HasEmployerOwnerAccount, policy =>
+                {
+                    policy.RequireClaim(EmployerClaims.AccountsClaimsTypeIdentifier);
+                    policy.Requirements.Add(new EmployerOwnerRoleRequirement());
                     policy.RequireAuthenticatedUser();
                     policy.Requirements.Add(new AccountActiveRequirement());
                 });
