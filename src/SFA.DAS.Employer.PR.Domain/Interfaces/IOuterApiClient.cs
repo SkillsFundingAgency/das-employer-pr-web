@@ -10,4 +10,8 @@ public interface IOuterApiClient
 
     [Get("/accountusers/{userId}/accounts")]
     Task<GetEmployerUserAccountsResponse> GetUserAccounts([Path] string userId, [Query] string email, CancellationToken cancellationToken);
+
+    [Get("/relationships/employeraccount/{accountHashedId}")]
+    Task<GetEmployerRelationshipsQueryResponse> GetAccountLegalEntities([Path] string accountHashedId, CancellationToken cancellationToken);
+
 }

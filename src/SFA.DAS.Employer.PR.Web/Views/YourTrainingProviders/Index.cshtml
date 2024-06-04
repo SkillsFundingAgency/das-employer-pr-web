@@ -1,0 +1,73 @@
+﻿@model YourTrainingProvidersViewModel
+@{
+    ViewData["Title"] = "Your training providers";
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-route="#" method="GET">
+            <h1 class="govuk-heading-l">
+                Your training providers
+            </h1>
+            <p class="govuk-body">
+                You can add a training provider, then give them permission to add apprentice records and recruit apprentices on your behalf.
+            </p>
+            @if (@Model.IsOwner)
+            {
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            How permissions work
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text" id="details-content-0" aria-hidden="false">
+                        <p class="govuk-body">
+                            You can:
+                        </p>
+                        <ol class="govuk-list govuk-list--bullet">
+                            <li>change permissions for a provider at any time</li>
+                            <li>review and edit anything a provider does on your behalf</li>
+                        </ol>
+                        <p class="govuk-body">
+                            Your provider will not be able to access your account.
+                        </p>
+                    </div>
+                </details>
+                <div class="govuk-button-group">
+                    <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Add a training provider</button>
+                </div>
+            }
+        </form>
+        @foreach (var ale in Model.LegalEntities.OrderBy(x=>x.Name))
+        {
+            <table class="govuk-table">
+                <caption class="govuk-table__caption govuk-table__caption--m">@ale.Name</caption>
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Training provider</th>
+                    <th scope="col" class="govuk-table__header">Permission to add apprentice records</th>
+                    <th scope="col" class="govuk-table__header">Permission to recruit apprentices</th>
+                @if (@Model.IsOwner)
+                {
+                    <th scope="col" class="govuk-table__header">Change permissions</th>   
+                }
+                </tr>
+                </thead>
+
+                <tbody class="govuk-table__body">
+                @foreach (var permissionDetails in ale.Permissions.OrderBy(p=>p.ProviderName))
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">@permissionDetails.ProviderName</td>
+                        <td class="govuk-table__cell">@permissionDetails.PermissionToAddRecords</td>
+                        <td class="govuk-table__cell">@permissionDetails.PermissionToRecruitApprentices</td>
+                    @if (@Model.IsOwner)
+                        {
+                                <td class="govuk-table__cell"><a class="govuk-link"  href="@permissionDetails.ChangePermissionsLink">Change permissions</a></td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

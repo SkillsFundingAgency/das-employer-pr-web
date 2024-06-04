@@ -1,26 +1,23 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using System.Diagnostics.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace SFA.DAS.Employer.PR.Web.Authentication;
 
 [ExcludeFromCodeCoverage]
-
 public class EmployerAccountAuthorizationHandler : AuthorizationHandler<EmployerAccountRequirement>
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<EmployerAccountAuthorizationHandler> _logger;
     private readonly IOuterApiClient _outerApiClient;
 
-    public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, ILogger<EmployerAccountAuthorizationHandler> logger, IOuterApiClient outerApiClient)
+    public EmployerAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor, IOuterApiClient outerApiClient)
     {
         _httpContextAccessor = httpContextAccessor;
-        _logger = logger;
         _outerApiClient = outerApiClient;
     }
 
@@ -44,21 +41,16 @@ public class EmployerAccountAuthorizationHandler : AuthorizationHandler<Employer
         }
 
         var employerAccountClaim = context.User.FindFirst(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier));
-        if (employerAccountClaim?.Value == null) return false;
-
-
-        Dictionary<string, EmployerUserAccountItem> employerAccounts;
-        try
+        if (employerAccountClaim?.Value == null)
         {
-            employerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(employerAccountClaim.Value)!;
-        }
-        catch (JsonSerializationException e)
-        {
-            _logger.LogError(e, "Could not deserialize employer account claim for user");
             return false;
         }
 
-        string accountIdFromUrl = _httpContextAccessor.HttpContext!.Request.RouteValues[RouteValueKeys.EncodedAccountId]!.ToString()!.ToUpper();
+
+        Dictionary<string, EmployerUserAccountItem> employerAccounts;
+        employerAccounts = JsonSerializer.Deserialize<Dictionary<string, EmployerUserAccountItem>>(employerAccountClaim.Value)!;
+
+        string accountIdFromUrl = _httpContextAccessor.HttpContext!.Request.RouteValues[RouteValueKeys.EncodedAccountId]!.ToString()!;
 
         EmployerUserAccountItem? employerUserAccount = null;
 
@@ -72,7 +64,9 @@ public class EmployerAccountAuthorizationHandler : AuthorizationHandler<Employer
             var requiredIdClaim = ClaimTypes.NameIdentifier;
 
             if (!context.User.HasClaim(c => c.Type.Equals(requiredIdClaim)))
+            {
                 return false;
+            }
 
             var userClaim = context.User.FindFirst(requiredIdClaim)!;
             var userId = userClaim.Value.ToString();
@@ -81,11 +75,11 @@ public class EmployerAccountAuthorizationHandler : AuthorizationHandler<Employer
 
             var result = _outerApiClient.GetUserAccounts(userId, email!, CancellationToken.None).Result;
 
-            var accountsAsJson = JsonConvert.SerializeObject(result.UserAccounts.ToDictionary(k => k.EncodedAccountId));
+            var accountsAsJson = JsonSerializer.Serialize(result.UserAccounts.ToDictionary(k => k.EncodedAccountId));
 
             var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
 
-            var updatedEmployerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);
+            var updatedEmployerAccounts = JsonSerializer.Deserialize<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);
 
             userClaim.Subject!.AddClaim(associatedAccountsClaim);
 
@@ -93,6 +87,7 @@ public class EmployerAccountAuthorizationHandler : AuthorizationHandler<Employer
             {
                 return false;
             }
+
             employerUserAccount = value;
         }
 

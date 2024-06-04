@@ -1,11 +1,15 @@
-﻿namespace SFA.DAS.Employer.PR.Web.Infrastructure;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace SFA.DAS.Employer.PR.Web.Infrastructure;
+
+[ExcludeFromCodeCoverage]
 public static class RouteNames
 {
     public const string SignOut = "sign-out";
     public const string SignedOut = "signed-out";
     public const string AccountUnavailable = "account-unavailable";
     public const string Home = nameof(Home);
+    public const string YourTrainingProviders = nameof(YourTrainingProviders);
 
     public static class StubAccount
     {

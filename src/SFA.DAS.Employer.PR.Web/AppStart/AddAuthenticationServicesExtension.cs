@@ -18,22 +18,18 @@ public static class AddAuthenticationServicesExtension
 
         services.Configure<IISServerOptions>(options => options.AutomaticAuthentication = false);
 
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(
-                PolicyNames.IsAuthenticated, policy =>
+        services.AddAuthorizationBuilder()
+            .AddPolicy(PolicyNames.IsAuthenticated, policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                });
-            options.AddPolicy(
-                PolicyNames.HasEmployerAccount, policy =>
+                })
+            .AddPolicy(PolicyNames.HasEmployerAccount, policy =>
                 {
                     policy.RequireClaim(EmployerClaims.AccountsClaimsTypeIdentifier);
                     policy.Requirements.Add(new EmployerAccountRequirement());
                     policy.RequireAuthenticatedUser();
                     policy.Requirements.Add(new AccountActiveRequirement());
                 });
-        });
 
         services.AddAndConfigureGovUkAuthentication(
             configuration,
