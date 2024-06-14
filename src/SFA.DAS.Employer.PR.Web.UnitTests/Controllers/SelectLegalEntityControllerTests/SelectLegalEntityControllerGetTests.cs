@@ -23,10 +23,10 @@ public class SelectLegalEntityControllerGetTests
         string accountName,
         string publicHashedId)
     {
-        Permission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
+        Permission permission = new() { Operations = new(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new List<Permission> { permission };
+        List<Permission> permissions = new() { permission };
         List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
         {
             new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions},
@@ -34,7 +34,7 @@ public class SelectLegalEntityControllerGetTests
         };
         var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
+            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectLegalEntityController sut = new(sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>())
@@ -82,7 +82,7 @@ public class SelectLegalEntityControllerGetTests
         };
         var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
+            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectLegalEntityController sut = new(sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>())

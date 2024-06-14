@@ -9,7 +9,7 @@ public class SelectTrainingProviderSubmitModelValidatorTests
     [Test, MoqAutoData]
     public void TestValidate_LegalEntitySet_Valid(string searchTerm)
     {
-        var model = new SelectTrainingProviderSubmitViewModel()
+        var model = new SelectTrainingProviderSubmitModel()
         {
             SearchTerm = searchTerm
         };
@@ -23,7 +23,7 @@ public class SelectTrainingProviderSubmitModelValidatorTests
     [Test]
     public void TestValidator_LegalEntityInvalid_ReturnsExpectedMessage()
     {
-        var model = new SelectTrainingProviderSubmitViewModel();
+        var model = new SelectTrainingProviderSubmitModel();
         var sut = new SelectTrainingProviderSubmitModelValidator();
         var result = sut.TestValidate(model);
 

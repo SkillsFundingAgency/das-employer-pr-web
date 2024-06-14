@@ -22,10 +22,9 @@ public class SelectLegalEntityController(ISessionService _sessionService, IValid
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
 
-        if (sessionModel == null)
+        if (sessionModel == null || sessionModel.EmployerAccountId != employerAccountId)
         {
             return RedirectToAction("Index", "YourTrainingProviders", new { employerAccountId });
-
         }
 
         ResetSessionForJourney(sessionModel);
