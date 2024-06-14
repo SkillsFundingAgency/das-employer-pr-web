@@ -4,14 +4,31 @@
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form action="@Model.AddTrainingProviderUrl" method="GET">
+        @if (Model.ShowPermissionsJustAddedBanner)
+        {
+            <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                        Success
+                    </h2>
+                </div>
+                <div class="govuk-notification-banner__content">
+                    <h3 class="govuk-notification-banner__heading">
+                        You've added @Model.ProviderWithChangedPermissions?.ToUpper() and set their permissions.
+                    </h3>
+                    <p class="govuk-body">We've emailed @Model?.ProviderWithChangedPermissions?.ToUpper() to let them know.</p>
+                </div>
+            </div>
+        }
+
+        <form action="@Model!.AddTrainingProviderUrl" method="GET">
             <h1 class="govuk-heading-l">
                 Your training providers
             </h1>
             <p class="govuk-body">
                 You can add a training provider, then give them permission to add apprentice records and recruit apprentices on your behalf.
             </p>
-            @if (@Model.IsOwner)
+            @if (@Model!.IsOwner)
             {
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
@@ -39,7 +56,7 @@
         </form>
     </div>
     <div class="govuk-grid-column">
-        @foreach (var ale in Model.LegalEntities.OrderBy(x => x.Name))
+        @foreach (var ale in Model.LegalEntities)
         {
             <table class="govuk-table">
                 <caption class="govuk-table__caption govuk-table__caption--m">@ale.Name</caption>
@@ -56,7 +73,7 @@
                 </thead>
 
                 <tbody class="govuk-table__body">
-                @foreach (var permissionDetails in ale.Permissions.OrderBy(p => p.ProviderName))
+                @foreach (var permissionDetails in ale.Permissions)
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">@permissionDetails.ProviderName</td>

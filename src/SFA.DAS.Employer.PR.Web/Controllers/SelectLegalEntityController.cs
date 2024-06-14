@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
@@ -13,35 +14,41 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/new/selectOrganisation", Name = RouteNames.SelectLegalEntity)]
-public class SelectLegalEntityController(ISessionService _sessionService, IValidator<SelectLegalEntitiesSubmitViewModel> _validator) : Controller
+public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<SelectLegalEntitiesSubmitViewModel> _validator) : Controller
 {
     public const string ViewPath = "~/Views/SelectLegalEntity/Index.cshtml";
 
     [HttpGet]
-    public IActionResult Index([FromRoute] string employerAccountId)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
 
         if (sessionModel == null)
         {
-            return RedirectToAction("Index", "YourTrainingProviders", new { employerAccountId });
+            var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
 
+            sessionModel = new AddTrainingProvidersSessionModel
+            {
+                AccountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name).ToList()
+            };
+            sessionModel.EmployerAccountId = employerAccountId;
+            _sessionService.Set(sessionModel);
         }
-
-        ResetSessionForJourney(sessionModel);
 
         SelectLegalEntitiesViewModel model = GetViewModel(employerAccountId, sessionModel);
 
-        if (model.LegalEntities.Count == 1)
+        if (model.LegalEntities.Count != 1)
         {
-            var legalEntity = model.LegalEntities[0];
-            sessionModel.LegalEntityId = legalEntity.LegalEntityId;
-            sessionModel.LegalName = legalEntity.Name;
-            _sessionService.Set(sessionModel);
-
-            return RedirectToAction("Index", "SelectTrainingProvider", new { employerAccountId });
+            return View(ViewPath, model);
         }
-        return View(ViewPath, model);
+
+        var legalEntity = model.LegalEntities[0];
+        sessionModel.LegalEntityId = legalEntity.LegalEntityId;
+        sessionModel.LegalName = legalEntity.Name;
+        _sessionService.Set(sessionModel);
+
+        return RedirectToAction("Index", "SelectTrainingProvider", new { employerAccountId });
+
     }
 
     [HttpPost]
@@ -94,12 +101,5 @@ public class SelectLegalEntityController(ISessionService _sessionService, IValid
         sessionModel.LegalName = legalEntity.Name;
         _sessionService.Set(sessionModel);
 
-    }
-
-    private void ResetSessionForJourney(AddTrainingProvidersSessionModel sessionModel)
-    {
-        sessionModel.ProviderName = null;
-        sessionModel.Ukprn = null;
-        _sessionService.Set(sessionModel);
     }
 }

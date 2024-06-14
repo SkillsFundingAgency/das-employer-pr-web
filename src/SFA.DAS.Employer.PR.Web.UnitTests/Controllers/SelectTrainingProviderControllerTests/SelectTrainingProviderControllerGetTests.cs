@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Controllers;
@@ -25,8 +26,8 @@ public class SelectTrainingProviderControllerGetTests
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut =
-            new(sessionServiceMock.Object,
-                Mock.Of<IValidator<SelectTrainingProviderSubmitViewModel>>())
+            new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object,
+                Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
             };
@@ -48,15 +49,17 @@ public class SelectTrainingProviderControllerGetTests
      )
     {
         Mock<ISessionService> sessionServiceMock = new Mock<ISessionService>();
+
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel
             {
+                EmployerAccountId = employerAccountId,
                 LegalEntityId = legalEntityId,
                 LegalName = legalName,
                 AccountLegalEntities = new List<AccountLegalEntity> { new AccountLegalEntity() }
             });
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(sessionServiceMock.Object, Mock.Of<IValidator<SelectTrainingProviderSubmitViewModel>>())
+        SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -64,7 +67,7 @@ public class SelectTrainingProviderControllerGetTests
 
         var result = sut.Index(employerAccountId);
         ViewResult? viewResult = result.As<ViewResult>();
-        SelectTrainingProviderViewModel? viewModel = viewResult.Model as SelectTrainingProviderViewModel;
+        SelectTrainingProviderModel? viewModel = viewResult.Model as SelectTrainingProviderModel;
 
         viewModel!.BackLink.Should().Be(BackLink);
     }
@@ -77,15 +80,17 @@ public class SelectTrainingProviderControllerGetTests
     )
     {
         Mock<ISessionService> sessionServiceMock = new Mock<ISessionService>();
+
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel
             {
+                EmployerAccountId = employerAccountId,
                 LegalEntityId = legalEntityId,
                 LegalName = legalName,
                 AccountLegalEntities = new List<AccountLegalEntity> { new AccountLegalEntity(), new AccountLegalEntity() }
             });
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(sessionServiceMock.Object, Mock.Of<IValidator<SelectTrainingProviderSubmitViewModel>>())
+        SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -93,7 +98,7 @@ public class SelectTrainingProviderControllerGetTests
 
         var result = sut.Index(employerAccountId);
         ViewResult? viewResult = result.As<ViewResult>();
-        SelectTrainingProviderViewModel? viewModel = viewResult.Model as SelectTrainingProviderViewModel;
+        SelectTrainingProviderModel? viewModel = viewResult.Model as SelectTrainingProviderModel;
 
         viewModel!.BackLink.Should().Be(BackLink);
     }

@@ -5,7 +5,6 @@ using SFA.DAS.Testing.AutoFixture;
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Models;
 public class PermissionModelTests
 {
-
     [Test]
     [MoqInlineAutoData(Operation.CreateCohort, Operation.Recruitment, PermissionModel.PermissionToAddRecordsText, PermissionModel.PermissionToRecruitText)]
     [MoqInlineAutoData(Operation.CreateCohort, Operation.RecruitmentRequiresReview, PermissionModel.PermissionToAddRecordsText, PermissionModel.PermissionToRecruitReviewAdvertsText)]

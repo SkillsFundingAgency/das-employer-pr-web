@@ -32,7 +32,7 @@ public class RegisteredProvidersController(IOuterApiClient outerApiClient, ICach
         if (providers != null) return providers;
 
         var result = await outerApiClient.GetRegisteredProviders(cancellationToken);
-        await cacheStorageService.SaveToCache(CacheStorageValues.Providers.Key, result.Providers, CacheStorageValues.Providers.HoursToCache);
+        await cacheStorageService.SaveToCache(CacheStorageValues.Providers.Key, result.Providers.OrderBy(p => p.Name).ToList(), CacheStorageValues.Providers.HoursToCache);
 
         return result.Providers;
     }
