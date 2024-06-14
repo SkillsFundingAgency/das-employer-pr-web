@@ -5,6 +5,8 @@ namespace SFA.DAS.Employer.PR.Web.Models;
 public class YourTrainingProvidersViewModel
 {
     public bool IsOwner { get; set; }
+    public string? PermissionsUpdatedForProvider { get; set; }
+    public bool ShowPermissionsUpdatedBanner() => !string.IsNullOrEmpty(PermissionsUpdatedForProvider);
 
     public List<LegalEntityModel> LegalEntities { get; set; } = [];
     public string AddTrainingProviderUrl { get; set; } = null!;

@@ -2,38 +2,48 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/new/selectProvider", Name = RouteNames.SelectTrainingProvider)]
-public class SelectTrainingProviderController(ISessionService _sessionService, IValidator<SelectTrainingProviderSubmitViewModel> _validator) : Controller
+public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<SelectTrainingProviderSubmitModel> _validator) : Controller
 {
+    public const string ShutterPageViewPath = "~/Views/SetPermissions/ShutterPage.cshtml";
+
     [HttpGet]
     public IActionResult Index([FromRoute] string employerAccountId)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
 
-        if (sessionModel == null)
+        if (sessionModel?.SelectedLegalEntityId == null || sessionModel.EmployerAccountId != employerAccountId)
         {
-            return RedirectToAction("Index", "YourTrainingProviders", new { employerAccountId });
+            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
         var backLink = SetBackLink(employerAccountId, sessionModel.AccountLegalEntities.Count);
 
-        SelectTrainingProviderViewModel model = new SelectTrainingProviderViewModel(backLink!, sessionModel!.ProviderName, sessionModel!.Ukprn.ToString());
+        SelectTrainingProviderModel model = new SelectTrainingProviderModel(backLink!, sessionModel!.ProviderName, sessionModel!.Ukprn.ToString());
         return View(model);
     }
 
     [HttpPost]
-    public IActionResult Index([FromRoute] string employerAccountId, SelectTrainingProviderSubmitViewModel submitModel)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, SelectTrainingProviderSubmitModel submitModel, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+
+        if (sessionModel?.EmployerAccountId != employerAccountId)
+        {
+            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+        }
+
         submitModel.SearchTerm = submitModel.Name;
         var result = _validator.Validate(submitModel);
 
@@ -49,7 +59,22 @@ public class SelectTrainingProviderController(ISessionService _sessionService, I
         sessionModel.ProviderName = submitModel.Name;
         _sessionService.Set(sessionModel);
 
-        return RedirectToAction("Index", "SelectTrainingProvider");
+        var existingPermissions = await _outerApiClient.GetPermissions(sessionModel.Ukprn.Value, sessionModel.SelectedLegalEntityId!.Value, cancellationToken);
+
+        if (existingPermissions.ResponseMessage.StatusCode == HttpStatusCode.NotFound)
+        {
+            return RedirectToRoute(RouteNames.SetPermissions, new { employerAccountId });
+        }
+
+        var shutterPageViewModel = new AddPermissionsShutterPageViewModel
+        (
+            sessionModel.ProviderName!,
+            sessionModel.Ukprn.Value,
+            Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!,
+            Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!
+            );
+
+        return View(ShutterPageViewPath, shutterPageViewModel);
     }
 
     private string SetBackLink(string employerAccountId, int numberOfLegalEntities)
@@ -64,10 +89,10 @@ public class SelectTrainingProviderController(ISessionService _sessionService, I
         return backLink!;
     }
 
-    private SelectTrainingProviderViewModel GetViewModel(string employerAccountId, string? name, string? ukprn)
+    private SelectTrainingProviderModel GetViewModel(string employerAccountId, string? name, string? ukprn)
     {
         var backLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
-        SelectTrainingProviderViewModel model = new SelectTrainingProviderViewModel(backLink!, name, ukprn);
+        SelectTrainingProviderModel model = new SelectTrainingProviderModel(backLink!, name, ukprn);
         return model;
     }
 }

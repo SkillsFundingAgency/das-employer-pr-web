@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace SFA.DAS.Employer.PR.Web.AppStart;
 
 [ExcludeFromCodeCoverage]
-public static class AddMemoryCacheExtension
+public static class AddDistributedCacheExtension
 {
     public static IServiceCollection AddDistributedCache(this IServiceCollection services, IConfiguration configuration)
     {
