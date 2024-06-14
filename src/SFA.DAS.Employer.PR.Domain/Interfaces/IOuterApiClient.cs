@@ -14,4 +14,6 @@ public interface IOuterApiClient
     [Get("/relationships/employeraccount/{accountHashedId}")]
     Task<GetEmployerRelationshipsQueryResponse> GetAccountLegalEntities([Path] string accountHashedId, CancellationToken cancellationToken);
 
+    [Get("/providers")]
+    Task<GetRegisteredProvidersResponse> GetRegisteredProviders(CancellationToken cancellationToken);
 }

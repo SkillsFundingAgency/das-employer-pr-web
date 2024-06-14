@@ -1,10 +1,9 @@
-﻿@using Microsoft.Extensions.Azure
-@model YourTrainingProvidersViewModel
+﻿@model YourTrainingProvidersViewModel
 @{
     ViewData["Title"] = "Your training providers";
 }
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column">
+    <div class="govuk-grid-column-two-thirds">
         <form action="@Model.AddTrainingProviderUrl" method="GET">
             <h1 class="govuk-heading-l">
                 Your training providers
@@ -38,7 +37,9 @@
                 </div>
             }
         </form>
-        @foreach (var ale in Model.LegalEntities.OrderBy(x=>x.Name))
+    </div>
+    <div class="govuk-grid-column">
+        @foreach (var ale in Model.LegalEntities.OrderBy(x => x.Name))
         {
             <table class="govuk-table">
                 <caption class="govuk-table__caption govuk-table__caption--m">@ale.Name</caption>
@@ -47,23 +48,23 @@
                     <th scope="col" class="govuk-table__header">Training provider</th>
                     <th scope="col" class="govuk-table__header">Permission to add apprentice records</th>
                     <th scope="col" class="govuk-table__header">Permission to recruit apprentices</th>
-                @if (@Model.IsOwner)
-                {
-                    <th scope="col" class="govuk-table__header">Change permissions</th>   
-                }
+                    @if (@Model.IsOwner)
+                    {
+                        <th scope="col" class="govuk-table__header">Change permissions</th>
+                    }
                 </tr>
                 </thead>
 
                 <tbody class="govuk-table__body">
-                @foreach (var permissionDetails in ale.Permissions.OrderBy(p=>p.ProviderName))
+                @foreach (var permissionDetails in ale.Permissions.OrderBy(p => p.ProviderName))
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">@permissionDetails.ProviderName</td>
                         <td class="govuk-table__cell">@permissionDetails.PermissionToAddRecords</td>
                         <td class="govuk-table__cell">@permissionDetails.PermissionToRecruitApprentices</td>
-                    @if (@Model.IsOwner)
+                        @if (@Model.IsOwner)
                         {
-                                <td class="govuk-table__cell"><a class="govuk-link"  href="@permissionDetails.ChangePermissionsLink">Change permissions</a></td>
+                            <td class="govuk-table__cell"><a class="govuk-link" href="@permissionDetails.ChangePermissionsLink">Change permissions</a></td>
                         }
                     </tr>
                 }

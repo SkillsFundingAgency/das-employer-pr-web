@@ -6,7 +6,7 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Models;
 public class YourTrainingProvidersViewModelTests
 {
     [Test, AutoData]
-    public void Operator_ConvertsTo_LegalEntityModel(List<AccountLegalEntity> legalEntities)
+    public void Operator_ConvertsTo_YourTrainingProvidersViewModel(List<AccountLegalEntity> legalEntities)
     {
         YourTrainingProvidersViewModel sut = legalEntities;
         sut.LegalEntities.Should().BeEquivalentTo(legalEntities, options => options.ExcludingMissingMembers());

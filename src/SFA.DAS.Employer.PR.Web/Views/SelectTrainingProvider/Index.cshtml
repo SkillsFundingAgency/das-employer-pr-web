@@ -1,0 +1,40 @@
+﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model SelectTrainingProviderViewModel
+@{
+    ViewData["Title"] = "select training provider";
+}
+@section breadcrumb {
+    <a href="@Model.BackLink" class="govuk-back-link">Back</a>
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <form asp-route="@RouteNames.SelectTrainingProvider" method="POST">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            Enter your training provider's name or reference number (UKPRN)
+                        </h1>
+                    </legend>
+                    <input asp-for="Name" id="Name" type="hidden"/>
+                    <input asp-for="Ukprn" id="Ukprn" type="hidden" />
+                    <p class="govuk-body">
+                        A UKPRN is the unique, 8 digit number we use to identify a training provider. Ask your training provider if you do not know it.
+                    </p>
+                    <span asp-validation-for="SearchTerm" class="govuk-error-message"></span>
+                    <div data-module="govuk-input">
+                        <input id="SearchTerm" type="text"
+                               asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete"/>
+
+                        <label class="govuk-visually-hidden">Search Result: @Model.Name, @Model.Ukprn</label>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Continue</button>
+            </div>
+        </form>
+    </div>
+</div>

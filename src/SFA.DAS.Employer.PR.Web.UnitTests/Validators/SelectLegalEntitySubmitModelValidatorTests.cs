@@ -20,7 +20,6 @@ public class SelectLegalEntitySubmitModelValidatorTests
         result.ShouldNotHaveValidationErrorFor(c => c.LegalEntityId);
     }
 
-
     [Test]
     public void TestValidator_LegalEntityInvalid_ReturnsExpectedMessage()
     {

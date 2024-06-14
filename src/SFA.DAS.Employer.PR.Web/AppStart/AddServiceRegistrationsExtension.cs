@@ -4,6 +4,7 @@ using SFA.DAS.Employer.PR.Application.Services;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Configuration;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
+using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Http.Configuration;
 
 namespace SFA.DAS.Employer.PR.Web.AppStart;
@@ -17,6 +18,7 @@ public static class AddServiceRegistrationsExtension
         AddOuterApi(services, outerApiConfiguration!);
         services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
         services.AddTransient<ISessionService, SessionService>();
+        services.AddTransient<ICacheStorageService, CacheStorageService>();
 
         return services;
     }
