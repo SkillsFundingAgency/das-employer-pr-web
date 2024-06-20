@@ -1,10 +1,11 @@
-﻿@model YourTrainingProvidersViewModel
+﻿@using Microsoft.Extensions.Azure
+@model YourTrainingProvidersViewModel
 @{
     ViewData["Title"] = "Your training providers";
 }
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <form asp-route="#" method="GET">
+    <div class="govuk-grid-column">
+        <form action="@Model.AddTrainingProviderUrl" method="GET">
             <h1 class="govuk-heading-l">
                 Your training providers
             </h1>

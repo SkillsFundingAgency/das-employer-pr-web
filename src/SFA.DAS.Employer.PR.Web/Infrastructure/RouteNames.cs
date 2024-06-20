@@ -10,6 +10,7 @@ public static class RouteNames
     public const string AccountUnavailable = "account-unavailable";
     public const string Home = nameof(Home);
     public const string YourTrainingProviders = nameof(YourTrainingProviders);
+    public const string SelectLegalEntity = nameof(SelectLegalEntity);
 
     public static class StubAccount
     {
