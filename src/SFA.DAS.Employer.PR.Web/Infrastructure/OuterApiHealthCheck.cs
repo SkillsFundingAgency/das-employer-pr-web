@@ -7,7 +7,7 @@ public class OuterApiHealthCheck(IOuterApiClient _outerApiClient) : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        var response = await _outerApiClient.Ping();
+        var response = await _outerApiClient.ServiceCheck();
 
         return response.IsSuccessStatusCode ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
     }
