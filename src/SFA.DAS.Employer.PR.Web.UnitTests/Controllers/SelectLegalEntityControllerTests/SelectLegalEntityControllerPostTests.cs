@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Controllers;
@@ -47,7 +48,7 @@ public class SelectLegalEntityControllerPostTests
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
 
-        SelectLegalEntityController sut = new(sessionServiceMock.Object, validatorMock.Object)
+        SelectLegalEntityController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -68,7 +69,8 @@ public class SelectLegalEntityControllerPostTests
         string employerAccountId,
         int accountId,
         string accountName,
-        string publicHashedId)
+        string publicHashedId,
+        CancellationToken cancellationToken)
     {
         var sessionServiceMock = new Mock<ISessionService>();
         var accountLegalEntityId = 1;
@@ -90,7 +92,7 @@ public class SelectLegalEntityControllerPostTests
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
 
-        SelectLegalEntityController sut = new(sessionServiceMock.Object, validatorMock.Object)
+        SelectLegalEntityController sut = new SelectLegalEntityController(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -131,7 +133,7 @@ public class SelectLegalEntityControllerPostTests
             new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions}
         };
 
-        SelectLegalEntityController sut = new(sessionServiceMock.Object, validatorMock.Object)
+        SelectLegalEntityController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };

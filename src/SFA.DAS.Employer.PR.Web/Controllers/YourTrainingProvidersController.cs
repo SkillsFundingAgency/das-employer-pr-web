@@ -18,20 +18,34 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
+        var permissionsJustAdded = false;
+        string? providerJustAdded = null;
+        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        if (sessionModel?.SuccessfulAddition != null && sessionModel.SuccessfulAddition)
+        {
+            permissionsJustAdded = true;
+            providerJustAdded = sessionModel.ProviderName;
+        }
+
         _sessionService.Delete<AddTrainingProvidersSessionModel>();
 
         var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
-        var accountLegalEntities = response.AccountLegalEntities;
+        var accountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name);
 
-        var sessionModel = new AddTrainingProvidersSessionModel
+        var legalEntities = new List<AccountLegalEntity>();
+
+        foreach (var ale in accountLegalEntities)
         {
-            AccountLegalEntities = accountLegalEntities
-        };
-        _sessionService.Set(sessionModel);
+            var permissions = new List<Permission>();
+            permissions.AddRange(ale.Permissions.OrderBy(p => p.ProviderName));
+            ale.Permissions = permissions;
+            legalEntities.Add(ale);
+        }
 
-        YourTrainingProvidersViewModel model = InitialiseViewModel(accountLegalEntities);
+        YourTrainingProvidersViewModel model = InitialiseViewModel(legalEntities);
         model.IsOwner = User.IsOwner(employerAccountId);
-
+        model.ShowPermissionsJustAddedBanner = permissionsJustAdded;
+        model.ProviderWithChangedPermissions = providerJustAdded;
         model.AddTrainingProviderUrl = Url.RouteUrl(RouteNames.SelectLegalEntity, new { employerAccountId })!;
 
         return View(model);

@@ -1,0 +1,31 @@
+﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using SFA.DAS.Employer.PR.Web.TagHelpers
+@model AddPermissionsShutterPageViewModel
+@{
+    ViewData["Title"] = "add permissions already done";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            You're already linked to this training provider
+                        </h1>
+                    </legend>
+                    <p class="govuk-body">
+                        You cannot add @Model.ProviderName.ToUpper() (@Model.Ukprn) because you're already linked to them. Continue to update permissions for this training provider.
+                    </p>
+                    <br/><br/>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <form Action="@Model.SetPermissionsLink">
+                    <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Continue</button>
+                    <a class="govuk-link" href="@Model.ReturnToYourTrainingProvidersLink">Return to your training providers</a>
+                </form>
+            </div>
+    </div>
+</div>

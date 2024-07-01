@@ -12,7 +12,7 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 public class RegisteredProvidersControllerTests
 {
     [Test, MoqAutoData]
-    public async Task GetProviders_Cached_ReturnsProvidersWithoutCallingOuterApi(
+    public async Task GetRegisteredProviders_Cached_ReturnsProvidersWithoutCallingOuterApi(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         Mock<ICacheStorageService> cacheStorageServiceMock,
         GetRegisteredProvidersResponse expectedResult,
@@ -38,13 +38,13 @@ public class RegisteredProvidersControllerTests
     }
 
     [Test, MoqAutoData]
-    public async Task GetProviders_NotCached_ReturnsProvidersCallingOuterApi(
+    public async Task GetRegisteredProviders_NotCached_ReturnsProvidersCallingOuterApi(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         Mock<ICacheStorageService> cacheStorageServiceMock,
         GetRegisteredProvidersResponse expectedResult,
         CancellationToken cancellationToken)
     {
-        string query = expectedResult.Providers.FirstOrDefault()!.Name;
+        string query = expectedResult.Providers.MinBy(p => p.Name)!.Name;
 
         outerApiMock.Setup(o => o.GetRegisteredProviders(cancellationToken)).ReturnsAsync(expectedResult);
 
@@ -67,7 +67,7 @@ public class RegisteredProvidersControllerTests
     [MoqInlineAutoData(true)]
     [MoqInlineAutoData(false)]
     [MoqInlineAutoData(null)]
-    public async Task GetProviders_ReturnsProviders_CaseInsensitive(
+    public async Task GetRegisteredProviders_ReturnsProviders_CaseInsensitive(
         bool? isUpperCase,
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         Mock<ICacheStorageService> cacheStorageServiceMock,
@@ -105,7 +105,37 @@ public class RegisteredProvidersControllerTests
     }
 
     [Test, MoqAutoData]
-    public async Task GetProviders_ReturnsProvidersUsingUkprn(
+    public async Task GetRegisteredProviders_NoCache_ReturnsProvidersInNameOrder(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        Mock<ICacheStorageService> cacheStorageServiceMock,
+        GetRegisteredProvidersResponse expectedResult,
+        CancellationToken cancellationToken)
+    {
+        string query = expectedResult.Providers.FirstOrDefault()!.Name;
+
+        outerApiMock.Setup(o => o.GetRegisteredProviders(cancellationToken)).ReturnsAsync(expectedResult);
+
+        cacheStorageServiceMock.Setup(g => g.RetrieveFromCache<List<RegisteredProvider>>(CacheStorageValues.Providers.Key)).ReturnsAsync((List<RegisteredProvider>)null!);
+
+        RegisteredProvidersController sut = new RegisteredProvidersController(outerApiMock.Object, cacheStorageServiceMock.Object);
+
+        var result = await sut.GetRegisteredProviders(query, cancellationToken);
+        cacheStorageServiceMock.Verify(g => g.RetrieveFromCache<List<RegisteredProvider>>(CacheStorageValues.Providers.Key), Times.Once());
+
+        var orderedProviders = expectedResult.Providers.OrderBy(p => p.Name).ToList();
+        cacheStorageServiceMock.Verify(g => g.SaveToCache(CacheStorageValues.Providers.Key, orderedProviders, CacheStorageValues.Providers.HoursToCache), Times.Once);
+
+        outerApiMock.Verify(x => x.GetRegisteredProviders(cancellationToken), Times.Once);
+
+        OkObjectResult? okObjectResult = result.As<OkObjectResult>();
+        var returnedProviders = new List<RegisteredProvider>(((IEnumerable<RegisteredProvider>)okObjectResult.Value!)!);
+
+        returnedProviders.First().Should().BeEquivalentTo(expectedResult.Providers.First(x =>
+            string.Equals(x.Name, query, StringComparison.CurrentCultureIgnoreCase)));
+    }
+
+    [Test, MoqAutoData]
+    public async Task GetRegisteredProviders_ReturnsProvidersUsingUkprn(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         Mock<ICacheStorageService> cacheStorageServiceMock,
         GetRegisteredProvidersResponse expectedResult,
@@ -133,7 +163,7 @@ public class RegisteredProvidersControllerTests
     }
 
     [Test, MoqAutoData]
-    public async Task GetProviders_NotCached_ReturnsProvidersUsingUkprn(
+    public async Task GetRegisteredProviders_NotCached_ReturnsProvidersUsingUkprn(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         Mock<ICacheStorageService> cacheStorageServiceMock,
         GetRegisteredProvidersResponse expectedResult,
@@ -144,13 +174,13 @@ public class RegisteredProvidersControllerTests
 
         outerApiMock.Setup(o => o.GetRegisteredProviders(cancellationToken)).ReturnsAsync(expectedResult);
 
-        cacheStorageServiceMock.Setup(g => g.RetrieveFromCache<List<RegisteredProvider>>(CacheStorageValues.Providers.Key))!.ReturnsAsync((List<RegisteredProvider>)null);
+        cacheStorageServiceMock.Setup(g => g.RetrieveFromCache<List<RegisteredProvider>>(CacheStorageValues.Providers.Key))!.ReturnsAsync((List<RegisteredProvider>)null!);
 
         RegisteredProvidersController sut = new RegisteredProvidersController(outerApiMock.Object, cacheStorageServiceMock.Object);
 
         var result = await sut.GetRegisteredProviders(query, cancellationToken);
         cacheStorageServiceMock.Verify(g => g.RetrieveFromCache<List<RegisteredProvider>>(CacheStorageValues.Providers.Key), Times.Once());
-        cacheStorageServiceMock.Verify(g => g.SaveToCache(It.IsAny<string>(), It.IsAny<List<RegisteredProvider>>(), It.IsAny<int>()), Times.Once());
+        cacheStorageServiceMock.Verify(g => g.SaveToCache(It.IsAny<string>(), It.IsAny<List<RegisteredProvider>>(), It.IsAny<int>()), Times.Once);
         outerApiMock.Verify(x => x.GetRegisteredProviders(cancellationToken), Times.Once);
 
         OkObjectResult? okObjectResult = result.As<OkObjectResult>();
@@ -161,7 +191,7 @@ public class RegisteredProvidersControllerTests
     }
 
     [Test, MoqAutoData]
-    public async Task GetProviders_ReturnsProviders_LessThan3CharactersLong(
+    public async Task GetRegisteredProviders_ReturnsProviders_LessThan3CharactersLong(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         Mock<ICacheStorageService> cacheStorageServiceMock,
         GetRegisteredProvidersResponse expectedResult,
