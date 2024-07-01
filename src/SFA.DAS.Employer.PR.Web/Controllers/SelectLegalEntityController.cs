@@ -20,7 +20,7 @@ public class SelectLegalEntityController(ISessionService _sessionService, IValid
     [HttpGet]
     public IActionResult Index([FromRoute] string employerAccountId)
     {
-        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        var sessionModel = _sessionService.Get<TrainingProvidersSessionModel>();
 
         if (sessionModel == null || sessionModel.EmployerAccountId != employerAccountId)
         {
@@ -46,7 +46,7 @@ public class SelectLegalEntityController(ISessionService _sessionService, IValid
     [HttpPost]
     public IActionResult Index([FromRoute] string employerAccountId, SelectLegalEntitiesSubmitViewModel submitModel)
     {
-        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        var sessionModel = _sessionService.Get<TrainingProvidersSessionModel>();
 
         ValidationResult result = _validator.Validate(submitModel);
 
@@ -62,7 +62,7 @@ public class SelectLegalEntityController(ISessionService _sessionService, IValid
     }
 
 
-    private SelectLegalEntitiesViewModel GetViewModel(string employerAccountId, AddTrainingProvidersSessionModel sessionModel)
+    private SelectLegalEntitiesViewModel GetViewModel(string employerAccountId, TrainingProvidersSessionModel sessionModel)
     {
         var backLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
         var cancelUrl = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
@@ -75,7 +75,7 @@ public class SelectLegalEntityController(ISessionService _sessionService, IValid
         {
             LegalEntityModel legalEntityToAdd = legalEntity;
 
-            if (legalEntity.Id == legalEntityId)
+            if (legalEntity.LegalEntityId == legalEntityId)
             {
                 legalEntityToAdd.IsSelected = true;
             }
@@ -86,16 +86,16 @@ public class SelectLegalEntityController(ISessionService _sessionService, IValid
         return model;
     }
 
-    private void SetSessionForSelectionMade(long legalEntityId, AddTrainingProvidersSessionModel sessionModel)
+    private void SetSessionForSelectionMade(long legalEntityId, TrainingProvidersSessionModel sessionModel)
     {
-        var legalEntity = sessionModel.AccountLegalEntities.First(l => l.Id == legalEntityId);
+        var legalEntity = sessionModel.AccountLegalEntities.First(l => l.LegalEntityId == legalEntityId);
         sessionModel.LegalEntityId = legalEntityId;
         sessionModel.LegalName = legalEntity.Name;
         _sessionService.Set(sessionModel);
 
     }
 
-    private void ResetSessionForJourney(AddTrainingProvidersSessionModel sessionModel)
+    private void ResetSessionForJourney(TrainingProvidersSessionModel sessionModel)
     {
         sessionModel.ProviderName = null;
         sessionModel.Ukprn = null;

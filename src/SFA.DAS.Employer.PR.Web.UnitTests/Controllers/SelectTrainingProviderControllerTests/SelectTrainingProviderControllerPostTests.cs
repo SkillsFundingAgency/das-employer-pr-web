@@ -28,8 +28,8 @@ public class SelectTrainingProviderControllerPostTests
         CancellationToken cancellationToken)
     {
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel
             {
                 LegalEntityId = accountLegalEntityId,
                 AccountLegalEntities = new() { new AccountLegalEntity() }
@@ -60,7 +60,7 @@ public class SelectTrainingProviderControllerPostTests
         redirectResult!.ActionName.Should().Be("Index");
         redirectResult.ControllerName.Should().Be("SetPermissions");
 
-        sessionServiceMock.Verify(s => s.Set(It.Is<AddTrainingProvidersSessionModel>(x => x.ProviderName == name && x.Ukprn == ukprn)), Times.Once);
+        sessionServiceMock.Verify(s => s.Set(It.Is<TrainingProvidersSessionModel>(x => x.ProviderName == name && x.Ukprn == ukprn)), Times.Once);
     }
 
     [Test, MoqAutoData]
@@ -71,8 +71,8 @@ public class SelectTrainingProviderControllerPostTests
     {
         var sessionServiceMock = new Mock<ISessionService>();
         var outerApiClientMock = new Mock<IOuterApiClient>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = new() { new AccountLegalEntity() } });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { AccountLegalEntities = new() { new AccountLegalEntity() } });
 
         SelectTrainingProviderSubmitModel submitModel = new SelectTrainingProviderSubmitModel();
         validatorMock.Setup(m => m.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
@@ -93,7 +93,7 @@ public class SelectTrainingProviderControllerPostTests
         SelectTrainingProviderModel? viewModel = viewResult.Model as SelectTrainingProviderModel;
 
         viewModel!.BackLink.Should().Be(YourTrainingProvidersLink);
-        sessionServiceMock.Verify(s => s.Set(It.IsAny<AddTrainingProvidersSessionModel>()), Times.Never);
+        sessionServiceMock.Verify(s => s.Set(It.IsAny<TrainingProvidersSessionModel>()), Times.Never);
     }
 
     [Test, MoqAutoData]
@@ -106,8 +106,8 @@ public class SelectTrainingProviderControllerPostTests
         CancellationToken cancellationToken)
     {
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel
             {
                 LegalEntityId = accountLegalEntityId,
                 AccountLegalEntities = new() { new AccountLegalEntity() }

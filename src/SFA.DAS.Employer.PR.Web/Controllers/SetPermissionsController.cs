@@ -43,7 +43,7 @@ public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionS
             return View(model);
         }
 
-        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        var sessionModel = _sessionService.Get<TrainingProvidersSessionModel>();
         if (sessionModel == null || sessionModel!.Ukprn == null || sessionModel!.LegalEntityId == null || sessionModel.EmployerAccountId != employerAccountId)
         {
             return RedirectToAction("Index", "YourTrainingProviders", new { employerAccountId });
@@ -81,7 +81,7 @@ public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionS
 
     private SetPermissionsViewModel? GetViewModel(string employerAccountId)
     {
-        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        var sessionModel = _sessionService.Get<TrainingProvidersSessionModel>();
 
         if (sessionModel?.Ukprn == null || sessionModel.EmployerAccountId != employerAccountId)
         {

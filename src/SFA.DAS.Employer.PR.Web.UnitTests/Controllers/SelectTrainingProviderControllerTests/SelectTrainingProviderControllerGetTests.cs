@@ -50,8 +50,8 @@ public class SelectTrainingProviderControllerGetTests
     {
         Mock<ISessionService> sessionServiceMock = new Mock<ISessionService>();
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel
             {
                 EmployerAccountId = employerAccountId,
                 LegalEntityId = legalEntityId,
@@ -81,8 +81,8 @@ public class SelectTrainingProviderControllerGetTests
     {
         Mock<ISessionService> sessionServiceMock = new Mock<ISessionService>();
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel
             {
                 EmployerAccountId = employerAccountId,
                 LegalEntityId = legalEntityId,

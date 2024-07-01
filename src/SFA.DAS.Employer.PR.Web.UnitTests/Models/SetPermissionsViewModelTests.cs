@@ -8,11 +8,11 @@ public class SetPermissionsViewModelTests
     public void Constructor_BuildsViewModel(long legalEntityId, string legalName, string providerName, long ukprn, string backLink, string cancelLink)
     {
         var sut = new SetPermissionsViewModel(legalEntityId, legalName, providerName, ukprn, backLink, cancelLink);
-        sut.LegalEntityId.Should().Be(legalEntityId);
-        sut.LegalName.Should().Be(legalName);
-        sut.ProviderName.Should().Be(providerName);
-        sut.Ukprn.Should().Be(ukprn);
+        sut.AdjustPermissionsViewModel.LegalEntityId.Should().Be(legalEntityId);
+        sut.AdjustPermissionsViewModel.LegalName.Should().Be(legalName);
+        sut.AdjustPermissionsViewModel.ProviderName.Should().Be(providerName);
+        sut.AdjustPermissionsViewModel.Ukprn.Should().Be(ukprn);
         sut.BackLink.Should().Be(backLink);
-        sut.CancelLink.Should().Be(cancelLink);
+        sut.AdjustPermissionsViewModel.CancelLink.Should().Be(cancelLink);
     }
 }

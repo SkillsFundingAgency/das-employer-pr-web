@@ -23,8 +23,8 @@ public class SetPermissionsControllerGetTests
         string employerAccountId)
     {
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns((AddTrainingProvidersSessionModel)null!);
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns((TrainingProvidersSessionModel)null!);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SetPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SetPermissionsSubmitViewModel>>())
@@ -49,8 +49,8 @@ public class SetPermissionsControllerGetTests
         string employerAccountId)
     {
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, LegalEntityId = legalEntityId, LegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { EmployerAccountId = employerAccountId, LegalEntityId = legalEntityId, LegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SetPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SetPermissionsSubmitViewModel>>())
@@ -80,8 +80,8 @@ public class SetPermissionsControllerGetTests
         string employerAccountId)
     {
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, LegalEntityId = legalEntityId, LegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { EmployerAccountId = employerAccountId, LegalEntityId = legalEntityId, LegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SetPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SetPermissionsSubmitViewModel>>())
@@ -108,8 +108,8 @@ public class SetPermissionsControllerGetTests
         string employerAccountId)
     {
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, LegalEntityId = legalEntityId, LegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { EmployerAccountId = employerAccountId, LegalEntityId = legalEntityId, LegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SetPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SetPermissionsSubmitViewModel>>())

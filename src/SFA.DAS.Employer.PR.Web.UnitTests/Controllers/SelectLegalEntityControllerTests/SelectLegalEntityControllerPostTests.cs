@@ -44,8 +44,8 @@ public class SelectLegalEntityControllerPostTests
             new() {AccountId = accountId,Id= accountLegalEntityId, Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions}
         };
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
 
         SelectLegalEntityController sut = new(sessionServiceMock.Object, validatorMock.Object)
         {
@@ -87,8 +87,8 @@ public class SelectLegalEntityControllerPostTests
             new() {AccountId = 1,Name = "test", Permissions = permissions,PublicHashedId = "xyz"}
         };
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
 
         SelectLegalEntityController sut = new(sessionServiceMock.Object, validatorMock.Object)
         {
@@ -101,7 +101,7 @@ public class SelectLegalEntityControllerPostTests
 
         RedirectToActionResult? viewResult = result.As<RedirectToActionResult>();
 
-        sessionServiceMock.Verify(s => s.Set(It.Is<AddTrainingProvidersSessionModel>(s => s.LegalEntityId == accountLegalEntityId && s.LegalName == accountName)), Times.Once);
+        sessionServiceMock.Verify(s => s.Set(It.Is<TrainingProvidersSessionModel>(s => s.LegalEntityId == accountLegalEntityId && s.LegalName == accountName)), Times.Once);
     }
 
     [Test, MoqAutoData]
@@ -137,8 +137,8 @@ public class SelectLegalEntityControllerPostTests
         };
 
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
         var result = sut.Index(employerAccountId, submitModel);
@@ -151,6 +151,6 @@ public class SelectLegalEntityControllerPostTests
         actualLegalEntity.AccountId.Should().Be(accountId);
         actualLegalEntity.Name.Should().Be(accountName);
         actualLegalEntity.LegalEntityPublicHashedId.Should().Be(publicHashedId);
-        sessionServiceMock.Verify(s => s.Set(It.IsAny<AddTrainingProvidersSessionModel>()), Times.Never);
+        sessionServiceMock.Verify(s => s.Set(It.IsAny<TrainingProvidersSessionModel>()), Times.Never);
     }
 }

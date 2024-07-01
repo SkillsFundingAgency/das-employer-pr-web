@@ -44,8 +44,8 @@ public class SetPermissionsControllerPostTests
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel
             { Ukprn = ukprn, LegalEntityId = legalEntityId, EmployerAccountId = employerAccountId });
 
         SetPermissionsController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
@@ -92,8 +92,8 @@ public class SetPermissionsControllerPostTests
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel
             { Ukprn = ukprn, LegalEntityId = legalEntityId, EmployerAccountId = employerAccountId });
 
         SetPermissionsController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
@@ -104,7 +104,7 @@ public class SetPermissionsControllerPostTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
         await sut.Index(employerAccountId, submitModel, cancellationToken);
 
-        sessionServiceMock.Verify(s => s.Set(It.Is<AddTrainingProvidersSessionModel>(s => s.AddRecords == addRecords
+        sessionServiceMock.Verify(s => s.Set(It.Is<TrainingProvidersSessionModel>(s => s.AddRecords == addRecords
             && s.RecruitApprentices == recruitApprentices
             && s.SuccessfulAddition == true)), Times.Once);
     }
@@ -157,8 +157,8 @@ public class SetPermissionsControllerPostTests
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel
             { Ukprn = ukprn, LegalEntityId = legalEntityId, EmployerAccountId = employerAccountId });
 
         SetPermissionsController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, validatorMock.Object)
@@ -205,8 +205,8 @@ public class SetPermissionsControllerPostTests
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns((AddTrainingProvidersSessionModel)null!);
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns((TrainingProvidersSessionModel)null!);
 
         SetPermissionsController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
         {
@@ -243,8 +243,8 @@ public class SetPermissionsControllerPostTests
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = $"{employerAccountId}_other" });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { EmployerAccountId = $"{employerAccountId}_other" });
 
         SetPermissionsController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
         {
@@ -279,8 +279,8 @@ public class SetPermissionsControllerPostTests
             new("TestField","Test Message") { ErrorCode = "1001"}
         }));
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, Ukprn = ukprn, LegalEntityId = legalEntityId, LegalName = legalName, ProviderName = providerName });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { EmployerAccountId = employerAccountId, Ukprn = ukprn, LegalEntityId = legalEntityId, LegalName = legalName, ProviderName = providerName });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
@@ -301,6 +301,6 @@ public class SetPermissionsControllerPostTests
         viewModel.ProviderName.Should().Be(providerName);
         viewModel.CancelLink.Should().Be(YourTrainingProvidersLink);
 
-        sessionServiceMock.Verify(s => s.Set(It.IsAny<AddTrainingProvidersSessionModel>()), Times.Never);
+        sessionServiceMock.Verify(s => s.Set(It.IsAny<TrainingProvidersSessionModel>()), Times.Never);
     }
 }

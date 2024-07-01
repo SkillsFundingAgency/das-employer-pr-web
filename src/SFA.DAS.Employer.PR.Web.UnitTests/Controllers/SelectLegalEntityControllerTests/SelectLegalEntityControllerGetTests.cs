@@ -33,8 +33,8 @@ public class SelectLegalEntityControllerGetTests
             new() {AccountId = 1123,Id=1, Name="account name", PublicHashedId = "12123232", Permissions = permissions}
         };
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectLegalEntityController sut = new(sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>())
@@ -81,8 +81,8 @@ public class SelectLegalEntityControllerGetTests
            firstLegalEntity
         };
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns(new TrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectLegalEntityController sut = new(sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>())
@@ -97,7 +97,7 @@ public class SelectLegalEntityControllerGetTests
 
         redirectToActionResult.ActionName.Should().Be("Index");
         redirectToActionResult.ControllerName.Should().Be("SelectTrainingProvider");
-        sessionServiceMock.Verify(x => x.Set(It.Is<AddTrainingProvidersSessionModel>(
+        sessionServiceMock.Verify(x => x.Set(It.Is<TrainingProvidersSessionModel>(
             s => s.LegalEntityId == firstLegalEntity.Id &&
                  s.LegalName == firstLegalEntity.Name
         )), Times.AtLeastOnce);
@@ -120,8 +120,8 @@ public class SelectLegalEntityControllerGetTests
             new() {AccountId = 1123,Id=1, Name="account name", PublicHashedId = "12123232", Permissions = permissions}
         };
         var sessionServiceMock = new Mock<ISessionService>();
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns((AddTrainingProvidersSessionModel)null!);
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>())
+            .Returns((TrainingProvidersSessionModel)null!);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectLegalEntityController sut = new(sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>())
@@ -154,6 +154,6 @@ public class SelectLegalEntityControllerGetTests
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
         var result = sut.Index(employerAccountId);
-        sessionServiceMock.Verify(s => s.Get<AddTrainingProvidersSessionModel>(), Times.Once);
+        sessionServiceMock.Verify(s => s.Get<TrainingProvidersSessionModel>(), Times.Once);
     }
 }

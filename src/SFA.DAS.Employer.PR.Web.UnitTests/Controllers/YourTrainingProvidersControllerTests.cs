@@ -256,7 +256,7 @@ public class YourTrainingProvidersControllerTests
         SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut, false);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
-        sessionServiceMock.Verify(s => s.Delete<AddTrainingProvidersSessionModel>(), Times.Once);
+        sessionServiceMock.Verify(s => s.Delete<TrainingProvidersSessionModel>(), Times.Once);
     }
 
     [Test, MoqInlineAutoData]
@@ -343,8 +343,8 @@ public class YourTrainingProvidersControllerTests
         permission.Operations.Add(Operation.CreateCohort);
         permission.Operations.Add(Operation.Recruitment);
 
-        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>()).Returns(
-            new AddTrainingProvidersSessionModel
+        sessionServiceMock.Setup(x => x.Get<TrainingProvidersSessionModel>()).Returns(
+            new TrainingProvidersSessionModel
             { SuccessfulAddition = isSuccessfulAddition, ProviderName = providerName });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);

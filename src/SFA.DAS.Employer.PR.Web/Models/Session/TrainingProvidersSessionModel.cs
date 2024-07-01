@@ -1,8 +1,6 @@
-﻿using SFA.DAS.Employer.PR.Domain.Models;
+﻿namespace SFA.DAS.Employer.PR.Web.Models.Session;
 
-namespace SFA.DAS.Employer.PR.Web.Models.Session;
-
-public class AddTrainingProvidersSessionModel
+public class TrainingProvidersSessionModel
 {
     public string? EmployerAccountId { get; set; } = null!;
     public long? LegalEntityId { get; set; }
@@ -10,7 +8,7 @@ public class AddTrainingProvidersSessionModel
     public string? ProviderName { get; set; }
     public long? Ukprn { get; set; }
 
-    public List<AccountLegalEntity> AccountLegalEntities { get; set; } = [];
+    public List<LegalEntityModel> AccountLegalEntities { get; set; } = [];
     public string? AddRecords { get; set; }
     public string? RecruitApprentices { get; set; }
 

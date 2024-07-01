@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
@@ -18,32 +17,42 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        _sessionService.Delete<AddTrainingProvidersSessionModel>();
+        _sessionService.Delete<TrainingProvidersSessionModel>();
 
         var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
         var accountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name);
 
-        var legalEntities = new List<AccountLegalEntity>();
+        var legalEntities = new List<LegalEntityModel>();
 
         foreach (var ale in accountLegalEntities)
         {
-            var permissions = new List<Permission>();
-            permissions.AddRange(ale.Permissions.OrderBy(p => p.ProviderName));
-            ale.Permissions = permissions;
-            legalEntities.Add(ale);
+            var legalEntity = (LegalEntityModel)ale;
+
+            var permissions = new List<PermissionModel>();
+
+            foreach (var p in ale.Permissions.OrderBy(p => p.ProviderName))
+            {
+                var pm = (PermissionModel)p;
+                pm.ChangePermissionsLink = Url.RouteUrl(RouteNames.ChangePermissions, new { employerAccountId, legalEntity.LegalEntityId, pm.Ukprn })!;
+                permissions.Add(pm);
+            }
+            //permissions.AddRange(ale.Permissions.OrderBy(p => p.ProviderName));
+
+            legalEntity.Permissions = permissions;
+            legalEntities.Add(legalEntity);
         }
 
 
         var permissionsJustAdded = false;
         string? providerJustAdded = null;
-        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        var sessionModel = _sessionService.Get<TrainingProvidersSessionModel>();
         if (sessionModel?.SuccessfulAddition != null && sessionModel.SuccessfulAddition)
         {
             permissionsJustAdded = true;
             providerJustAdded = sessionModel.ProviderName;
         }
 
-        sessionModel = new AddTrainingProvidersSessionModel
+        sessionModel = new TrainingProvidersSessionModel
         {
             AccountLegalEntities = legalEntities
         };
@@ -59,12 +68,18 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         return View(model);
     }
 
-    private static YourTrainingProvidersViewModel InitialiseViewModel(List<AccountLegalEntity> accountLegalEntities)
+    private static YourTrainingProvidersViewModel InitialiseViewModel(List<LegalEntityModel> accountLegalEntities)
     {
         var model = new YourTrainingProvidersViewModel();
         foreach (var legalEntity in accountLegalEntities.Where(x => x.Permissions.Count > 0))
         {
+            foreach (var permission in legalEntity.Permissions)
+            {
+
+            }
             model.LegalEntities.Add(legalEntity);
+
+
         }
 
         return model;

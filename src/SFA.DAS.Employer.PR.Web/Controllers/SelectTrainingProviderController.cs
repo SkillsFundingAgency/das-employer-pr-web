@@ -20,7 +20,7 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
     [HttpGet]
     public IActionResult Index([FromRoute] string employerAccountId)
     {
-        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        var sessionModel = _sessionService.Get<TrainingProvidersSessionModel>();
 
         if (sessionModel?.LegalEntityId == null || sessionModel.EmployerAccountId != employerAccountId)
         {
@@ -36,7 +36,7 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
     [HttpPost]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, SelectTrainingProviderSubmitModel submitModel, CancellationToken cancellationToken)
     {
-        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        var sessionModel = _sessionService.Get<TrainingProvidersSessionModel>();
         submitModel.SearchTerm = submitModel.Name;
         var result = _validator.Validate(submitModel);
 
