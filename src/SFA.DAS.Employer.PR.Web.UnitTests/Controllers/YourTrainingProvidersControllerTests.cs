@@ -17,6 +17,7 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 public class YourTrainingProvidersControllerTests
 {
     static readonly string SelectLegalEntityUrl = Guid.NewGuid().ToString();
+    static readonly string YourTrainingProviderUrl = Guid.NewGuid().ToString();
 
     [Test, MoqAutoData]
     public void Index_CallsOuterApiEndpoint(
@@ -62,7 +63,7 @@ public class YourTrainingProvidersControllerTests
         permission.Operations.Add(Operation.CreateCohort);
 
         List<Permission> permissions = new List<Permission> { permission };
-        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut);
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut, false);
         Task<IActionResult> result = sut.Index(employerAccountId, new CancellationToken());
 
         ViewResult? viewResult = result.Result.As<ViewResult>();
@@ -109,7 +110,7 @@ public class YourTrainingProvidersControllerTests
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
         var permissions = new List<Permission> { permission };
-        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut);
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut, false);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
 
@@ -150,14 +151,14 @@ public class YourTrainingProvidersControllerTests
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
         var permissions = new List<Permission> { permission };
-        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut);
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut, false);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
         sessionServiceMock.Verify(s => s.Delete<AddTrainingProvidersSessionModel>(), Times.Once);
     }
 
     [Test, MoqInlineAutoData]
-    public void SetsSelectLegalEntitiesUrl(
+    public void SetsYourTrainingProviderUrl(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         string employerAccountId,
@@ -180,16 +181,52 @@ public class YourTrainingProvidersControllerTests
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
         var permissions = new List<Permission> { permission };
-        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut);
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut, true);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
 
         var viewResult = result.Result.As<ViewResult>();
         var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
+
         viewModel!.AddTrainingProviderUrl.Should().Be(SelectLegalEntityUrl);
     }
+
+    [Test, MoqInlineAutoData]
+    public void SetsLegalProvidersEntitiesUrl(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        string employerAccountId,
+        string providerName,
+        long ukprn
+    )
+    {
+        var accountId = 1123;
+        var accountName = "account name";
+        var publicHashedId = "12123232";
+
+        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        permission.Operations.Add(Operation.CreateCohort);
+        permission.Operations.Add(Operation.Recruitment);
+
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>())
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
+        var permissions = new List<Permission> { permission };
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut, true);
+
+        var result = sut.Index(employerAccountId, new CancellationToken());
+
+        var viewResult = result.Result.As<ViewResult>();
+        var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
+
+        viewModel!.AddTrainingProviderUrl.Should().Be(SelectLegalEntityUrl);
+    }
+
     private static void SetupControllerAndClasses(Mock<IOuterApiClient> outerApiMock, string employerAccountId, int accountId, string accountName,
-        string publicHashedId, List<Permission> permissions, YourTrainingProvidersController sut)
+        string publicHashedId, List<Permission> permissions, YourTrainingProvidersController sut, bool multipleAccounts)
     {
         List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
         {
@@ -200,11 +237,24 @@ public class YourTrainingProvidersControllerTests
             }
         };
 
+        if (multipleAccounts)
+        {
+            accountLegalEntities.Add(new AccountLegalEntity
+            { AccountId = 1234, Id = 2, Name = "name 2", PublicHashedId = "AFC", Permissions = permissions });
+        }
+
         GetEmployerRelationshipsQueryResponse response = new GetEmployerRelationshipsQueryResponse(accountLegalEntities);
 
         outerApiMock.Setup(o => o.GetAccountLegalEntities(employerAccountId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.SelectLegalEntity, SelectLegalEntityUrl);
+        if (multipleAccounts)
+        {
+            sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.SelectLegalEntity, SelectLegalEntityUrl);
+        }
+        else
+        {
+            sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.SelectTrainingProvider, YourTrainingProviderUrl);
+        }
     }
 }

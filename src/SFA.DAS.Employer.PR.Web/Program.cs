@@ -17,6 +17,7 @@ builder.Services
     .AddServiceRegistrations(configuration)
     .AddAuthenticationServices(configuration)
     .AddSession(configuration)
+    .AddDistributedCache(configuration)
     .AddValidatorsFromAssembly(typeof(SelectLegalEntitySubmitModelValidator).Assembly)
     .AddHealthChecks(configuration)
     .AddMaMenuConfiguration(RouteNames.SignOut, configuration["ResourceEnvironmentName"]);

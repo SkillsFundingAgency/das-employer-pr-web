@@ -3,12 +3,10 @@
 public class SelectLegalEntitiesViewModel : SelectLegalEntitiesSubmitViewModel, IBackLink
 {
     public List<LegalEntityModel> LegalEntities { get; set; } = new();
-    public string CancelUrl { get; set; }
     public string BackLink { get; set; }
 
     public SelectLegalEntitiesViewModel(string cancelUrl, string backLink)
     {
-        CancelUrl = cancelUrl;
         BackLink = backLink;
     }
 }
@@ -16,4 +14,5 @@ public class SelectLegalEntitiesViewModel : SelectLegalEntitiesSubmitViewModel, 
 public class SelectLegalEntitiesSubmitViewModel
 {
     public long? LegalEntityId { get; set; }
+    public string? LegalName { get; set; }
 }

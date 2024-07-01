@@ -18,7 +18,6 @@ public class SelectLegalEntitiesViewModelTests
         }
 
         sut.BackLink.Should().BeEquivalentTo(backLink);
-        sut.CancelUrl.Should().BeEquivalentTo(cancelUrl);
         sut.LegalEntities.Should().BeEquivalentTo(legalEntities, options => options.ExcludingMissingMembers());
     }
 }

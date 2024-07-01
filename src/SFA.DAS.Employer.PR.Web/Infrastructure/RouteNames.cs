@@ -11,6 +11,8 @@ public static class RouteNames
     public const string Home = nameof(Home);
     public const string YourTrainingProviders = nameof(YourTrainingProviders);
     public const string SelectLegalEntity = nameof(SelectLegalEntity);
+    public const string SelectTrainingProvider = nameof(SelectTrainingProvider);
+    public const string GetRegisteredProviders = nameof(GetRegisteredProviders);
 
     public static class StubAccount
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
+using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
@@ -15,26 +15,32 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 [Route("accounts/{employerAccountId}/providers", Name = RouteNames.YourTrainingProviders)]
 public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, ISessionService _sessionService) : Controller
 {
+    [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         _sessionService.Delete<AddTrainingProvidersSessionModel>();
 
-        var legalEntities = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
-        YourTrainingProvidersViewModel model = InitialiseViewModel(legalEntities);
+        var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
+        var accountLegalEntities = response.AccountLegalEntities;
+
+        var sessionModel = new AddTrainingProvidersSessionModel
+        {
+            AccountLegalEntities = accountLegalEntities
+        };
+        _sessionService.Set(sessionModel);
+
+        YourTrainingProvidersViewModel model = InitialiseViewModel(accountLegalEntities);
         model.IsOwner = User.IsOwner(employerAccountId);
 
-        /// NOTE this will require a count of response.AccountLegalEntities to decide on
-        /// 1: Page to pick ukprn for the single legal entity
-        /// >1: as below
         model.AddTrainingProviderUrl = Url.RouteUrl(RouteNames.SelectLegalEntity, new { employerAccountId })!;
 
         return View(model);
     }
 
-    private static YourTrainingProvidersViewModel InitialiseViewModel(GetEmployerRelationshipsQueryResponse response)
+    private static YourTrainingProvidersViewModel InitialiseViewModel(List<AccountLegalEntity> accountLegalEntities)
     {
         var model = new YourTrainingProvidersViewModel();
-        foreach (var legalEntity in response.AccountLegalEntities.Where(x => x.Permissions.Count > 0))
+        foreach (var legalEntity in accountLegalEntities.Where(x => x.Permissions.Count > 0))
         {
             model.LegalEntities.Add(legalEntity);
         }

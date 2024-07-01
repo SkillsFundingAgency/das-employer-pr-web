@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Employer.PR.Web.Infrastructure.Configuration;
 
 namespace SFA.DAS.Employer.PR.Web.AppStart;
 
@@ -15,19 +14,6 @@ public static class AddSessionExtension
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             options.Cookie.IsEssential = true;
         });
-
-        if (configuration["EnvironmentName"]!.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase))
-        {
-            services.AddDistributedMemoryCache();
-        }
-        else
-        {
-            services.AddStackExchangeRedisCache(options =>
-            {
-                var applicationConfiguration = configuration.GetSection(nameof(ApplicationSettings)).Get<ApplicationSettings>();
-                options.Configuration = applicationConfiguration!.RedisConnectionString;
-            });
-        }
 
         return services;
     }
