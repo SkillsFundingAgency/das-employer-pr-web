@@ -21,6 +21,6 @@ public interface IOuterApiClient
     [Get("/permissions")]
     Task<GetPermissionsResponse> GetPermissions([Query] long ukprn, [Query] long AccountLegalEntityId, CancellationToken cancellationToken);
 
-    [Post("permissions")]
+    [Post("/permissions")]
     Task PostPermissions([Body] PostPermissionsCommand command, CancellationToken cancellationToken);
 }

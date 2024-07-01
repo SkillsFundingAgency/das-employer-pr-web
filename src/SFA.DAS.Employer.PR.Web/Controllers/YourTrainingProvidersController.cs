@@ -18,6 +18,15 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
+        var permissionsJustAdded = false;
+        string? providerJustAdded = null;
+        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        if (sessionModel?.SuccessfulAddition != null && sessionModel.SuccessfulAddition)
+        {
+            permissionsJustAdded = true;
+            providerJustAdded = sessionModel.ProviderName;
+        }
+
         _sessionService.Delete<AddTrainingProvidersSessionModel>();
 
         var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
@@ -32,23 +41,6 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
             ale.Permissions = permissions;
             legalEntities.Add(ale);
         }
-
-
-        var permissionsJustAdded = false;
-        string? providerJustAdded = null;
-        var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
-        if (sessionModel?.SuccessfulAddition != null && sessionModel.SuccessfulAddition)
-        {
-            permissionsJustAdded = true;
-            providerJustAdded = sessionModel.ProviderName;
-        }
-
-        sessionModel = new AddTrainingProvidersSessionModel
-        {
-            AccountLegalEntities = legalEntities
-        };
-        sessionModel.EmployerAccountId = employerAccountId;
-        _sessionService.Set(sessionModel);
 
         YourTrainingProvidersViewModel model = InitialiseViewModel(legalEntities);
         model.IsOwner = User.IsOwner(employerAccountId);

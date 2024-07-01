@@ -1,5 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using SFA.DAS.Employer.PR.Domain.Constants;
+using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Validators;
 

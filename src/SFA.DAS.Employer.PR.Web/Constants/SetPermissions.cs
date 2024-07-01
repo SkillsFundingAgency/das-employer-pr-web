@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.Employer.PR.Domain.Constants;
+namespace SFA.DAS.Employer.PR.Web.Constants;
 
 [ExcludeFromCodeCoverage]
 public static class SetPermissions
