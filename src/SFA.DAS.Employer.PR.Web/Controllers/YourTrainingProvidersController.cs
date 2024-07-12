@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
+using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
@@ -21,20 +22,31 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         _sessionService.Delete<AddTrainingProvidersSessionModel>();
 
         var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
-        var accountLegalEntities = response.AccountLegalEntities;
+        var accountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name);
 
-        var sessionModel = new AddTrainingProvidersSessionModel
-        {
-            AccountLegalEntities = accountLegalEntities
-        };
-        _sessionService.Set(sessionModel);
+        var legalEntities = OrderPermissionsByProviderName(accountLegalEntities);
 
-        YourTrainingProvidersViewModel model = InitialiseViewModel(accountLegalEntities);
+        YourTrainingProvidersViewModel model = InitialiseViewModel(legalEntities);
         model.IsOwner = User.IsOwner(employerAccountId);
-
+        model.PermissionsUpdatedForProvider = TempData[TempDataKeys.NameOfProviderAdded]?.ToString();
         model.AddTrainingProviderUrl = Url.RouteUrl(RouteNames.SelectLegalEntity, new { employerAccountId })!;
 
         return View(model);
+    }
+
+    private static List<AccountLegalEntity> OrderPermissionsByProviderName(IEnumerable<AccountLegalEntity> accountLegalEntities)
+    {
+        var legalEntities = new List<AccountLegalEntity>();
+
+        foreach (var ale in accountLegalEntities)
+        {
+            var permissions = new List<Permission>();
+            permissions.AddRange(ale.Permissions.OrderBy(p => p.ProviderName));
+            ale.Permissions = permissions;
+            legalEntities.Add(ale);
+        }
+
+        return legalEntities;
     }
 
     private static YourTrainingProvidersViewModel InitialiseViewModel(List<AccountLegalEntity> accountLegalEntities)

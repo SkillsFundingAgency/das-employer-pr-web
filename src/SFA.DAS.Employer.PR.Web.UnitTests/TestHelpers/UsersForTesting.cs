@@ -5,10 +5,12 @@ using System.Text.Json;
 namespace SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 public static class UsersForTesting
 {
+    public const string NameIdentifierValue = "validNameIdentifier";
     public static ClaimsPrincipal GetUserWithClaims(string employerAccountId, EmployerUserRole? roleToUse)
     {
         var familyName = "validFamilyName";
         var givenName = "validGivenName";
+
         var familyNameClaim = new Claim(EmployerClaims.FamilyName, familyName);
         var givenNameClaim = new Claim(EmployerClaims.GivenName, givenName);
         var nameClaim = new Claim(EmployerClaims.UserDisplayNameClaimTypeIdentifier, $"{givenName} {familyName}");
@@ -23,9 +25,11 @@ public static class UsersForTesting
 
         var accountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
 
+        var nameIdentifierClaim = new Claim(ClaimTypes.NameIdentifier, NameIdentifierValue);
+
         ClaimsPrincipal claimsPrincipal = new(new ClaimsIdentity[1]
         {
-            new(new Claim[6]
+            new(new Claim[7]
             {
                 givenNameClaim,
                 familyNameClaim,
@@ -33,7 +37,7 @@ public static class UsersForTesting
                 emailClaim,
                 userIdClaimTypeIdentifier,
                 accountsClaim,
-
+                nameIdentifierClaim
             }, "Test")
         });
 
