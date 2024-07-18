@@ -11,6 +11,7 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using SFA.DAS.Employer.PR.Web.Services;
 using System.Security.Claims;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
@@ -49,21 +50,9 @@ public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionS
             return View(model);
         }
 
-        var operationsToSet = new List<Operation>();
+        var permissionDescriptions = (PermissionDescriptionsModel)submitModel;
 
-        if (submitModel.PermissionToAddCohorts == SetPermissions.AddRecords.Yes)
-        {
-            operationsToSet.Add(Operation.CreateCohort);
-        }
-
-        if (submitModel.PermissionToRecruit == SetPermissions.RecruitApprentices.Yes)
-        {
-            operationsToSet.Add(Operation.Recruitment);
-        }
-        else if (submitModel.PermissionToRecruit == SetPermissions.RecruitApprentices.YesWithReview)
-        {
-            operationsToSet.Add(Operation.RecruitmentRequiresReview);
-        }
+        var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
         var userRef = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

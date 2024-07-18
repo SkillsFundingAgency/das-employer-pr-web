@@ -2,9 +2,9 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using SFA.DAS.Employer.PR.Web.Constants
 @using SFA.DAS.Employer.PR.Web.TagHelpers
-@model SetPermissionsViewModel
+@model ChangePermissionsViewModel
 @{
-    ViewData["Title"] = "Add provider and select permissions";
+    ViewData["Title"] = "change permissions";
 }
 @section breadcrumb {
     <a href="@Model.BackLink" class="govuk-back-link">Back</a>
@@ -12,16 +12,22 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="_validationSummary" />
-        <form asp-route="@RouteNames.SetPermissions" method="POST">
+        <form asp-route="@RouteNames.ChangePermissions" method="POST">
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <h1 class="govuk-fieldset__heading">
-                            Add @Model.ProviderName.ToUpper() and set permissions
+                            Set permissions for @Model.ProviderName.ToUpper()
                         </h1>
                     </legend>
+                    <input asp-for="LegalEntityId" id="legalEntityId" type="hidden" />
+                    @* <input asp-for="LegalName" id="legalName" type="hidden" /> *@
+                    @* <input asp-for="ProviderName" id="providerName" type="hidden" /> *@
+                    <input asp-for="Ukprn" id="ukprn" type="hidden" />
+                    <input asp-for="PermissionToAddCohortsOriginal" id="AddRecordsOriginal" type="hidden" />
+                    <input asp-for="PermissionToRecruitOriginal" id="RecruitApprenticesOriginal" type="hidden" />
                     <p class="govuk-body">
-                        The details you entered are for @Model.ProviderName.ToUpper() (UKPRN @Model.Ukprn). Select what permissions you  want this training provider to have for @Model.LegalName.ToUpper(). You can change these permissions at any time. 
+                        Select what permissions you want this training provider to have for @(Model.LegalName.ToUpper()). You can change these permissions at any time.
                     </p>
                     <partial name="_PermissionChoices" />
                 </fieldset>

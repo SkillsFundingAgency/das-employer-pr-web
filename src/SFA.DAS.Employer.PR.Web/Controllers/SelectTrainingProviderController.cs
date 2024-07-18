@@ -70,7 +70,8 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
         (
             sessionModel.ProviderName!,
             sessionModel.Ukprn.Value,
-            Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!,
+            sessionModel.SelectedLegalEntityId!.Value,
+            Url.RouteUrl(RouteNames.ChangePermissions, new { employerAccountId })!,
             Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!
             );
 

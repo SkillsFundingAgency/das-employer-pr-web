@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.Employer.PR.Web.Models;
+﻿using SFA.DAS.Employer.PR.Domain.Models;
+
+namespace SFA.DAS.Employer.PR.Web.Models;
 
 public class SetPermissionsViewModel : SetPermissionsSubmitViewModel, IBackLink
 {
@@ -20,8 +22,6 @@ public class SetPermissionsViewModel : SetPermissionsSubmitViewModel, IBackLink
     }
 }
 
-public class SetPermissionsSubmitViewModel
+public class SetPermissionsSubmitViewModel : PermissionDescriptionsModel
 {
-    public string? PermissionToAddCohorts { get; set; }
-    public string? PermissionToRecruit { get; set; }
 }

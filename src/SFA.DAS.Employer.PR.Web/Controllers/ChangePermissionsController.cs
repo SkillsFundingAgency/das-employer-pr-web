@@ -1,0 +1,81 @@
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Interfaces;
+using SFA.DAS.Employer.PR.Domain.Models;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Web.Authentication;
+using SFA.DAS.Employer.PR.Web.Constants;
+using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Models;
+using SFA.DAS.Employer.PR.Web.Services;
+using System.Security.Claims;
+
+namespace SFA.DAS.Employer.PR.Web.Controllers;
+
+[Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
+[Route("accounts/{employerAccountId}/providers/changePermissions", Name = RouteNames.ChangePermissions)]
+public class ChangePermissionsController(IOuterApiClient _outerApiClient, IValidator<ChangePermissionsSubmitViewModel> _validator) : Controller
+{
+    [HttpGet]
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, [FromQuery] long legalEntityId,
+         [FromQuery] long ukprn, CancellationToken cancellationToken)
+    {
+        var viewModel = await GetViewModel(employerAccountId, legalEntityId, ukprn, cancellationToken);
+
+        return View(viewModel);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId,
+        ChangePermissionsSubmitViewModel submitModel, CancellationToken cancellationToken)
+    {
+        var model = await GetViewModel(employerAccountId, submitModel.LegalEntityId, submitModel.Ukprn, cancellationToken);
+
+        var result = _validator.Validate(submitModel);
+
+        if (!result.IsValid)
+        {
+            result.AddToModelState(ModelState);
+            return View(model);
+        }
+
+        var permissionDescriptions = (PermissionDescriptionsModel)submitModel;
+
+        var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
+
+
+        var userRef = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var command = new PostPermissionsCommand(userRef!, submitModel.Ukprn, submitModel.LegalEntityId, operationsToSet);
+
+        await _outerApiClient.PostPermissions(command, cancellationToken);
+
+        TempData[TempDataKeys.NameOfProviderUpdated] = model.ProviderName;
+
+        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+    }
+
+    private async Task<ChangePermissionsViewModel> GetViewModel(string employerAccountId, long legalEntityId, long ukprn,
+        CancellationToken cancellationToken)
+    {
+        var relationshipDetailsResponse = await _outerApiClient.GetPermissions(ukprn, legalEntityId, cancellationToken);
+
+        var relationshipDetails = relationshipDetailsResponse.GetContent();
+
+        var accountLegalEntityName = relationshipDetails.AccountLegalEntityName;
+        var providerName = relationshipDetails.ProviderName;
+
+        var currentOperations = relationshipDetails.Operations.ToList();
+
+        var permissionDescriptions = OperationsMappingService.MapOperationsToDescriptions(currentOperations);
+
+        var backLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
+
+        ChangePermissionsViewModel viewModel = new ChangePermissionsViewModel(backLink!,
+            permissionDescriptions.PermissionToAddCohorts, permissionDescriptions.PermissionToRecruit, providerName, accountLegalEntityName, legalEntityId, ukprn);
+        return viewModel;
+    }
+}
