@@ -22,7 +22,7 @@
             </div>
             <div class="govuk-button-group">
                 <form Action="@Model.ChangePermissionsLink" method="Get">
-                    <input asp-for="LegalEntityId" id="legalEntityId" type="hidden" />
+                <input asp-for="LegalEntityPublicHashedId" id="legalEntityPublicHashedId" type="hidden" />
                     <input asp-for="Ukprn" id="ukprn" type="hidden" />
                     <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Continue</button>
                     <a class="govuk-link" href="@Model.ReturnToYourTrainingProvidersLink">Return to your training providers</a>

@@ -10,11 +10,11 @@ public class ChangePermissionsSubmitViewModelValidator : AbstractValidator<Chang
     public ChangePermissionsSubmitViewModelValidator()
     {
         RuleFor(s => s.PermissionToAddCohorts)
-            .Must(SetPermissionsNotChanged)
+            .Must(ChangePermissionsNotChanged)
             .WithMessage(NotChangedPermissionsErrorMessage);
     }
 
-    private static bool SetPermissionsNotChanged(ChangePermissionsSubmitViewModel model, string? addRecords)
+    private static bool ChangePermissionsNotChanged(ChangePermissionsSubmitViewModel model, string? addRecords)
     {
         return !(model.PermissionToAddCohorts == model.PermissionToAddCohortsOriginal && model.PermissionToRecruit == model.PermissionToRecruitOriginal);
     }

@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using SFA.DAS.Employer.PR.Web.Constants
 @using SFA.DAS.Employer.PR.Web.TagHelpers
-@model SetPermissionsViewModel
+@model AddPermissionsViewModel
 @{
     ViewData["Title"] = "Add provider and select permissions";
 }
@@ -12,7 +12,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="_validationSummary" />
-        <form asp-route="@RouteNames.SetPermissions" method="POST">
+        <form asp-route="@RouteNames.AddPermissions" method="POST">
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">

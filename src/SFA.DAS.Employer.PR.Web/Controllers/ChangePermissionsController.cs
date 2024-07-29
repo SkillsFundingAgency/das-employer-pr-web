@@ -3,25 +3,28 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Services;
+using SFA.DAS.Encoding;
 using System.Security.Claims;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/changePermissions", Name = RouteNames.ChangePermissions)]
-public class ChangePermissionsController(IOuterApiClient _outerApiClient, IValidator<ChangePermissionsSubmitViewModel> _validator) : Controller
+public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncodingService _encodingService, IValidator<ChangePermissionsSubmitViewModel> _validator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index([FromRoute] string employerAccountId, [FromQuery] long legalEntityId,
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, [FromQuery] string legalEntityPublicHashedId,
          [FromQuery] long ukprn, CancellationToken cancellationToken)
     {
+
+        var legalEntityId = _encodingService.Decode(legalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId);
+
         var viewModel = await GetViewModel(employerAccountId, legalEntityId, ukprn, cancellationToken);
 
         return View(viewModel);

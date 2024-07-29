@@ -1,8 +1,6 @@
-﻿using SFA.DAS.Employer.PR.Domain.Models;
+﻿namespace SFA.DAS.Employer.PR.Web.Models;
 
-namespace SFA.DAS.Employer.PR.Web.Models;
-
-public class SetPermissionsViewModel : SetPermissionsSubmitViewModel, IBackLink
+public class AddPermissionsViewModel : AddPermissionsSubmitViewModel, IBackLink
 {
     public string BackLink { get; set; }
     public string CancelLink { get; set; }
@@ -11,7 +9,7 @@ public class SetPermissionsViewModel : SetPermissionsSubmitViewModel, IBackLink
     public string ProviderName { get; set; }
     public long Ukprn { get; set; }
 
-    public SetPermissionsViewModel(long legalEntityId, string legalName, string providerName, long ukprn, string backLink, string cancelLink)
+    public AddPermissionsViewModel(long legalEntityId, string legalName, string providerName, long ukprn, string backLink, string cancelLink)
     {
         LegalEntityId = legalEntityId;
         LegalName = legalName;
@@ -22,6 +20,6 @@ public class SetPermissionsViewModel : SetPermissionsSubmitViewModel, IBackLink
     }
 }
 
-public class SetPermissionsSubmitViewModel : PermissionDescriptionsModel
+public class AddPermissionsSubmitViewModel : PermissionDescriptionsModel
 {
 }

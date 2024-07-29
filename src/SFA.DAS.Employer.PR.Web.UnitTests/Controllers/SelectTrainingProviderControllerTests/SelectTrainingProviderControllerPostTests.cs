@@ -12,6 +12,7 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
+using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
 using System.Net;
 
@@ -22,7 +23,7 @@ public class SelectTrainingProviderControllerPostTests
     static readonly string ChangePermissionsLink = Guid.NewGuid().ToString();
 
     [Test, MoqAutoData]
-    public async Task Post_Validated_RelationshipDoesntExist_RedirectToSetPermissions(
+    public async Task Post_Validated_RelationshipDoesntExist_RedirectToAddPermissions(
         Mock<IValidator<SelectTrainingProviderSubmitModel>> validatorMock,
         string employerAccountId,
         int ukprn,
@@ -54,7 +55,7 @@ public class SelectTrainingProviderControllerPostTests
 
         validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, validatorMock.Object)
+        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -63,7 +64,7 @@ public class SelectTrainingProviderControllerPostTests
         var result = await sut.Index(employerAccountId, submitModel, cancellationToken);
 
         RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
-        redirectToRouteResult.RouteName.Should().Be(RouteNames.SetPermissions);
+        redirectToRouteResult.RouteName.Should().Be(RouteNames.AddPermissions);
 
         sessionServiceMock.Verify(s => s.Set(It.Is<AddTrainingProvidersSessionModel>(x => x.ProviderName == name && x.Ukprn == ukprn)), Times.Once);
     }
@@ -114,7 +115,7 @@ public class SelectTrainingProviderControllerPostTests
 
         validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, validatorMock.Object)
+        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -144,7 +145,7 @@ public class SelectTrainingProviderControllerPostTests
         }));
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, validatorMock.Object)
+        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -197,7 +198,7 @@ public class SelectTrainingProviderControllerPostTests
 
         validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, validatorMock.Object)
+        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -214,7 +215,7 @@ public class SelectTrainingProviderControllerPostTests
     }
 
     [Test, MoqAutoData]
-    public async Task Post_LegalEntityUkprnAlreadyExists_DirectsToShutterPage_CorrectSetPermissionsLink(
+    public async Task Post_LegalEntityUkprnAlreadyExists_DirectsToShutterPage_CorrectAddPermissionsLink(
        Mock<IValidator<SelectTrainingProviderSubmitModel>> validatorMock,
        string employerAccountId,
        int ukprn,
@@ -251,7 +252,7 @@ public class SelectTrainingProviderControllerPostTests
 
         validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, validatorMock.Object)
+        SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -263,6 +264,5 @@ public class SelectTrainingProviderControllerPostTests
         var viewModel = viewResult.Model as AddPermissionsShutterPageViewModel;
 
         viewModel!.ChangePermissionsLink.Should().Be(ChangePermissionsLink);
-
     }
 }

@@ -9,6 +9,7 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
+using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.SelectTrainingProviderControllerTests;
@@ -26,7 +27,7 @@ public class SelectTrainingProviderControllerGetTests
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut =
-            new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object,
+            new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, Mock.Of<IEncodingService>(),
                 Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
@@ -57,7 +58,8 @@ public class SelectTrainingProviderControllerGetTests
                 AccountLegalEntities = new List<AccountLegalEntity> { new AccountLegalEntity() }
             });
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
+        SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object,
+            Mock.Of<IEncodingService>(), Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -88,7 +90,7 @@ public class SelectTrainingProviderControllerGetTests
                 AccountLegalEntities = new List<AccountLegalEntity> { new AccountLegalEntity(), new AccountLegalEntity() }
             });
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
+        SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, Mock.Of<IEncodingService>(), Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };

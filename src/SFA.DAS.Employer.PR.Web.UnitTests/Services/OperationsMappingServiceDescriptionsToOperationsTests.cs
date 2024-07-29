@@ -1,6 +1,7 @@
 ﻿using AutoFixture.NUnit3;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Constants;
+using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Services;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Services;

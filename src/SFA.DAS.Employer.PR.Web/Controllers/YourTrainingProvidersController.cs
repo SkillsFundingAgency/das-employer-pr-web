@@ -37,20 +37,20 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
 
     private void SetSuccessBanner(YourTrainingProvidersViewModel model)
     {
-        var nameOfProviderAdded = TempData[TempDataKeys.NameOfProviderAdded];
+        var nameOfProviderAdded = TempData[TempDataKeys.NameOfProviderAdded]?.ToString()!.ToUpper();
         if (nameOfProviderAdded != null)
         {
-            model.PermissionsUpdatedForProvider = nameOfProviderAdded.ToString()!.ToUpper();
+            model.PermissionsUpdatedForProvider = nameOfProviderAdded;
             model.PermissionsUpdatedForProviderText =
                 $"You've added {model.PermissionsUpdatedForProvider} and set their permissions.";
             return;
         }
 
-        var nameOfProviderUpdated = TempData[TempDataKeys.NameOfProviderUpdated];
+        var nameOfProviderUpdated = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
 
         if (nameOfProviderUpdated != null)
         {
-            model.PermissionsUpdatedForProvider = nameOfProviderUpdated.ToString()!.ToUpper();
+            model.PermissionsUpdatedForProvider = nameOfProviderUpdated;
             model.PermissionsUpdatedForProviderText =
                 $"You've set permissions for {model.PermissionsUpdatedForProvider}";
         }
@@ -70,7 +70,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
             {
                 var pm = (PermissionModel)p;
                 pm.ChangePermissionsLink = Url.RouteUrl(RouteNames.ChangePermissions,
-                    new { employerAccountId, legalEntity.LegalEntityId, pm.Ukprn })!;
+                    new { employerAccountId, legalEntity.LegalEntityPublicHashedId, pm.Ukprn })!;
                 permissions.Add(pm);
             }
 
