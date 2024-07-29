@@ -12,12 +12,16 @@ public static class OperationsMappingService
             ? SetPermissions.AddRecords.Yes
             : SetPermissions.AddRecords.No;
 
+        var permissionToRecruit = SetPermissions.RecruitApprentices.No;
 
-        var permissionToRecruit = !operations.Exists(o => o == Operation.Recruitment)
-            ? operations.Exists(o => o == Operation.RecruitmentRequiresReview)
-                ? SetPermissions.RecruitApprentices.YesWithReview
-                : SetPermissions.RecruitApprentices.No
-            : SetPermissions.RecruitApprentices.Yes;
+        if (operations.Exists(o => o == Operation.Recruitment))
+        {
+            permissionToRecruit = SetPermissions.RecruitApprentices.Yes;
+        }
+        else if (operations.Exists(o => o == Operation.RecruitmentRequiresReview))
+        {
+            permissionToRecruit = SetPermissions.RecruitApprentices.YesWithReview;
+        }
 
         return new PermissionDescriptionsModel { PermissionToAddCohorts = permissionToAddCohorts, PermissionToRecruit = permissionToRecruit };
     }
