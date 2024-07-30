@@ -14,7 +14,7 @@ namespace SFA.DAS.Employer.PR.Web.AppStart;
 [ExcludeFromCodeCoverage]
 public static class AddServiceRegistrationsExtension
 {
-    private const string EncodingConfigKey = "SFA.DAS.Encoding";
+    public const string EncodingConfigKey = "SFA.DAS.Encoding";
 
     public static IServiceCollection AddServiceRegistrations(this IServiceCollection services, IConfigurationRoot configuration)
     {

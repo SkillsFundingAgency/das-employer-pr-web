@@ -27,7 +27,7 @@ public class AddPermissionsControllerGetTests
             .Returns((AddTrainingProvidersSessionModel)null!);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewModel>>())
+        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -52,7 +52,7 @@ public class AddPermissionsControllerGetTests
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewModel>>())
+        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -83,7 +83,7 @@ public class AddPermissionsControllerGetTests
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewModel>>())
+        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -111,7 +111,7 @@ public class AddPermissionsControllerGetTests
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewModel>>())
+        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };

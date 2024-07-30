@@ -32,7 +32,7 @@ public class ChangePermissionsControllerPostTests
         GetPermissionsResponse getPermissionsResponse,
         CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
             PermissionToRecruit = SetPermissions.RecruitApprentices.Yes,
@@ -59,7 +59,7 @@ public class ChangePermissionsControllerPostTests
         Mock<ITempDataDictionary> tempDataMock = new();
         sut.TempData = tempDataMock.Object;
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
-        var result = await sut.Index(employerAccountId, submitModel, cancellationToken);
+        var result = await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
         RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
 
@@ -84,7 +84,7 @@ public class ChangePermissionsControllerPostTests
         GetPermissionsResponse getPermissionsResponse,
         CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
         {
             PermissionToAddCohorts = addRecords,
             PermissionToRecruit = recruitApprentices,
@@ -115,7 +115,7 @@ public class ChangePermissionsControllerPostTests
         sut.TempData = tempData;
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
-        await sut.Index(employerAccountId, submitModel, cancellationToken);
+        await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
         sut.TempData[TempDataKeys.NameOfProviderUpdated]!.ToString().Should().Be(providerName);
     }
@@ -137,7 +137,7 @@ public class ChangePermissionsControllerPostTests
         string providerName,
         CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
         {
             PermissionToAddCohorts = addRecords,
             PermissionToRecruit = recruitApprentices,
@@ -178,7 +178,7 @@ public class ChangePermissionsControllerPostTests
         Mock<ITempDataDictionary> tempDataMock = new();
         sut.TempData = tempDataMock.Object;
 
-        await sut.Index(employerAccountId, submitModel, cancellationToken);
+        await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
         var command = new PostPermissionsCommand(UsersForTesting.NameIdentifierValue, ukprn, legalEntityId,
             expectedOperations);
@@ -205,7 +205,7 @@ public class ChangePermissionsControllerPostTests
         string providerName,
         CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
         {
             PermissionToAddCohorts = addRecords,
             PermissionToRecruit = recruitApprentices,
@@ -231,7 +231,7 @@ public class ChangePermissionsControllerPostTests
         Mock<ITempDataDictionary> tempDataMock = new();
         sut.TempData = tempDataMock.Object;
 
-        await sut.Index(employerAccountId, submitModel, cancellationToken);
+        await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
         var command = new PostPermissionsCommand(UsersForTesting.NameIdentifierValue, ukprn, legalEntityId,
             expectedOperations);
@@ -256,7 +256,7 @@ public class ChangePermissionsControllerPostTests
       CancellationToken cancellationToken
   )
     {
-        ChangePermissionsSubmitViewModel submitModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.No,
             PermissionToRecruit = SetPermissions.RecruitApprentices.No,
@@ -289,7 +289,7 @@ public class ChangePermissionsControllerPostTests
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
-        var result = await sut.Index(employerAccountId, submitModel, cancellationToken);
+        var result = await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
         ViewResult? viewResult = result.As<ViewResult>();
         ChangePermissionsViewModel? viewModel = viewResult.Model as ChangePermissionsViewModel;

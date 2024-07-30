@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Employer.PR.Web.Models;
 
-public class SelectLegalEntitiesViewModel : SelectLegalEntitiesSubmitViewModel, IBackLink
+public class SelectLegalEntitiesViewModel : SelectLegalEntitiesSubmitViewModel
 {
     public List<LegalEntityModel> LegalEntities { get; set; } = new();
     public string BackLink { get; set; }

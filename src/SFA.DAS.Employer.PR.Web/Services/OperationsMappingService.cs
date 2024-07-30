@@ -6,7 +6,7 @@ namespace SFA.DAS.Employer.PR.Web.Services;
 
 public static class OperationsMappingService
 {
-    public static PermissionDescriptionsModel MapOperationsToDescriptions(List<Operation> operations)
+    public static PermissionDescriptionsViewModel MapOperationsToDescriptions(List<Operation> operations)
     {
         var permissionToAddCohorts = operations.Exists(o => o == Operation.CreateCohort)
             ? SetPermissions.AddRecords.Yes
@@ -23,23 +23,23 @@ public static class OperationsMappingService
             permissionToRecruit = SetPermissions.RecruitApprentices.YesWithReview;
         }
 
-        return new PermissionDescriptionsModel { PermissionToAddCohorts = permissionToAddCohorts, PermissionToRecruit = permissionToRecruit };
+        return new PermissionDescriptionsViewModel { PermissionToAddCohorts = permissionToAddCohorts, PermissionToRecruit = permissionToRecruit };
     }
 
-    public static List<Operation> MapDescriptionsToOperations(PermissionDescriptionsModel permissionDescriptionsModel)
+    public static List<Operation> MapDescriptionsToOperations(PermissionDescriptionsViewModel permissionDescriptionsViewModel)
     {
         var operations = new List<Operation>();
 
-        if (permissionDescriptionsModel.PermissionToAddCohorts == SetPermissions.AddRecords.Yes)
+        if (permissionDescriptionsViewModel.PermissionToAddCohorts == SetPermissions.AddRecords.Yes)
         {
             operations.Add(Operation.CreateCohort);
         }
 
-        if (permissionDescriptionsModel.PermissionToRecruit == SetPermissions.RecruitApprentices.Yes)
+        if (permissionDescriptionsViewModel.PermissionToRecruit == SetPermissions.RecruitApprentices.Yes)
         {
             operations.Add(Operation.Recruitment);
         }
-        else if (permissionDescriptionsModel.PermissionToRecruit == SetPermissions.RecruitApprentices.YesWithReview)
+        else if (permissionDescriptionsViewModel.PermissionToRecruit == SetPermissions.RecruitApprentices.YesWithReview)
         {
             operations.Add(Operation.RecruitmentRequiresReview);
         }

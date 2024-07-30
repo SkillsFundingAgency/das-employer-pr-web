@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.4" />
     <PackageReference Include="NUnit" Version="4.1.0" />
-    <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
     <PackageReference Include="SFA.DAS.Testing" Version="3.0.169" />
     <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="17.1.94" />
     <PackageReference Include="Moq" Version="4.18.4" />

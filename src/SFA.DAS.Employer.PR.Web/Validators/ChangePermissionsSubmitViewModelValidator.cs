@@ -14,8 +14,8 @@ public class ChangePermissionsSubmitViewModelValidator : AbstractValidator<Chang
             .WithMessage(NotChangedPermissionsErrorMessage);
     }
 
-    private static bool ChangePermissionsNotChanged(ChangePermissionsSubmitViewModel model, string? addRecords)
+    private static bool ChangePermissionsNotChanged(ChangePermissionsSubmitViewModel viewModel, string? addRecords)
     {
-        return !(model.PermissionToAddCohorts == model.PermissionToAddCohortsOriginal && model.PermissionToRecruit == model.PermissionToRecruitOriginal);
+        return !(viewModel.PermissionToAddCohorts == viewModel.PermissionToAddCohortsOriginal && viewModel.PermissionToRecruit == viewModel.PermissionToRecruitOriginal);
     }
 }

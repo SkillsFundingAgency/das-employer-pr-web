@@ -17,7 +17,7 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/new/addPermissions", Name = RouteNames.AddPermissions)]
-public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<AddPermissionsSubmitViewModel> _validator) : Controller
+public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<AddPermissionsSubmitViewViewModel> _validator) : Controller
 {
     [HttpGet]
     public IActionResult Index([FromRoute] string employerAccountId)
@@ -32,7 +32,7 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromRoute] string employerAccountId, AddPermissionsSubmitViewModel submitModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, AddPermissionsSubmitViewViewModel submitViewModel, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
         if (sessionModel == null || sessionModel!.Ukprn == null || sessionModel!.SelectedLegalEntityId == null || sessionModel.EmployerAccountId != employerAccountId)
@@ -40,7 +40,7 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
             return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
-        var result = _validator.Validate(submitModel);
+        var result = _validator.Validate(submitViewModel);
 
         if (!result.IsValid)
         {
@@ -49,7 +49,7 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
             return View(model);
         }
 
-        var permissionDescriptions = (PermissionDescriptionsModel)submitModel;
+        var permissionDescriptions = (PermissionDescriptionsViewModel)submitViewModel;
 
         var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
@@ -76,8 +76,8 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
         var backLink = Url.RouteUrl(RouteNames.SelectTrainingProvider, new { employerAccountId });
         var cancelLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
 
-        AddPermissionsViewModel model = new AddPermissionsViewModel(sessionModel.SelectedLegalEntityId!.Value,
+        AddPermissionsViewModel viewModel = new AddPermissionsViewModel(sessionModel.SelectedLegalEntityId!.Value,
             sessionModel.SelectedLegalName!, sessionModel.ProviderName!, sessionModel.Ukprn!.Value, backLink!, cancelLink!);
-        return model;
+        return viewModel;
     }
 }

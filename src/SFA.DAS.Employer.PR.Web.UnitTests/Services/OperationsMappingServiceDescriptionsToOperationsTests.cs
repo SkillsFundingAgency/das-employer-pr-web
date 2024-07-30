@@ -12,7 +12,7 @@ public class OperationsMappingServiceDescriptionsToOperationsTests
     [InlineAutoData(null, SetPermissions.AddRecords.No)]
     public void PermissionToAddRecords_FromOperations(Operation? expectedOperation, string permissionText)
     {
-        var permissionDescriptions = new PermissionDescriptionsModel { PermissionToAddCohorts = permissionText };
+        var permissionDescriptions = new PermissionDescriptionsViewModel { PermissionToAddCohorts = permissionText };
 
         var operations = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
@@ -33,7 +33,7 @@ public class OperationsMappingServiceDescriptionsToOperationsTests
     [InlineAutoData(null, SetPermissions.RecruitApprentices.No)]
     public void PermissionToAddRecruit_FromOperations(Operation? expectedOperation, string permissionText)
     {
-        var permissionDescriptions = new PermissionDescriptionsModel { PermissionToRecruit = permissionText };
+        var permissionDescriptions = new PermissionDescriptionsViewModel { PermissionToRecruit = permissionText };
 
         var operations = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
@@ -73,7 +73,7 @@ public class OperationsMappingServiceDescriptionsToOperationsTests
             operationsToCheck.Add(addRecruitmentOperation.Value);
         }
 
-        var permissionDescriptions = new PermissionDescriptionsModel { PermissionToAddCohorts = addRecord, PermissionToRecruit = addRecruit };
+        var permissionDescriptions = new PermissionDescriptionsViewModel { PermissionToAddCohorts = addRecord, PermissionToRecruit = addRecruit };
 
         var operations = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 

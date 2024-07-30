@@ -13,7 +13,7 @@ public class AddPermissionsSubmitViewModelValidatorTests
     [TestCase(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.No)]
     public void AddRecordsAndRecruitApprenticesSet_Valid(string addRecordsSelection, string recruitApprenticesSelection)
     {
-        var model = new AddPermissionsSubmitViewModel()
+        var model = new AddPermissionsSubmitViewViewModel()
         {
             PermissionToAddCohorts = addRecordsSelection,
             PermissionToRecruit = recruitApprenticesSelection
@@ -32,7 +32,7 @@ public class AddPermissionsSubmitViewModelValidatorTests
     [TestCase(SetPermissions.RecruitApprentices.No)]
     public void AddRecordsNotSet_InvalidWithExpectedMessage(string recruitApprenticesSelection)
     {
-        var model = new AddPermissionsSubmitViewModel()
+        var model = new AddPermissionsSubmitViewViewModel()
         {
             PermissionToRecruit = recruitApprenticesSelection
         };
@@ -48,7 +48,7 @@ public class AddPermissionsSubmitViewModelValidatorTests
     [TestCase(SetPermissions.AddRecords.No)]
     public void RecruitApprenticesNotSet_InvalidWithExpectedMessage(string addRecordsSelection)
     {
-        var model = new AddPermissionsSubmitViewModel()
+        var model = new AddPermissionsSubmitViewViewModel()
         {
             PermissionToAddCohorts = addRecordsSelection
         };
@@ -63,7 +63,7 @@ public class AddPermissionsSubmitViewModelValidatorTests
     [Test]
     public void AddRecordsNo_RecruitApprenticesNo_InvalidWithExpectedMessage()
     {
-        var model = new AddPermissionsSubmitViewModel
+        var model = new AddPermissionsSubmitViewViewModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.No,
             PermissionToRecruit = SetPermissions.RecruitApprentices.No

@@ -74,7 +74,7 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
             sessionModel.ProviderName!,
             sessionModel.Ukprn.Value,
             hashedId,
-            Url.RouteUrl(RouteNames.ChangePermissions, new { employerAccountId })!,
+            Url.RouteUrl(RouteNames.ChangePermissions, new { employerAccountId, ukprn = sessionModel.Ukprn.Value })!,
             Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!
             );
 
