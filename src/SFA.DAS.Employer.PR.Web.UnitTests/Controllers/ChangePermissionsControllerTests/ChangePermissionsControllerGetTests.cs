@@ -20,6 +20,40 @@ public class ChangePermissionsControllerGetTests
 {
     static readonly string YourTrainingProvidersLink = Guid.NewGuid().ToString();
 
+
+    [Test, MoqAutoData]
+    public async Task Index_PermissionsDoNotExist_RedirectsToYourTrainingProviders(
+      string employerAccountId,
+      long ukprn,
+      long legalEntityId,
+      string legalEntityPublicHashedId,
+      GetPermissionsResponse getPermissionsResponse,
+      CancellationToken cancellationToken)
+    {
+        var operations = new List<Operation>();
+        getPermissionsResponse.Operations = operations;
+        var outerApiClientMock = new Mock<IOuterApiClient>();
+
+        outerApiClientMock.Setup(o => o.GetPermissions(ukprn, legalEntityId, cancellationToken))
+            .ReturnsAsync(new Response<GetPermissionsResponse>(string.Empty, new(HttpStatusCode.NotFound), () => getPermissionsResponse));
+
+        var encodingServiceMock = new Mock<IEncodingService>();
+        encodingServiceMock.Setup(x => x.Decode(legalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId)).Returns(legalEntityId);
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+        ChangePermissionsController sut = new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitViewModel>>())
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
+        var result = await sut.Index(employerAccountId, legalEntityPublicHashedId, ukprn, cancellationToken);
+
+        RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
+
+        redirectToRouteResult.RouteName.Should().Be(RouteNames.YourTrainingProviders);
+    }
+
     [Test, MoqAutoData]
     public async Task Index_ReturnsExpectedViewModel_ModelMatchesExpected(
       string employerAccountId,

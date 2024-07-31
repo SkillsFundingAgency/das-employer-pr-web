@@ -10,6 +10,7 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Encoding;
+using System.Net;
 using System.Security.Claims;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
@@ -26,6 +27,10 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
         var legalEntityId = _encodingService.Decode(legalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId);
 
         var viewModel = await GetViewModel(employerAccountId, legalEntityId, ukprn, cancellationToken);
+        if (viewModel == null)
+        {
+            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+        }
 
         return View(viewModel);
     }
@@ -36,6 +41,11 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
         ChangePermissionsSubmitViewModel submitViewModel, CancellationToken cancellationToken)
     {
         var model = await GetViewModel(employerAccountId, submitViewModel.LegalEntityId, submitViewModel.Ukprn, cancellationToken);
+
+        if (model == null)
+        {
+            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+        }
 
         var result = _validator.Validate(submitViewModel);
 
@@ -61,10 +71,15 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
         return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
     }
 
-    private async Task<ChangePermissionsViewModel> GetViewModel(string employerAccountId, long legalEntityId, long ukprn,
+    private async Task<ChangePermissionsViewModel?> GetViewModel(string employerAccountId, long legalEntityId, long ukprn,
         CancellationToken cancellationToken)
     {
         var relationshipDetailsResponse = await _outerApiClient.GetPermissions(ukprn, legalEntityId, cancellationToken);
+
+        if (relationshipDetailsResponse.ResponseMessage.StatusCode != HttpStatusCode.OK)
+        {
+            return null;
+        }
 
         var relationshipDetails = relationshipDetailsResponse.GetContent();
 

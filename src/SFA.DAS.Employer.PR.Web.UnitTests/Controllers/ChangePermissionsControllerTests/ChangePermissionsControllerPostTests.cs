@@ -66,6 +66,47 @@ public class ChangePermissionsControllerPostTests
         redirectToRouteResult.RouteName.Should().Be(RouteNames.YourTrainingProviders);
     }
 
+    [Test, MoqAutoData]
+    public async Task Post_GetPermissionsDoesNotExist_RedirectsToYourTrainingProviders(
+      Mock<IValidator<ChangePermissionsSubmitViewModel>> validatorMock,
+      string employerAccountId,
+      long ukprn,
+      long legalEntityId,
+      GetPermissionsResponse getPermissionsResponse,
+      CancellationToken cancellationToken)
+    {
+        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
+        {
+            PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
+            PermissionToRecruit = SetPermissions.RecruitApprentices.Yes,
+            LegalEntityId = legalEntityId,
+            Ukprn = ukprn
+        };
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitViewModel>())).Returns(new ValidationResult());
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+
+        Permission permission = new()
+        { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
+        permission.Operations.Add(Operation.CreateCohort);
+
+        var outerApiClientMock = new Mock<IOuterApiClient>();
+
+        outerApiClientMock.Setup(o => o.GetPermissions(ukprn, legalEntityId, cancellationToken))
+            .ReturnsAsync(new Response<GetPermissionsResponse>(string.Empty, new(HttpStatusCode.NotFound), () => getPermissionsResponse));
+
+        ChangePermissionsController sut = new(outerApiClientMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
+        var result = await sut.Index(employerAccountId, submitViewModel, cancellationToken);
+
+        RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
+
+        redirectToRouteResult.RouteName.Should().Be(RouteNames.YourTrainingProviders);
+    }
+
     [Test]
     [MoqInlineAutoData(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.Yes)]
     [MoqInlineAutoData(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.YesWithReview)]
@@ -135,6 +176,7 @@ public class ChangePermissionsControllerPostTests
         long ukprn,
         long legalEntityId,
         string providerName,
+        GetPermissionsResponse getPermissionsResponse,
         CancellationToken cancellationToken)
     {
         ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
@@ -168,6 +210,9 @@ public class ChangePermissionsControllerPostTests
         Permission permission = new()
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
+
+        outerApiClientMock.Setup(o => o.GetPermissions(ukprn, legalEntityId, cancellationToken))
+            .ReturnsAsync(new Response<GetPermissionsResponse>(string.Empty, new(HttpStatusCode.OK), () => getPermissionsResponse));
 
         ChangePermissionsController sut = new(outerApiClientMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
@@ -203,6 +248,7 @@ public class ChangePermissionsControllerPostTests
         long ukprn,
         long legalEntityId,
         string providerName,
+        GetPermissionsResponse getPermissionsResponse,
         CancellationToken cancellationToken)
     {
         ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
@@ -221,6 +267,9 @@ public class ChangePermissionsControllerPostTests
         Permission permission = new()
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
+
+        outerApiClientMock.Setup(o => o.GetPermissions(ukprn, legalEntityId, cancellationToken))
+            .ReturnsAsync(new Response<GetPermissionsResponse>(string.Empty, new(HttpStatusCode.OK), () => getPermissionsResponse));
 
         ChangePermissionsController sut = new(outerApiClientMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
