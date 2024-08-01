@@ -13,7 +13,8 @@ public static class RouteNames
     public const string SelectLegalEntity = nameof(SelectLegalEntity);
     public const string SelectTrainingProvider = nameof(SelectTrainingProvider);
     public const string GetRegisteredProviders = nameof(GetRegisteredProviders);
-    public const string SetPermissions = nameof(SetPermissions);
+    public const string AddPermissions = nameof(AddPermissions);
+    public const string ChangePermissions = nameof(ChangePermissions);
 
     public static class StubAccount
     {

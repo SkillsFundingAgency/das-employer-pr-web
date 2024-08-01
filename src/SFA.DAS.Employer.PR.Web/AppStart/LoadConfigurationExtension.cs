@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using SFA.DAS.Configuration.AzureTableStorage;
+﻿using SFA.DAS.Configuration.AzureTableStorage;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Employer.PR.Web.AppStart;
 
@@ -19,6 +19,7 @@ public static class LoadConfigurationExtension
             options.StorageConnectionString = config["ConfigurationStorageConnectionString"];
             options.EnvironmentName = config["EnvironmentName"];
             options.PreFixConfigurationKeys = false;
+            options.ConfigurationKeysRawJsonResult = new[] { AddServiceRegistrationsExtension.EncodingConfigKey };
         });
 
         var configuration = configBuilder.Build();

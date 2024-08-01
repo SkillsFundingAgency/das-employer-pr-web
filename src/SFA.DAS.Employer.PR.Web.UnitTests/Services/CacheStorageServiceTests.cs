@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Caching.Distributed;
 using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Testing.AutoFixture;
-using System.Text;
 using System.Text.Json;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Services;
@@ -39,7 +38,7 @@ public class CacheStorageServiceTests
         CacheStorageService service)
     {
         distributedCache.Setup(x => x.GetAsync(keyName, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(test)));
+            .ReturnsAsync(System.Text.Encoding.UTF8.GetBytes(JsonSerializer.Serialize(test)));
 
         var item = await service.RetrieveFromCache<TestObject>(keyName);
 

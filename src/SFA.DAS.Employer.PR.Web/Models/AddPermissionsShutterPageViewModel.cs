@@ -4,14 +4,16 @@ public class AddPermissionsShutterPageViewModel
 {
     public string ProviderName { get; }
     public long Ukprn { get; }
-    public string SetPermissionsLink { get; }
+    public string LegalEntityPublicHashedId { get; }
+    public string ChangePermissionsLink { get; }
     public string ReturnToYourTrainingProvidersLink { get; }
 
-    public AddPermissionsShutterPageViewModel(string providerName, long ukprn, string setPermissionsLink, string returnToYourTrainingProvidersLink)
+    public AddPermissionsShutterPageViewModel(string providerName, long ukprn, string legalEntityPublicHashedId, string changePermissionsLink, string returnToYourTrainingProvidersLink)
     {
         ProviderName = providerName;
         Ukprn = ukprn;
-        SetPermissionsLink = setPermissionsLink;
+        LegalEntityPublicHashedId = legalEntityPublicHashedId;
+        ChangePermissionsLink = changePermissionsLink;
         ReturnToYourTrainingProvidersLink = returnToYourTrainingProvidersLink;
     }
 }

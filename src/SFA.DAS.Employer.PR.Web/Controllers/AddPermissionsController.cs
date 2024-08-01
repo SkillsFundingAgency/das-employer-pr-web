@@ -3,7 +3,6 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
@@ -11,13 +10,14 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using SFA.DAS.Employer.PR.Web.Services;
 using System.Security.Claims;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
-[Route("accounts/{employerAccountId}/providers/new/setPermissions", Name = RouteNames.SetPermissions)]
-public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<SetPermissionsSubmitViewModel> _validator) : Controller
+[Route("accounts/{employerAccountId}/providers/new/addPermissions", Name = RouteNames.AddPermissions)]
+public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<AddPermissionsSubmitViewViewModel> _validator) : Controller
 {
     [HttpGet]
     public IActionResult Index([FromRoute] string employerAccountId)
@@ -32,7 +32,7 @@ public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionS
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromRoute] string employerAccountId, SetPermissionsSubmitViewModel submitModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, AddPermissionsSubmitViewViewModel submitViewModel, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
         if (sessionModel == null || sessionModel!.Ukprn == null || sessionModel!.SelectedLegalEntityId == null || sessionModel.EmployerAccountId != employerAccountId)
@@ -40,7 +40,7 @@ public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionS
             return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
-        var result = _validator.Validate(submitModel);
+        var result = _validator.Validate(submitViewModel);
 
         if (!result.IsValid)
         {
@@ -49,21 +49,9 @@ public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionS
             return View(model);
         }
 
-        var operationsToSet = new List<Operation>();
+        var permissionDescriptions = (PermissionDescriptionsViewModel)submitViewModel;
 
-        if (submitModel.PermissionToAddCohorts == SetPermissions.AddRecords.Yes)
-        {
-            operationsToSet.Add(Operation.CreateCohort);
-        }
-
-        if (submitModel.PermissionToRecruit == SetPermissions.RecruitApprentices.Yes)
-        {
-            operationsToSet.Add(Operation.Recruitment);
-        }
-        else if (submitModel.PermissionToRecruit == SetPermissions.RecruitApprentices.YesWithReview)
-        {
-            operationsToSet.Add(Operation.RecruitmentRequiresReview);
-        }
+        var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
         var userRef = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -76,7 +64,7 @@ public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionS
         return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
     }
 
-    private SetPermissionsViewModel? GetViewModel(string employerAccountId)
+    private AddPermissionsViewModel? GetViewModel(string employerAccountId)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
 
@@ -88,8 +76,8 @@ public class SetPermissionsController(IOuterApiClient _outerApiClient, ISessionS
         var backLink = Url.RouteUrl(RouteNames.SelectTrainingProvider, new { employerAccountId });
         var cancelLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
 
-        SetPermissionsViewModel model = new SetPermissionsViewModel(sessionModel.SelectedLegalEntityId!.Value,
+        AddPermissionsViewModel viewModel = new AddPermissionsViewModel(sessionModel.SelectedLegalEntityId!.Value,
             sessionModel.SelectedLegalName!, sessionModel.ProviderName!, sessionModel.Ukprn!.Value, backLink!, cancelLink!);
-        return model;
+        return viewModel;
     }
 }

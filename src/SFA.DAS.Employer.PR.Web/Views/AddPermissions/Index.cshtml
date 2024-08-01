@@ -1,0 +1,35 @@
+﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using SFA.DAS.Employer.PR.Web.Constants
+@using SFA.DAS.Employer.PR.Web.TagHelpers
+@model AddPermissionsViewModel
+@{
+    ViewData["Title"] = "Add provider and select permissions";
+}
+@section breadcrumb {
+    <a href="@Model.BackLink" class="govuk-back-link">Back</a>
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <form asp-route="@RouteNames.AddPermissions" method="POST">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            Add @Model.ProviderName.ToUpper() and set permissions
+                        </h1>
+                    </legend>
+                    <p class="govuk-body">
+                        The details you entered are for @Model.ProviderName.ToUpper() (UKPRN @Model.Ukprn). Select what permissions you  want this training provider to have for @Model.LegalName.ToUpper(). You can change these permissions at any time. 
+                    </p>
+                    <partial name="_PermissionChoices" />
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Confirm</button>
+                <a class="govuk-link" href="@Model.CancelLink">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

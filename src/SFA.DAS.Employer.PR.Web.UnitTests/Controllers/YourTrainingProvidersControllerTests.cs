@@ -20,6 +20,7 @@ public class YourTrainingProvidersControllerTests
 {
     static readonly string SelectLegalEntityUrl = Guid.NewGuid().ToString();
     static readonly string YourTrainingProviderUrl = Guid.NewGuid().ToString();
+    static readonly string ChangePermissionsLink = Guid.NewGuid().ToString();
 
     [Test, MoqAutoData]
     public void Index_CallsOuterApiEndpoint(
@@ -188,6 +189,8 @@ public class YourTrainingProvidersControllerTests
         var permissions = new List<Permission> { permission };
         SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut, false);
 
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.ChangePermissions, ChangePermissionsLink);
+
         var result = sut.Index(employerAccountId, new CancellationToken());
 
         var viewResult = result.Result.As<ViewResult>();
@@ -201,7 +204,7 @@ public class YourTrainingProvidersControllerTests
         actualPermissionDetails.ProviderName.Should().Be(providerName);
         actualPermissionDetails.PermissionToAddRecords.Should().Be(expectedPermissionToAddApprenticesText);
         actualPermissionDetails.PermissionToRecruitApprentices.Should().Be(expectedPermissionToRecruitApprenticesText);
-        actualPermissionDetails.ChangePermissionsLink.Should().Be("#");
+        actualPermissionDetails.ChangePermissionsLink.Should().Be(ChangePermissionsLink);
     }
 
 
@@ -369,7 +372,55 @@ public class YourTrainingProvidersControllerTests
         var viewResult = result.Result.As<ViewResult>();
         var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
         viewModel!.ShowPermissionsUpdatedBanner().Should().BeTrue();
-        viewModel.PermissionsUpdatedForProvider.Should().Be(providerName);
+        viewModel.PermissionsUpdatedForProvider.Should().Be(providerName.ToUpper());
+        var expectedText = $"You've added {providerName.ToUpper()} and set their permissions.";
+        viewModel.PermissionsUpdatedForProviderText.Should().Be(expectedText);
+    }
+
+
+    [Test, MoqInlineAutoData]
+    public void TempDataSuccessfulUpdate_AddsShowBannerAndProviderNameToViewModel(
+       [Frozen] Mock<IOuterApiClient> outerApiMock,
+       [Frozen] Mock<ISessionService> sessionServiceMock,
+       string employerAccountId,
+       string providerName,
+       long ukprn
+   )
+    {
+        var isSuccessfulAddition = true;
+        var accountId = 1123;
+        var accountName = "account name";
+        var publicHashedId = "12123232";
+
+        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        permission.Operations.Add(Operation.CreateCohort);
+        permission.Operations.Add(Operation.Recruitment);
+
+        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>()).Returns(
+            new AddTrainingProvidersSessionModel
+            { SuccessfulAddition = isSuccessfulAddition, ProviderName = providerName });
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+        YourTrainingProvidersController sut = new(outerApiMock.Object, sessionServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
+        };
+        var permissions = new List<Permission> { permission };
+        SetupControllerAndClasses(outerApiMock, employerAccountId, accountId, accountName, publicHashedId, permissions, sut, false);
+
+        Mock<ITempDataDictionary> tempDataMock = new();
+        tempDataMock.Setup(t => t[TempDataKeys.NameOfProviderUpdated]).Returns(providerName);
+
+        sut.TempData = tempDataMock.Object;
+
+        var result = sut.Index(employerAccountId, new CancellationToken());
+
+        var viewResult = result.Result.As<ViewResult>();
+        var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
+        viewModel!.ShowPermissionsUpdatedBanner().Should().BeTrue();
+        viewModel.PermissionsUpdatedForProvider.Should().Be(providerName.ToUpper());
+        var expectedText = $"You've set permissions for {providerName.ToUpper()}"; ;
+        viewModel.PermissionsUpdatedForProviderText.Should().Be(expectedText);
     }
 
     private static void SetupControllerAndClasses(Mock<IOuterApiClient> outerApiMock, string employerAccountId, int accountId, string accountName,

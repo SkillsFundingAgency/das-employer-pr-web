@@ -11,8 +11,8 @@ using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
-namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.SetPermissionsControllerTests;
-public class SetPermissionsControllerGetTests
+namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.AddPermissionsControllerTests;
+public class AddPermissionsControllerGetTests
 {
     static readonly string YourTrainingProvidersLink = Guid.NewGuid().ToString();
     static readonly string BackLink = Guid.NewGuid().ToString();
@@ -27,7 +27,7 @@ public class SetPermissionsControllerGetTests
             .Returns((AddTrainingProvidersSessionModel)null!);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SetPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SetPermissionsSubmitViewModel>>())
+        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -52,7 +52,7 @@ public class SetPermissionsControllerGetTests
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SetPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SetPermissionsSubmitViewModel>>())
+        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -62,7 +62,7 @@ public class SetPermissionsControllerGetTests
         var result = sut.Index(employerAccountId);
 
         ViewResult? viewResult = result.As<ViewResult>();
-        SetPermissionsViewModel? viewModel = viewResult.Model as SetPermissionsViewModel;
+        AddPermissionsViewModel? viewModel = viewResult.Model as AddPermissionsViewModel;
         viewModel!.Ukprn.Should().Be(ukprn);
         viewModel.LegalEntityId.Should().Be(legalEntityId);
         viewModel.ProviderName.Should().Be(providerName);
@@ -83,7 +83,7 @@ public class SetPermissionsControllerGetTests
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SetPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SetPermissionsSubmitViewModel>>())
+        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -93,7 +93,7 @@ public class SetPermissionsControllerGetTests
         var result = sut.Index(employerAccountId);
 
         ViewResult? viewResult = result.As<ViewResult>();
-        SetPermissionsViewModel? viewModel = viewResult.Model as SetPermissionsViewModel;
+        AddPermissionsViewModel? viewModel = viewResult.Model as AddPermissionsViewModel;
         viewModel!.CancelLink.Should().Be(YourTrainingProvidersLink);
     }
 
@@ -111,7 +111,7 @@ public class SetPermissionsControllerGetTests
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SetPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SetPermissionsSubmitViewModel>>())
+        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -121,7 +121,7 @@ public class SetPermissionsControllerGetTests
         var result = sut.Index(employerAccountId);
 
         ViewResult? viewResult = result.As<ViewResult>();
-        SetPermissionsViewModel? viewModel = viewResult.Model as SetPermissionsViewModel;
+        AddPermissionsViewModel? viewModel = viewResult.Model as AddPermissionsViewModel;
         viewModel!.BackLink.Should().Be(BackLink);
     }
 }

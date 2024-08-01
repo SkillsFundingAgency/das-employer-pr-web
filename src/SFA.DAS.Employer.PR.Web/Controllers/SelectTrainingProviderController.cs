@@ -8,15 +8,16 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using SFA.DAS.Encoding;
 using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/new/selectProvider", Name = RouteNames.SelectTrainingProvider)]
-public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<SelectTrainingProviderSubmitModel> _validator) : Controller
+public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IEncodingService _encodingService, IValidator<SelectTrainingProviderSubmitModel> _validator) : Controller
 {
-    public const string ShutterPageViewPath = "~/Views/SetPermissions/ShutterPage.cshtml";
+    public const string ShutterPageViewPath = "~/Views/AddPermissions/ShutterPage.cshtml";
 
     [HttpGet]
     public IActionResult Index([FromRoute] string employerAccountId)
@@ -63,14 +64,17 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
 
         if (existingPermissions.ResponseMessage.StatusCode == HttpStatusCode.NotFound)
         {
-            return RedirectToRoute(RouteNames.SetPermissions, new { employerAccountId });
+            return RedirectToRoute(RouteNames.AddPermissions, new { employerAccountId });
         }
+
+        var hashedId = _encodingService.Encode(sessionModel.SelectedLegalEntityId!.Value, EncodingType.PublicAccountLegalEntityId);
 
         var shutterPageViewModel = new AddPermissionsShutterPageViewModel
         (
             sessionModel.ProviderName!,
             sessionModel.Ukprn.Value,
-            Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!,
+            hashedId,
+            Url.RouteUrl(RouteNames.ChangePermissions, new { employerAccountId, ukprn = sessionModel.Ukprn.Value })!,
             Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!
             );
 

@@ -1,0 +1,58 @@
+﻿@using SFA.DAS.Employer.PR.Web.Constants
+@using SFA.DAS.Employer.PR.Web.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model SFA.DAS.Employer.PR.Web.Models.PermissionDescriptionsViewModel
+<br/><br/>
+<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+    Add apprentice records
+</legend>
+<div id="addRecords-hint" class="govuk-hint">
+    Training provider can add apprentice records. If you do not pay the levy (you have an annual pay bill of under £3 million), training provider can also reserve funding for your apprentices.
+</div>
+<div esfa-validation-marker-for="@Model.PermissionToAddCohorts" class="govuk-form-group">
+    <span asp-validation-for="PermissionToAddCohorts" class="govuk-error-message"></span>
+    <div class="govuk-radios" id="PermissionToAddCohorts" data-module="govuk-radios">
+        <div class="govuk-radios__item">
+            <input asp-for="PermissionToAddCohorts" class="govuk-radios__input" id="addRecords-1" type="radio" value="@SetPermissions.AddRecords.Yes">
+            <label class="govuk-label govuk-radios__label" for="addRecords-1">
+                Yes, but I want final review of apprentice records
+            </label>
+        </div>
+        <div class="govuk-radios__item">
+            <input asp-for="PermissionToAddCohorts" class="govuk-radios__input" id="addRecords-2" type="radio" value="@SetPermissions.AddRecords.No">
+            <label class="govuk-label govuk-radios__label" for="addRecords-2">
+                No
+            </label>
+        </div>
+    </div>
+</div>
+<br />
+<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+    Recruit apprentices
+</legend>
+<div id="recruitApprentices-hint" class="govuk-hint">
+    Training provider can advertise apprenticeships and review applications on your behalf.
+</div>
+<div esfa-validation-marker-for="@Model.PermissionToRecruit" class="govuk-form-group">
+    <span asp-validation-for="PermissionToRecruit" class="govuk-error-message"></span>
+    <div class="govuk-radios" id="PermissionToRecruit" data-module="govuk-radios">
+        <div class="govuk-radios__item">
+            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-1" type="radio" value="@SetPermissions.RecruitApprentices.Yes">
+            <label class="govuk-label govuk-radios__label" for="recruitApprentices-1">
+                Yes
+            </label>
+        </div>
+        <div class="govuk-radios__item">
+            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-2" type="radio" value="@SetPermissions.RecruitApprentices.YesWithReview">
+            <label class="govuk-label govuk-radios__label" for="recruitApprentices-2">
+                Yes, but I want to review adverts before they're advertised
+            </label>
+        </div>
+        <div class="govuk-radios__item">
+            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-3" type="radio" value="@SetPermissions.RecruitApprentices.No">
+            <label class="govuk-label govuk-radios__label" for="recruitApprentices-3">
+                No
+            </label>
+        </div>
+    </div>
+</div>

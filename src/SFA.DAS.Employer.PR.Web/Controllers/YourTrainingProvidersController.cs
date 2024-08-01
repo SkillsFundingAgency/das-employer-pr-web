@@ -24,32 +24,64 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
         var accountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name);
 
-        var legalEntities = OrderPermissionsByProviderName(accountLegalEntities);
+        var legalEntityModels = OrderPermissionsAndAddLinks(employerAccountId, accountLegalEntities);
 
-        YourTrainingProvidersViewModel model = InitialiseViewModel(legalEntities);
+        YourTrainingProvidersViewModel model = InitialiseViewModel(legalEntityModels);
         model.IsOwner = User.IsOwner(employerAccountId);
-        model.PermissionsUpdatedForProvider = TempData[TempDataKeys.NameOfProviderAdded]?.ToString();
+        SetSuccessBanner(model);
+
         model.AddTrainingProviderUrl = Url.RouteUrl(RouteNames.SelectLegalEntity, new { employerAccountId })!;
 
         return View(model);
     }
 
-    private static List<AccountLegalEntity> OrderPermissionsByProviderName(IEnumerable<AccountLegalEntity> accountLegalEntities)
+    private void SetSuccessBanner(YourTrainingProvidersViewModel model)
     {
-        var legalEntities = new List<AccountLegalEntity>();
+        var nameOfProviderAdded = TempData[TempDataKeys.NameOfProviderAdded]?.ToString()!.ToUpper();
+        if (nameOfProviderAdded != null)
+        {
+            model.PermissionsUpdatedForProvider = nameOfProviderAdded;
+            model.PermissionsUpdatedForProviderText =
+                $"You've added {model.PermissionsUpdatedForProvider} and set their permissions.";
+            return;
+        }
+
+        var nameOfProviderUpdated = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
+
+        if (nameOfProviderUpdated != null)
+        {
+            model.PermissionsUpdatedForProvider = nameOfProviderUpdated;
+            model.PermissionsUpdatedForProviderText =
+                $"You've set permissions for {model.PermissionsUpdatedForProvider}";
+        }
+    }
+
+    private List<LegalEntityModel> OrderPermissionsAndAddLinks(string employerAccountId, IOrderedEnumerable<AccountLegalEntity> accountLegalEntities)
+    {
+        var legalEntityModels = new List<LegalEntityModel>();
 
         foreach (var ale in accountLegalEntities)
         {
-            var permissions = new List<Permission>();
-            permissions.AddRange(ale.Permissions.OrderBy(p => p.ProviderName));
-            ale.Permissions = permissions;
-            legalEntities.Add(ale);
+            var legalEntity = (LegalEntityModel)ale;
+
+            var permissions = new List<PermissionModel>();
+
+            foreach (var p in ale.Permissions.OrderBy(p => p.ProviderName))
+            {
+                var pm = (PermissionModel)p;
+                pm.ChangePermissionsLink = Url.RouteUrl(RouteNames.ChangePermissions,
+                    new { employerAccountId, legalEntity.LegalEntityPublicHashedId, pm.Ukprn })!;
+                permissions.Add(pm);
+            }
+
+            legalEntity.Permissions = permissions;
+            legalEntityModels.Add(legalEntity);
         }
 
-        return legalEntities;
+        return legalEntityModels;
     }
 
-    private static YourTrainingProvidersViewModel InitialiseViewModel(List<AccountLegalEntity> accountLegalEntities)
+    private static YourTrainingProvidersViewModel InitialiseViewModel(List<LegalEntityModel> accountLegalEntities)
     {
         var model = new YourTrainingProvidersViewModel();
         foreach (var legalEntity in accountLegalEntities.Where(x => x.Permissions.Count > 0))

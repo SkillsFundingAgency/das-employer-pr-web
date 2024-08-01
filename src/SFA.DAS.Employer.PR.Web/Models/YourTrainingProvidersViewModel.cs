@@ -6,6 +6,7 @@ public class YourTrainingProvidersViewModel
 {
     public bool IsOwner { get; set; }
     public string? PermissionsUpdatedForProvider { get; set; }
+    public string? PermissionsUpdatedForProviderText { get; set; }
     public bool ShowPermissionsUpdatedBanner() => !string.IsNullOrEmpty(PermissionsUpdatedForProvider);
 
     public List<LegalEntityModel> LegalEntities { get; set; } = [];
