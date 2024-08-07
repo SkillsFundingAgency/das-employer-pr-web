@@ -97,32 +97,32 @@ stages:
       SolutionBaseName: $(SolutionBaseName)
       ServiceConnection: SFA-DIG-PreProd-ARM
 
-# - stage: Deploy_PROD
-#   dependsOn: Build
-#   displayName: Deploy to PROD
-#   variables:
-#   - group: PROD Management Resources
-#   - group: PROD Shared Resources
-#   - group: __PRODSpecificReleaseVariables__ #PLACEHOLDER
-#   jobs:
-#   - template: pipeline-templates/job/deploy.yml
-#     parameters:
-#       Environment: PROD
-#       SolutionBaseName: $(SolutionBaseName)
-#       ServiceConnection: SFA-DIG-Prod-ARM
+- stage: Deploy_PROD
+  dependsOn: Build
+  displayName: Deploy to PROD
+  variables:
+  - group: PROD Management Resources
+  - group: PROD Shared Resources
+  - group: PROD das-employer-pr-web
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: PROD
+      SolutionBaseName: $(SolutionBaseName)
+      ServiceConnection: SFA-DIG-Prod-ARM
 
-# - stage: Deploy_MO
-#   dependsOn: Build
-#   displayName: Deploy to MO
-#   variables:
-#   - group: MO Management Resources
-#   - group: MO Shared Resources
-#   jobs:
-#   - template: pipeline-templates/job/deploy.yml
-#     parameters:
-#       Environment: MO
-#       SolutionBaseName: $(SolutionBaseName)
-#       ServiceConnection: SFA-ASM-ModelOffice-ARM
+- stage: Deploy_MO
+  dependsOn: Build
+  displayName: Deploy to MO
+  variables:
+  - group: MO Management Resources
+  - group: MO Shared Resources
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: MO
+      SolutionBaseName: $(SolutionBaseName)
+      ServiceConnection: SFA-ASM-ModelOffice-ARM
 
 - stage: Deploy_DEMO
   dependsOn: Build
