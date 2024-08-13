@@ -1,11 +1,11 @@
-﻿using SFA.DAS.Employer.PR.Domain.Models;
+﻿using System.Text.Json;
+using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
-using System.Text.Json;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 public static class UsersForTesting
 {
-    public const string NameIdentifierValue = "validNameIdentifier";
+    public static readonly Guid EmployerUserRef = Guid.NewGuid();
     public static ClaimsPrincipal GetUserWithClaims(string employerAccountId, EmployerUserRole? roleToUse)
     {
         var familyName = "validFamilyName";
@@ -16,7 +16,7 @@ public static class UsersForTesting
         var nameClaim = new Claim(EmployerClaims.UserDisplayNameClaimTypeIdentifier, $"{givenName} {familyName}");
 
         var emailClaim = new Claim(ClaimTypes.Email, "valid_email");
-        var userIdClaimTypeIdentifier = new Claim(EmployerClaims.UserIdClaimTypeIdentifier, Guid.NewGuid().ToString());
+        var userIdClaimTypeIdentifier = new Claim(EmployerClaims.UserIdClaimTypeIdentifier, EmployerUserRef.ToString());
 
         var role = roleToUse != null ? roleToUse.ToString() : "role";
 
@@ -25,21 +25,18 @@ public static class UsersForTesting
 
         var accountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
 
-        var nameIdentifierClaim = new Claim(ClaimTypes.NameIdentifier, NameIdentifierValue);
-
-        ClaimsPrincipal claimsPrincipal = new(new ClaimsIdentity[1]
-        {
-            new(new Claim[7]
-            {
+        ClaimsPrincipal claimsPrincipal = new(
+        [
+            new(
+            [
                 givenNameClaim,
                 familyNameClaim,
                 nameClaim,
                 emailClaim,
                 userIdClaimTypeIdentifier,
-                accountsClaim,
-                nameIdentifierClaim
-            }, "Test")
-        });
+                accountsClaim
+            ], "Test")
+        ]);
 
         return claimsPrincipal;
     }
