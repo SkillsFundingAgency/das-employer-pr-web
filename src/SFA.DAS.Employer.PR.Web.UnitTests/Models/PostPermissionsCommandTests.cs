@@ -6,7 +6,7 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Models;
 public class PostPermissionsCommandTests
 {
     [Test, AutoData]
-    public void Constructor_BuildsCommand(string userRef, long ukprn, long accountLegalEntityId, List<Operation> operations)
+    public void Constructor_BuildsCommand(Guid userRef, long ukprn, long accountLegalEntityId, List<Operation> operations)
     {
         var sut = new PostPermissionsCommand(userRef, ukprn, accountLegalEntityId, operations);
 

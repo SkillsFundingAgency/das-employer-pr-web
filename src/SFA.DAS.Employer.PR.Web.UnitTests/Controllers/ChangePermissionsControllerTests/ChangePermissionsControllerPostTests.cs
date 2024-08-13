@@ -225,11 +225,11 @@ public class ChangePermissionsControllerPostTests
 
         await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
-        var command = new PostPermissionsCommand(UsersForTesting.NameIdentifierValue, ukprn, legalEntityId,
+        var command = new PostPermissionsCommand(UsersForTesting.EmployerUserRef, ukprn, legalEntityId,
             expectedOperations);
 
         outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsCommand>(
-            c => c.UserRef == UsersForTesting.NameIdentifierValue
+            c => c.UserRef == UsersForTesting.EmployerUserRef
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId
                  && c.Operations.Count == expectedOperations.Count
@@ -282,11 +282,11 @@ public class ChangePermissionsControllerPostTests
 
         await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
-        var command = new PostPermissionsCommand(UsersForTesting.NameIdentifierValue, ukprn, legalEntityId,
+        var command = new PostPermissionsCommand(UsersForTesting.EmployerUserRef, ukprn, legalEntityId,
             expectedOperations);
 
         outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsCommand>(
-            c => c.UserRef == UsersForTesting.NameIdentifierValue
+            c => c.UserRef == UsersForTesting.EmployerUserRef
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId
                  && c.Operations.Count == 0

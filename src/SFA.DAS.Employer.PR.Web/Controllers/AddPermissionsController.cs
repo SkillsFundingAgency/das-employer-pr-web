@@ -6,12 +6,12 @@ using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
+using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.Services;
-using System.Security.Claims;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -53,9 +53,9 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
 
         var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
-        var userRef = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userRef = User.GetUserId();
 
-        var command = new PostPermissionsCommand(userRef!, sessionModel.Ukprn.Value, sessionModel.SelectedLegalEntityId.Value, operationsToSet);
+        var command = new PostPermissionsCommand(userRef, sessionModel.Ukprn.Value, sessionModel.SelectedLegalEntityId.Value, operationsToSet);
 
         await _outerApiClient.PostPermissions(command, cancellationToken);
 

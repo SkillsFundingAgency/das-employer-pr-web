@@ -176,15 +176,12 @@ public class AddPermissionsControllerPostTests
 
         await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
-        var command = new PostPermissionsCommand(UsersForTesting.NameIdentifierValue, ukprn, legalEntityId,
-            expectedOperations);
-
         outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsCommand>(
-            c => c.UserRef == UsersForTesting.NameIdentifierValue
+            c => c.UserRef == UsersForTesting.EmployerUserRef
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId
                  && c.Operations.Count == expectedOperations.Count
-                 && c.Operations.Contains(expectedOperations.First())
+                 && c.Operations.Contains(expectedOperations[0])
         ), cancellationToken), Times.Once);
     }
 

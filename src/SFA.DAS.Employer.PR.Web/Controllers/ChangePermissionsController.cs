@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Net;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,12 +7,11 @@ using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
+using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Encoding;
-using System.Net;
-using System.Security.Claims;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -60,9 +60,9 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
         var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
 
-        var userRef = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userRef = User.GetUserId();
 
-        var command = new PostPermissionsCommand(userRef!, submitViewModel.Ukprn, submitViewModel.LegalEntityId, operationsToSet);
+        var command = new PostPermissionsCommand(userRef, submitViewModel.Ukprn, submitViewModel.LegalEntityId, operationsToSet);
 
         await _outerApiClient.PostPermissions(command, cancellationToken);
 

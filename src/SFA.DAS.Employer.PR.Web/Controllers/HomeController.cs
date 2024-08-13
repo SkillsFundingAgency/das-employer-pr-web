@@ -12,6 +12,6 @@ public class HomeController : Controller
 {
     public IActionResult Index([FromRoute] string employerAccountId)
     {
-        return View();
+        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
     }
 }
