@@ -28,6 +28,7 @@ builder.Services
      {
          options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
      })
+     .SetDefaultNavigationSection(NavigationSection.AccountsHome)
      .AddSessionStateTempDataProvider();
 
 #if DEBUG
