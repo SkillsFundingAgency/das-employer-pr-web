@@ -9,19 +9,20 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using SFA.DAS.Encoding;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerAccount))]
 [Route("accounts/{employerAccountId}/providers", Name = RouteNames.YourTrainingProviders)]
-public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, ISessionService _sessionService) : Controller
+public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IEncodingService _encodingService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         _sessionService.Delete<AddTrainingProvidersSessionModel>();
-
-        var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
+        var accountId = _encodingService.Decode(employerAccountId, EncodingType.AccountId);
+        var response = await _outerApiClient.GetAccountLegalEntities(accountId, cancellationToken);
         var accountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name);
 
         var legalEntityModels = OrderPermissionsAndAddLinks(employerAccountId, accountLegalEntities);

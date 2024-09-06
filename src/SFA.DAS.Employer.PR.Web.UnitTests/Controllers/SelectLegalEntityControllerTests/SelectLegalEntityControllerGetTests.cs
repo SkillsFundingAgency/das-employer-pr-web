@@ -12,6 +12,7 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
+using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.SelectLegalEntityControllerTests;
@@ -41,10 +42,10 @@ public class SelectLegalEntityControllerGetTests
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         var outerApiClientMock = new Mock<IOuterApiClient>();
-        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<string>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
+        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>())
+        SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>(), Mock.Of<IEncodingService>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -92,7 +93,7 @@ public class SelectLegalEntityControllerGetTests
         };
 
         var outerApiClientMock = new Mock<IOuterApiClient>();
-        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<string>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
+        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
 
 
 
@@ -101,7 +102,7 @@ public class SelectLegalEntityControllerGetTests
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>())
+        SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>(), Mock.Of<IEncodingService>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -127,12 +128,12 @@ public class SelectLegalEntityControllerGetTests
         CancellationToken cancellationToken
     )
     {
-        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(employerRelationshipsQueryResponse);
         sessionServiceMock.Setup(s => s.Get<AddTrainingProvidersSessionModel>()).Returns((AddTrainingProvidersSessionModel)null!);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>())
+        SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>(), Mock.Of<IEncodingService>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };

@@ -12,8 +12,8 @@ public interface IOuterApiClient
     [Get("/accountusers/{userId}/accounts")]
     Task<GetEmployerUserAccountsResponse> GetUserAccounts([Path] string userId, [Query] string email, CancellationToken cancellationToken);
 
-    [Get("/relationships/employeraccount/{accountHashedId}")]
-    Task<GetEmployerRelationshipsQueryResponse> GetAccountLegalEntities([Path] string accountHashedId, CancellationToken cancellationToken);
+    [Get("/relationships/{accountId}")]
+    Task<GetEmployerRelationshipsQueryResponse> GetAccountLegalEntities([Path] long accountId, CancellationToken cancellationToken);
 
     [Get("/providers")]
     Task<GetRegisteredProvidersResponse> GetRegisteredProviders(CancellationToken cancellationToken);

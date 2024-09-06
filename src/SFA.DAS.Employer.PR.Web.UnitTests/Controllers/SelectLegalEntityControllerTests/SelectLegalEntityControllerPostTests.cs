@@ -1,7 +1,7 @@
-﻿using FluentValidation;
+﻿using AutoFixture.NUnit3;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Controllers;
@@ -19,13 +19,14 @@ public class SelectLegalEntityControllerPostTests
 
     [Test, MoqAutoData]
     public void Post_Validated_ReturnsExpectedModel(
-        Mock<IValidator<SelectLegalEntitiesSubmitViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<SelectLegalEntitiesSubmitViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] SelectLegalEntityController sut,
         string employerAccountId,
         int accountId,
         string accountName,
         string publicHashedId)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         var accountLegalEntityId = 1;
         SelectLegalEntitiesSubmitViewModel submitModel = new SelectLegalEntitiesSubmitViewModel
         {
@@ -48,10 +49,7 @@ public class SelectLegalEntityControllerPostTests
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
 
-        SelectLegalEntityController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
         var result = sut.Index(employerAccountId, submitModel);
@@ -63,13 +61,14 @@ public class SelectLegalEntityControllerPostTests
     [Test, MoqAutoData]
 
     public void Post_Validated_SetsSessionModel(
-        Mock<IValidator<SelectLegalEntitiesSubmitViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<SelectLegalEntitiesSubmitViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] SelectLegalEntityController sut,
         string employerAccountId,
         int accountId,
         string accountName,
         string publicHashedId)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         var accountLegalEntityId = 1;
         SelectLegalEntitiesSubmitViewModel submitModel = new SelectLegalEntitiesSubmitViewModel { LegalEntityId = accountLegalEntityId };
 
@@ -89,10 +88,7 @@ public class SelectLegalEntityControllerPostTests
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
 
-        SelectLegalEntityController sut = new SelectLegalEntityController(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
@@ -103,14 +99,15 @@ public class SelectLegalEntityControllerPostTests
     [Test, MoqAutoData]
 
     public void Post_Validated_RedirectIfEmployerAccountDoesNotMatch(
-        Mock<IValidator<SelectLegalEntitiesSubmitViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<SelectLegalEntitiesSubmitViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] SelectLegalEntityController sut,
         string employerAccountId,
         int accountId,
         string accountName,
         string publicHashedId,
         CancellationToken cancellationToken)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         var accountLegalEntityId = 1;
         SelectLegalEntitiesSubmitViewModel submitModel = new SelectLegalEntitiesSubmitViewModel { LegalEntityId = accountLegalEntityId };
 
@@ -130,10 +127,7 @@ public class SelectLegalEntityControllerPostTests
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities });
 
-        SelectLegalEntityController sut = new SelectLegalEntityController(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
@@ -145,13 +139,14 @@ public class SelectLegalEntityControllerPostTests
 
     [Test, MoqAutoData]
     public void Post_ValidatedAndFailed_ReturnsExpectedModel(
-        Mock<IValidator<SelectLegalEntitiesSubmitViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<SelectLegalEntitiesSubmitViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] SelectLegalEntityController sut,
         string employerAccountId,
         int accountId,
         string accountName,
         string publicHashedId)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         SelectLegalEntitiesSubmitViewModel submitModel = new SelectLegalEntitiesSubmitViewModel();
         validatorMock.Setup(m => m.Validate(It.IsAny<SelectLegalEntitiesSubmitViewModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
         {
@@ -170,10 +165,7 @@ public class SelectLegalEntityControllerPostTests
             new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions}
         };
 
-        SelectLegalEntityController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
 
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())

@@ -9,12 +9,13 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using SFA.DAS.Encoding;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/new/selectOrganisation", Name = RouteNames.SelectLegalEntity)]
-public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<SelectLegalEntitiesSubmitViewModel> _validator) : Controller
+public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<SelectLegalEntitiesSubmitViewModel> _validator, IEncodingService _encodingService) : Controller
 {
     public const string ViewPath = "~/Views/SelectLegalEntity/Index.cshtml";
 
@@ -25,7 +26,8 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
 
         if (sessionModel == null)
         {
-            var response = await _outerApiClient.GetAccountLegalEntities(employerAccountId, cancellationToken);
+            var accountId = _encodingService.Decode(employerAccountId, EncodingType.AccountId);
+            var response = await _outerApiClient.GetAccountLegalEntities(accountId, cancellationToken);
 
             sessionModel = new AddTrainingProvidersSessionModel
             {
