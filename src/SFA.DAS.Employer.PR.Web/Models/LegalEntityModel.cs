@@ -23,7 +23,7 @@ public class LegalEntityModel
             Name = legalEntity.Name
         };
 
-        foreach (var permission in legalEntity.ProviderPermissions)
+        foreach (var permission in legalEntity.Permissions)
         {
             model.Permissions.Add(permission);
         }

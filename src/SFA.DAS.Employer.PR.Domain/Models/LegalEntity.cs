@@ -6,5 +6,5 @@ public class LegalEntity
     public string PublicHashedId { get; set; } = null!;
     public string Name { get; set; } = null!;
     public long AccountId { get; set; }
-    public List<ProviderPermission> ProviderPermissions { get; set; } = [];
+    public List<ProviderPermission> Permissions { get; set; } = [];
 }

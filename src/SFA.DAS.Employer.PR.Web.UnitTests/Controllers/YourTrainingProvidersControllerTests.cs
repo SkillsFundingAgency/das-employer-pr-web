@@ -126,17 +126,17 @@ public class YourTrainingProvidersControllerTests
             new()
             {
                 AccountId = accountId, Id = 1, Name = accountNameExpectedThird, PublicHashedId = "KJGH",
-                ProviderPermissions = new List<ProviderPermission> {permissionOther}
+                Permissions = new List<ProviderPermission> {permissionOther}
             },
             new()
             {
                 AccountId = accountId, Id=2, Name = accountNameExpectedFirst, PublicHashedId = publicHashedId,
-                ProviderPermissions = permissions
+                Permissions = permissions
             },
             new()
             {
                 AccountId = accountId, Id = 1, Name = accountNameExpectedSecond, PublicHashedId = "AVBC",
-                ProviderPermissions = new List<ProviderPermission> {permissionOther}
+                Permissions = new List<ProviderPermission> {permissionOther}
             },
         };
 
@@ -402,14 +402,14 @@ public class YourTrainingProvidersControllerTests
             new()
             {
                 AccountId = accountId, Id = 1, Name = accountName, PublicHashedId = publicHashedId,
-                ProviderPermissions = permissions
+                Permissions = permissions
             }
         };
 
         if (multipleAccounts)
         {
             accountLegalEntities.Add(new LegalEntity
-            { AccountId = 1234, Id = 2, Name = "name 2", PublicHashedId = "AFC", ProviderPermissions = permissions });
+            { AccountId = 1234, Id = 2, Name = "name 2", PublicHashedId = "AFC", Permissions = permissions });
         }
 
         GetEmployerRelationshipsQueryResponse response = new GetEmployerRelationshipsQueryResponse(accountLegalEntities);

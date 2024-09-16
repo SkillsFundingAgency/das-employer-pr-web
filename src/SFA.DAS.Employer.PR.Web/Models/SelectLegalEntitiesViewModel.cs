@@ -23,5 +23,4 @@ public record AccountLegalEntityViewModel(string Id, string Name)
 public class SelectLegalEntitiesSubmitViewModel
 {
     public string? LegalEntityPublicHashedId { get; set; }
-    public string? LegalName { get; set; }
 }

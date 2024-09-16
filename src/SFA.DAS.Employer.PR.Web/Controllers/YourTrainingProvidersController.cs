@@ -67,7 +67,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
 
             var permissions = new List<PermissionModel>();
 
-            foreach (var p in ale.ProviderPermissions.OrderBy(p => p.ProviderName))
+            foreach (var p in ale.Permissions.OrderBy(p => p.ProviderName))
             {
                 var pm = (PermissionModel)p;
                 pm.ChangePermissionsLink = Url.RouteUrl(RouteNames.ChangePermissions,
