@@ -63,6 +63,7 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
     public IActionResult Index([FromRoute] string employerAccountId, SelectLegalEntitiesSubmitViewModel submitModel)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        if (sessionModel == null) return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
 
         ValidationResult result = _validator.Validate(submitModel);
 

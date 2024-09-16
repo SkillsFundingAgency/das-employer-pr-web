@@ -110,4 +110,20 @@ public class SelectLegalEntityControllerPostTests
         viewModel!.LegalEntities.Count.Should().Be(accountLegalEntities.Count);
         sessionServiceMock.Verify(s => s.Set(It.IsAny<AddTrainingProvidersSessionModel>()), Times.Never);
     }
+
+    [Test, MoqAutoData]
+    public void Post_SessionModelNotSet_RedirectsToYourProvidersPage(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] SelectLegalEntityController sut,
+        string employerAccountId)
+    {
+        SelectLegalEntitiesSubmitViewModel submitModel = new();
+
+        sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>()).Returns(() => null);
+
+        var result = sut.Index(employerAccountId, submitModel);
+
+        result.As<RedirectToRouteResult>().Should().NotBeNull();
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.YourTrainingProviders);
+    }
 }
