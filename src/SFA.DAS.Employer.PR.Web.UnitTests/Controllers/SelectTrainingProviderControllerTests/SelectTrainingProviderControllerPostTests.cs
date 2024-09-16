@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Net;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using RestEase;
@@ -14,7 +15,6 @@ using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.SelectTrainingProviderControllerTests;
 public class SelectTrainingProviderControllerPostTests
@@ -29,6 +29,7 @@ public class SelectTrainingProviderControllerPostTests
         int ukprn,
         string name,
         long accountLegalEntityId,
+        List<AccountLegalEntity> accountLegalEntities,
         CancellationToken cancellationToken)
     {
         var sessionServiceMock = new Mock<ISessionService>();
@@ -36,7 +37,7 @@ public class SelectTrainingProviderControllerPostTests
             .Returns(new AddTrainingProvidersSessionModel
             {
                 SelectedLegalEntityId = accountLegalEntityId,
-                AccountLegalEntities = new() { new LegalEntity() },
+                AccountLegalEntities = accountLegalEntities,
                 EmployerAccountId = employerAccountId
             });
 
@@ -79,6 +80,7 @@ public class SelectTrainingProviderControllerPostTests
         int ukprn,
         string name,
         long accountLegalEntityId,
+        List<AccountLegalEntity> accountLegalEntities,
         CancellationToken cancellationToken)
     {
         var sessionServiceMock = new Mock<ISessionService>();
@@ -89,7 +91,7 @@ public class SelectTrainingProviderControllerPostTests
                 .Returns(new AddTrainingProvidersSessionModel
                 {
                     SelectedLegalEntityId = accountLegalEntityId,
-                    AccountLegalEntities = new() { new LegalEntity() },
+                    AccountLegalEntities = accountLegalEntities,
                     EmployerAccountId = employerAccountIdOther
                 });
         }
@@ -130,13 +132,15 @@ public class SelectTrainingProviderControllerPostTests
     [Test, MoqAutoData]
     public async Task Post_ValidatedAndFailed_ReturnsExpectedModel(
         Mock<IValidator<SelectTrainingProviderSubmitModel>> validatorMock,
+        AccountLegalEntity accountLegalEntity,
         string employerAccountId,
         CancellationToken cancellationToken)
     {
+        List<AccountLegalEntity> accountLegalEntities = [accountLegalEntity];
         var sessionServiceMock = new Mock<ISessionService>();
         var outerApiClientMock = new Mock<IOuterApiClient>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = new() { new LegalEntity() }, EmployerAccountId = employerAccountId });
+            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities, EmployerAccountId = employerAccountId });
 
         SelectTrainingProviderSubmitModel submitModel = new SelectTrainingProviderSubmitModel();
         validatorMock.Setup(m => m.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
@@ -167,6 +171,7 @@ public class SelectTrainingProviderControllerPostTests
         int ukprn,
         string name,
         long accountLegalEntityId,
+        List<AccountLegalEntity> accountLegalEntities,
         CancellationToken cancellationToken)
     {
         var sessionServiceMock = new Mock<ISessionService>();
@@ -175,7 +180,7 @@ public class SelectTrainingProviderControllerPostTests
             {
                 SelectedLegalEntityId = accountLegalEntityId,
                 EmployerAccountId = employerAccountId,
-                AccountLegalEntities = new() { new LegalEntity() }
+                AccountLegalEntities = accountLegalEntities
             });
 
         var outerApiClientMock = new Mock<IOuterApiClient>();
@@ -221,6 +226,7 @@ public class SelectTrainingProviderControllerPostTests
        int ukprn,
        string name,
        long accountLegalEntityId,
+       List<AccountLegalEntity> accountLegalEntities,
        CancellationToken cancellationToken)
     {
         var sessionServiceMock = new Mock<ISessionService>();
@@ -229,7 +235,7 @@ public class SelectTrainingProviderControllerPostTests
             {
                 SelectedLegalEntityId = accountLegalEntityId,
                 EmployerAccountId = employerAccountId,
-                AccountLegalEntities = new() { new LegalEntity() }
+                AccountLegalEntities = accountLegalEntities
             });
 
         var outerApiClientMock = new Mock<IOuterApiClient>();

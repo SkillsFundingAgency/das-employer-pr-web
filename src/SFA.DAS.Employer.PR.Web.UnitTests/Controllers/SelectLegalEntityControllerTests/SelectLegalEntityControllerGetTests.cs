@@ -23,26 +23,18 @@ public class SelectLegalEntityControllerGetTests
     [Test, MoqAutoData]
     public async Task ReturnsExpectedLegalEntityModel_MatchingMultipleLegalEntities(
         string employerAccountId,
-        int accountId,
-        string accountName,
-        string publicHashedId,
+        List<AccountLegalEntity> accountLegalEntities,
         CancellationToken cancellationToken)
     {
         ProviderPermission permission = new() { Operations = new(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<ProviderPermission> permissions = new() { permission };
-        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
-        {
-            new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, ProviderPermissions = permissions},
-            new() {AccountId = 1123,Id=1, Name= $"{accountName}x", PublicHashedId = "12123232", ProviderPermissions = permissions}
-        };
         var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         var outerApiClientMock = new Mock<IOuterApiClient>();
-        outerApiClientMock.Setup(o => o.GetEmployerRelationships(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
+        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetAccountLegalEntitiesResponse(accountLegalEntities));
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>(), Mock.Of<IEncodingService>())
@@ -56,66 +48,43 @@ public class SelectLegalEntityControllerGetTests
         var result = await sut.Index(employerAccountId, cancellationToken);
 
         ViewResult? viewResult = result.As<ViewResult>();
-        SelectLegalEntitiesViewModel? viewModel = viewResult.Model as SelectLegalEntitiesViewModel;
+        var viewModel = viewResult.Model.As<SelectLegalEntitiesViewModel>();
 
-        viewModel!.LegalEntities.Count.Should().Be(2);
         viewModel.BackLink.Should().Be(YourTrainingProvidersLink);
-        LegalEntityModel actualLegalEntity = viewModel.LegalEntities.First();
-        actualLegalEntity.AccountId.Should().Be(accountId);
-        actualLegalEntity.Name.Should().Be(accountName);
-        actualLegalEntity.LegalEntityPublicHashedId.Should().Be(publicHashedId);
+        viewModel.LegalEntities.Should().HaveCount(accountLegalEntities.Count);
     }
 
     [Test, MoqAutoData]
     public async Task ReturnsExpectedLegalEntityModel_MatchingSingleLegalEntity(
-      string employerAccountId,
-      int accountId,
-      string accountName,
-      string publicHashedId,
-      CancellationToken cancellationToken)
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IEncodingService> encodingServiceMock,
+        [Greedy] SelectLegalEntityController sut,
+        AccountLegalEntity accountLegalEntity,
+        long accountLegalEntityId,
+        string employerAccountId,
+        CancellationToken cancellationToken)
     {
-        ProviderPermission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
-        permission.Operations.Add(Operation.CreateCohort);
+        encodingServiceMock.Setup(e => e.Decode(accountLegalEntity.AccountLegalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId)).Returns(accountLegalEntityId);
 
-        List<ProviderPermission> permissions = new List<ProviderPermission> { permission };
+        List<AccountLegalEntity> accountLegalEntities = [accountLegalEntity];
+        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetAccountLegalEntitiesResponse(accountLegalEntities));
 
-        var firstLegalEntity = new LegalEntity
-        {
-            AccountId = accountId,
-            Id = 1,
-            Name = accountName,
-            PublicHashedId = publicHashedId,
-            ProviderPermissions = permissions
-        };
-        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
-        {
-           firstLegalEntity
-        };
-
-        var outerApiClientMock = new Mock<IOuterApiClient>();
-        outerApiClientMock.Setup(o => o.GetEmployerRelationships(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
-
-
-
-        var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>(), Mock.Of<IEncodingService>())
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
-
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
-        var result = await sut.Index(employerAccountId, cancellationToken);
 
+        /// Action
+        var result = await sut.Index(employerAccountId, cancellationToken);
 
         RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
         redirectToRouteResult.RouteName.Should().Be(RouteNames.SelectTrainingProvider);
         sessionServiceMock.Verify(x => x.Set(It.Is<AddTrainingProvidersSessionModel>(
-            s => s.SelectedLegalEntityId == firstLegalEntity.Id &&
-                 s.SelectedLegalName == firstLegalEntity.Name
+            s => s.SelectedLegalEntityId == accountLegalEntityId &&
+                 s.SelectedLegalName == accountLegalEntity.AccountLegalEntityName
         )), Times.AtLeastOnce);
     }
 
@@ -123,13 +92,13 @@ public class SelectLegalEntityControllerGetTests
     public async Task SetsUpSessionModelWithAccountLegalEntities(
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
-        GetEmployerRelationshipsQueryResponse employerRelationshipsQueryResponse,
+        GetAccountLegalEntitiesResponse employerAccountLegalEntitiesResponse,
         string employerAccountId,
         CancellationToken cancellationToken
     )
     {
-        outerApiClientMock.Setup(o => o.GetEmployerRelationships(It.IsAny<long>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(employerRelationshipsQueryResponse);
+        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(employerAccountLegalEntitiesResponse);
         sessionServiceMock.Setup(s => s.Get<AddTrainingProvidersSessionModel>()).Returns((AddTrainingProvidersSessionModel)null!);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
@@ -142,6 +111,6 @@ public class SelectLegalEntityControllerGetTests
         var result = await sut.Index(employerAccountId, cancellationToken);
         sessionServiceMock.Verify(s => s.Set(
             It.Is<AddTrainingProvidersSessionModel>(m => m.EmployerAccountId == employerAccountId
-                    && m.AccountLegalEntities.Count == employerRelationshipsQueryResponse.AccountLegalEntities.Count)), Times.Once);
+                    && m.AccountLegalEntities.Count == employerAccountLegalEntitiesResponse.LegalEntities.Count)), Times.Once);
     }
 }

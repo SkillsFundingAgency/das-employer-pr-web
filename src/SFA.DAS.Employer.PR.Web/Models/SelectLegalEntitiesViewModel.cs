@@ -1,8 +1,10 @@
-﻿namespace SFA.DAS.Employer.PR.Web.Models;
+﻿using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
+
+namespace SFA.DAS.Employer.PR.Web.Models;
 
 public class SelectLegalEntitiesViewModel : SelectLegalEntitiesSubmitViewModel
 {
-    public List<LegalEntityModel> LegalEntities { get; set; } = new();
+    public List<AccountLegalEntityViewModel> LegalEntities { get; set; } = new();
     public string BackLink { get; set; }
 
     public SelectLegalEntitiesViewModel(string cancelUrl, string backLink)
@@ -11,8 +13,15 @@ public class SelectLegalEntitiesViewModel : SelectLegalEntitiesSubmitViewModel
     }
 }
 
+public record AccountLegalEntityViewModel(string Id, string Name)
+{
+    public bool IsSelected { get; set; }
+    public static implicit operator AccountLegalEntityViewModel(AccountLegalEntity source)
+        => new(source.AccountLegalEntityPublicHashedId, source.AccountLegalEntityName);
+}
+
 public class SelectLegalEntitiesSubmitViewModel
 {
-    public long? LegalEntityId { get; set; }
+    public string? LegalEntityId { get; set; }
     public string? LegalName { get; set; }
 }

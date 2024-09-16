@@ -7,7 +7,7 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Validators;
 public class SelectLegalEntitySubmitModelValidatorTests
 {
     [Test, MoqAutoData]
-    public void TestValidate_LegalEntitySet_Valid(long legalEntityId)
+    public void TestValidate_LegalEntitySet_Valid(string legalEntityId)
     {
         var model = new SelectLegalEntitiesSubmitViewModel
         {

@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Employer.PR.Domain.Models;
+﻿using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 
 namespace SFA.DAS.Employer.PR.Web.Models.Session;
 
@@ -10,7 +10,7 @@ public class AddTrainingProvidersSessionModel
     public string? ProviderName { get; set; }
     public long? Ukprn { get; set; }
 
-    public List<LegalEntity> AccountLegalEntities { get; set; } = [];
+    public List<AccountLegalEntity> AccountLegalEntities { get; set; } = [];
     public string? PermissionToAddCohorts { get; set; }
     public string? PermissionToRecruit { get; set; }
 

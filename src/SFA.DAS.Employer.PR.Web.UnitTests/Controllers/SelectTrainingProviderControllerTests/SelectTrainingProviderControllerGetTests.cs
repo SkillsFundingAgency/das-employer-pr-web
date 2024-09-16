@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.Models;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Controllers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
@@ -42,6 +42,7 @@ public class SelectTrainingProviderControllerGetTests
 
     [Test, MoqAutoData]
     public void SelectTrainingProviderGet_SingleLegalEntity_SetsBackLinkToExpected(
+        AccountLegalEntity accountLegalEntity,
         string employerAccountId,
         long legalEntityId,
         string legalName
@@ -55,7 +56,7 @@ public class SelectTrainingProviderControllerGetTests
                 EmployerAccountId = employerAccountId,
                 SelectedLegalEntityId = legalEntityId,
                 SelectedLegalName = legalName,
-                AccountLegalEntities = new List<LegalEntity> { new LegalEntity() }
+                AccountLegalEntities = [accountLegalEntity]
             });
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object,
@@ -74,6 +75,7 @@ public class SelectTrainingProviderControllerGetTests
 
     [Test, MoqAutoData]
     public void SelectTrainingProviderGet_MultipleLegalEntity_SetsBackLinkToExpected(
+        List<AccountLegalEntity> accountLegalEntities,
         string employerAccountId,
         long legalEntityId,
         string legalName
@@ -87,7 +89,7 @@ public class SelectTrainingProviderControllerGetTests
                 EmployerAccountId = employerAccountId,
                 SelectedLegalEntityId = legalEntityId,
                 SelectedLegalName = legalName,
-                AccountLegalEntities = new List<LegalEntity> { new LegalEntity(), new LegalEntity() }
+                AccountLegalEntities = accountLegalEntities
             });
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, Mock.Of<IEncodingService>(), Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())
