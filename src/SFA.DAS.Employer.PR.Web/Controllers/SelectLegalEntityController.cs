@@ -27,7 +27,7 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
         if (sessionModel == null)
         {
             var accountId = _encodingService.Decode(employerAccountId, EncodingType.AccountId);
-            var response = await _outerApiClient.GetAccountLegalEntities(accountId, cancellationToken);
+            var response = await _outerApiClient.GetEmployerRelationships(accountId, cancellationToken);
 
             sessionModel = new AddTrainingProvidersSessionModel
             {

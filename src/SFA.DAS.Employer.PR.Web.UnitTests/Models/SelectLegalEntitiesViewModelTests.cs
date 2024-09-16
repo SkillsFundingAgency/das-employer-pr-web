@@ -8,7 +8,7 @@ public class SelectLegalEntitiesViewModelTests
 {
 
     [Test, AutoData]
-    public void Operator_ConvertsTo_LegalEntityModel(List<AccountLegalEntity> legalEntities, string backLink, string cancelUrl)
+    public void Operator_ConvertsTo_LegalEntityModel(List<LegalEntity> legalEntities, string backLink, string cancelUrl)
     {
         SelectLegalEntitiesViewModel sut = new(cancelUrl, backLink);
 

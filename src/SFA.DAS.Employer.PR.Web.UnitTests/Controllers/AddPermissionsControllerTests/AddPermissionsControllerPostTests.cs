@@ -41,7 +41,7 @@ public class AddPermissionsControllerPostTests
         validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        Permission permission = new()
+        ProviderPermission permission = new()
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
@@ -91,7 +91,7 @@ public class AddPermissionsControllerPostTests
         validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        Permission permission = new()
+        ProviderPermission permission = new()
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
@@ -157,7 +157,7 @@ public class AddPermissionsControllerPostTests
         validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        Permission permission = new()
+        ProviderPermission permission = new()
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
@@ -204,7 +204,7 @@ public class AddPermissionsControllerPostTests
         validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        Permission permission = new()
+        ProviderPermission permission = new()
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
@@ -240,7 +240,7 @@ public class AddPermissionsControllerPostTests
         validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        Permission permission = new()
+        ProviderPermission permission = new()
         { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 

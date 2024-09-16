@@ -55,7 +55,7 @@ public class SelectTrainingProviderControllerGetTests
                 EmployerAccountId = employerAccountId,
                 SelectedLegalEntityId = legalEntityId,
                 SelectedLegalName = legalName,
-                AccountLegalEntities = new List<AccountLegalEntity> { new AccountLegalEntity() }
+                AccountLegalEntities = new List<LegalEntity> { new LegalEntity() }
             });
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object,
@@ -87,7 +87,7 @@ public class SelectTrainingProviderControllerGetTests
                 EmployerAccountId = employerAccountId,
                 SelectedLegalEntityId = legalEntityId,
                 SelectedLegalName = legalName,
-                AccountLegalEntities = new List<AccountLegalEntity> { new AccountLegalEntity(), new AccountLegalEntity() }
+                AccountLegalEntities = new List<LegalEntity> { new LegalEntity(), new LegalEntity() }
             });
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, Mock.Of<IEncodingService>(), Mock.Of<IValidator<SelectTrainingProviderSubmitModel>>())

@@ -12,7 +12,7 @@ public class YourTrainingProvidersViewModel
     public List<LegalEntityModel> LegalEntities { get; set; } = [];
     public string AddTrainingProviderUrl { get; set; } = null!;
 
-    public static implicit operator YourTrainingProvidersViewModel(List<AccountLegalEntity> legalEntities)
+    public static implicit operator YourTrainingProvidersViewModel(List<LegalEntity> legalEntities)
     {
         var model = new YourTrainingProvidersViewModel();
         foreach (var legalEntity in legalEntities)

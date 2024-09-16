@@ -37,13 +37,13 @@ public class SelectLegalEntityControllerPostTests
         validatorMock.Setup(v => v.Validate(It.IsAny<SelectLegalEntitiesSubmitViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        Permission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
+        ProviderPermission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new List<Permission> { permission };
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        List<ProviderPermission> permissions = new List<ProviderPermission> { permission };
+        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
-            new() {AccountId = accountId,Id= accountLegalEntityId, Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions}
+            new() {AccountId = accountId,Id= accountLegalEntityId, Name=accountName, PublicHashedId = publicHashedId, ProviderPermissions = permissions}
         };
 
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
@@ -75,14 +75,14 @@ public class SelectLegalEntityControllerPostTests
         validatorMock.Setup(v => v.Validate(It.IsAny<SelectLegalEntitiesSubmitViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        Permission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
+        ProviderPermission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new List<Permission> { permission };
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        List<ProviderPermission> permissions = new List<ProviderPermission> { permission };
+        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
-            new() {AccountId = accountId,Id= accountLegalEntityId, Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions},
-            new() {AccountId = 1,Name = "test", Permissions = permissions,PublicHashedId = "xyz"}
+            new() {AccountId = accountId,Id= accountLegalEntityId, Name=accountName, PublicHashedId = publicHashedId, ProviderPermissions = permissions},
+            new() {AccountId = 1,Name = "test", ProviderPermissions = permissions,PublicHashedId = "xyz"}
         };
 
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
@@ -114,14 +114,14 @@ public class SelectLegalEntityControllerPostTests
         validatorMock.Setup(v => v.Validate(It.IsAny<SelectLegalEntitiesSubmitViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        Permission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
+        ProviderPermission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new List<Permission> { permission };
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        List<ProviderPermission> permissions = new List<ProviderPermission> { permission };
+        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
-            new() {AccountId = accountId,Id= accountLegalEntityId, Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions},
-            new() {AccountId = 1,Name = "test", Permissions = permissions,PublicHashedId = "xyz"}
+            new() {AccountId = accountId,Id= accountLegalEntityId, Name=accountName, PublicHashedId = publicHashedId, ProviderPermissions = permissions},
+            new() {AccountId = 1,Name = "test", ProviderPermissions = permissions,PublicHashedId = "xyz"}
         };
 
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
@@ -156,13 +156,13 @@ public class SelectLegalEntityControllerPostTests
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
 
-        Permission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
+        ProviderPermission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new List<Permission> { permission };
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        List<ProviderPermission> permissions = new List<ProviderPermission> { permission };
+        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
-            new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions}
+            new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, ProviderPermissions = permissions}
         };
 
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };

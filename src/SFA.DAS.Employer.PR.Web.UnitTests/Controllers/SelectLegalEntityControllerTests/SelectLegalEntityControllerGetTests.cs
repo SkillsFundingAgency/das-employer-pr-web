@@ -28,21 +28,21 @@ public class SelectLegalEntityControllerGetTests
         string publicHashedId,
         CancellationToken cancellationToken)
     {
-        Permission permission = new() { Operations = new(), ProviderName = "provider name", Ukprn = 12345678 };
+        ProviderPermission permission = new() { Operations = new(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new() { permission };
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        List<ProviderPermission> permissions = new() { permission };
+        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
-            new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, Permissions = permissions},
-            new() {AccountId = 1123,Id=1, Name= $"{accountName}x", PublicHashedId = "12123232", Permissions = permissions}
+            new() {AccountId = accountId,Id=1 , Name=accountName, PublicHashedId = publicHashedId, ProviderPermissions = permissions},
+            new() {AccountId = 1123,Id=1, Name= $"{accountName}x", PublicHashedId = "12123232", ProviderPermissions = permissions}
         };
         var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, AccountLegalEntities = accountLegalEntities });
 
         var outerApiClientMock = new Mock<IOuterApiClient>();
-        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
+        outerApiClientMock.Setup(o => o.GetEmployerRelationships(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectLegalEntityController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<SelectLegalEntitiesSubmitViewModel>>(), Mock.Of<IEncodingService>())
@@ -74,26 +74,26 @@ public class SelectLegalEntityControllerGetTests
       string publicHashedId,
       CancellationToken cancellationToken)
     {
-        Permission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
+        ProviderPermission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new List<Permission> { permission };
+        List<ProviderPermission> permissions = new List<ProviderPermission> { permission };
 
-        var firstLegalEntity = new AccountLegalEntity
+        var firstLegalEntity = new LegalEntity
         {
             AccountId = accountId,
             Id = 1,
             Name = accountName,
             PublicHashedId = publicHashedId,
-            Permissions = permissions
+            ProviderPermissions = permissions
         };
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
            firstLegalEntity
         };
 
         var outerApiClientMock = new Mock<IOuterApiClient>();
-        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
+        outerApiClientMock.Setup(o => o.GetEmployerRelationships(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
 
 
 
@@ -128,7 +128,7 @@ public class SelectLegalEntityControllerGetTests
         CancellationToken cancellationToken
     )
     {
-        outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), It.IsAny<CancellationToken>()))
+        outerApiClientMock.Setup(o => o.GetEmployerRelationships(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(employerRelationshipsQueryResponse);
         sessionServiceMock.Setup(s => s.Get<AddTrainingProvidersSessionModel>()).Returns((AddTrainingProvidersSessionModel)null!);
 

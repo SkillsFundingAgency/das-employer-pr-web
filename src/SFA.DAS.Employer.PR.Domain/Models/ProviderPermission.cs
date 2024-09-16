@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Employer.PR.Domain.Models;
 
-public class Permission
+public class ProviderPermission
 {
     public long Ukprn { get; set; }
     public string ProviderName { get; set; } = null!;

@@ -13,7 +13,7 @@ public class LegalEntityModel
 
     public List<PermissionModel> Permissions { get; set; } = new();
 
-    public static implicit operator LegalEntityModel(AccountLegalEntity legalEntity)
+    public static implicit operator LegalEntityModel(LegalEntity legalEntity)
     {
         var model = new LegalEntityModel
         {
@@ -23,7 +23,7 @@ public class LegalEntityModel
             Name = legalEntity.Name
         };
 
-        foreach (var permission in legalEntity.Permissions)
+        foreach (var permission in legalEntity.ProviderPermissions)
         {
             model.Permissions.Add(permission);
         }

@@ -2,4 +2,4 @@
 
 namespace SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 
-public record GetEmployerRelationshipsQueryResponse(List<AccountLegalEntity> AccountLegalEntities);
+public record GetEmployerRelationshipsQueryResponse(List<LegalEntity> AccountLegalEntities);

@@ -36,7 +36,7 @@ public class SelectTrainingProviderControllerPostTests
             .Returns(new AddTrainingProvidersSessionModel
             {
                 SelectedLegalEntityId = accountLegalEntityId,
-                AccountLegalEntities = new() { new AccountLegalEntity() },
+                AccountLegalEntities = new() { new LegalEntity() },
                 EmployerAccountId = employerAccountId
             });
 
@@ -89,7 +89,7 @@ public class SelectTrainingProviderControllerPostTests
                 .Returns(new AddTrainingProvidersSessionModel
                 {
                     SelectedLegalEntityId = accountLegalEntityId,
-                    AccountLegalEntities = new() { new AccountLegalEntity() },
+                    AccountLegalEntities = new() { new LegalEntity() },
                     EmployerAccountId = employerAccountIdOther
                 });
         }
@@ -136,7 +136,7 @@ public class SelectTrainingProviderControllerPostTests
         var sessionServiceMock = new Mock<ISessionService>();
         var outerApiClientMock = new Mock<IOuterApiClient>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
-            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = new() { new AccountLegalEntity() }, EmployerAccountId = employerAccountId });
+            .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = new() { new LegalEntity() }, EmployerAccountId = employerAccountId });
 
         SelectTrainingProviderSubmitModel submitModel = new SelectTrainingProviderSubmitModel();
         validatorMock.Setup(m => m.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
@@ -175,7 +175,7 @@ public class SelectTrainingProviderControllerPostTests
             {
                 SelectedLegalEntityId = accountLegalEntityId,
                 EmployerAccountId = employerAccountId,
-                AccountLegalEntities = new() { new AccountLegalEntity() }
+                AccountLegalEntities = new() { new LegalEntity() }
             });
 
         var outerApiClientMock = new Mock<IOuterApiClient>();
@@ -229,7 +229,7 @@ public class SelectTrainingProviderControllerPostTests
             {
                 SelectedLegalEntityId = accountLegalEntityId,
                 EmployerAccountId = employerAccountId,
-                AccountLegalEntities = new() { new AccountLegalEntity() }
+                AccountLegalEntities = new() { new LegalEntity() }
             });
 
         var outerApiClientMock = new Mock<IOuterApiClient>();
