@@ -73,7 +73,7 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
             return View(ViewPath, model);
         }
 
-        SetSessionForSelectionMade(submitModel.LegalEntityId!, sessionModel);
+        SetSessionForSelectionMade(submitModel.LegalEntityPublicHashedId!, sessionModel);
         return RedirectToRoute(RouteNames.SelectTrainingProvider, new { employerAccountId });
     }
 

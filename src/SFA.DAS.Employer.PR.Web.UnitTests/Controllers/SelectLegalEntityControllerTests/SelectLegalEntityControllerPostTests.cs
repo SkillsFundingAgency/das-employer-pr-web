@@ -37,7 +37,7 @@ public class SelectLegalEntityControllerPostTests
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
-        SelectLegalEntitiesSubmitViewModel submitModel = new() { LegalEntityId = accountLegalEntity.AccountLegalEntityPublicHashedId };
+        SelectLegalEntitiesSubmitViewModel submitModel = new() { LegalEntityPublicHashedId = accountLegalEntity.AccountLegalEntityPublicHashedId };
 
         /// Action
         var result = sut.Index(employerAccountId, submitModel);
@@ -56,7 +56,7 @@ public class SelectLegalEntityControllerPostTests
         List<AccountLegalEntity> accountLegalEntities,
         AccountLegalEntity selectedAccountLegalEntity)
     {
-        SelectLegalEntitiesSubmitViewModel submitModel = new SelectLegalEntitiesSubmitViewModel { LegalEntityId = selectedAccountLegalEntity.AccountLegalEntityPublicHashedId };
+        SelectLegalEntitiesSubmitViewModel submitModel = new SelectLegalEntitiesSubmitViewModel { LegalEntityPublicHashedId = selectedAccountLegalEntity.AccountLegalEntityPublicHashedId };
 
         validatorMock.Setup(v => v.Validate(It.IsAny<SelectLegalEntitiesSubmitViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);

@@ -9,7 +9,7 @@ public class SelectLegalEntitySubmitModelValidator : AbstractValidator<SelectLeg
 
     public SelectLegalEntitySubmitModelValidator()
     {
-        RuleFor(s => s.LegalEntityId)
+        RuleFor(s => s.LegalEntityPublicHashedId)
             .NotEmpty()
             .WithMessage(NoOrganisationSelectedErrorMessage);
     }

@@ -11,13 +11,13 @@ public class SelectLegalEntitySubmitModelValidatorTests
     {
         var model = new SelectLegalEntitiesSubmitViewModel
         {
-            LegalEntityId = legalEntityId
+            LegalEntityPublicHashedId = legalEntityId
         };
 
         var sut = new SelectLegalEntitySubmitModelValidator();
         var result = sut.TestValidate(model);
 
-        result.ShouldNotHaveValidationErrorFor(c => c.LegalEntityId);
+        result.ShouldNotHaveValidationErrorFor(c => c.LegalEntityPublicHashedId);
     }
 
     [Test]
@@ -27,7 +27,7 @@ public class SelectLegalEntitySubmitModelValidatorTests
         var sut = new SelectLegalEntitySubmitModelValidator();
         var result = sut.TestValidate(model);
 
-        result.ShouldHaveValidationErrorFor(c => c.LegalEntityId)
+        result.ShouldHaveValidationErrorFor(c => c.LegalEntityPublicHashedId)
             .WithErrorMessage(SelectLegalEntitySubmitModelValidator.NoOrganisationSelectedErrorMessage);
     }
 }

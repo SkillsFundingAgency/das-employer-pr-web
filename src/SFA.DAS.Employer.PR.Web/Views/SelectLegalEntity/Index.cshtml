@@ -22,9 +22,9 @@
                     <p class="govuk-body">
                         You have multiple organisations on your account. Select one organisation to add a training provider to.
                     </p>
-                    <div class="govuk-form-group" id="LegalEntityId" esfa-validation-marker-for="@Model.LegalEntityId">
+                    <div class="govuk-form-group" id="LegalEntityId" esfa-validation-marker-for="@Model.LegalEntityPublicHashedId">
 
-                        <span asp-validation-for="LegalEntityId" class="govuk-error-message"></span>
+                        <span asp-validation-for="LegalEntityPublicHashedId" class="govuk-error-message"></span>
                         <div class="govuk-radios" data-module="govuk-radios">
                             @for (var index = 0; index < legalEntitiesOrdered.Count; index++)
                             {
