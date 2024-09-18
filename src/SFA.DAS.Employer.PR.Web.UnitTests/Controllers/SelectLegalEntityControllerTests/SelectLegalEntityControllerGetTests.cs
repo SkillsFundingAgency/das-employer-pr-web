@@ -60,15 +60,11 @@ public class SelectLegalEntityControllerGetTests
     public async Task Get_AccountWithSingleLegalEntity_RedirectsToSelectProvider(
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
-        [Frozen] Mock<IEncodingService> encodingServiceMock,
         [Greedy] SelectLegalEntityController sut,
         AccountLegalEntity accountLegalEntity,
-        long accountLegalEntityId,
         string employerAccountId,
         CancellationToken cancellationToken)
     {
-        encodingServiceMock.Setup(e => e.Decode(accountLegalEntity.AccountLegalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId)).Returns(accountLegalEntityId);
-
         List<AccountLegalEntity> accountLegalEntities = [accountLegalEntity];
         outerApiClientMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), cancellationToken)).ReturnsAsync(new GetAccountLegalEntitiesResponse(accountLegalEntities));
 
@@ -85,7 +81,7 @@ public class SelectLegalEntityControllerGetTests
         RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
         redirectToRouteResult.RouteName.Should().Be(RouteNames.SelectTrainingProvider);
         sessionServiceMock.Verify(x => x.Set(It.Is<AddTrainingProvidersSessionModel>(
-            s => s.SelectedLegalEntityId == accountLegalEntityId &&
+            s => s.SelectedLegalEntityId == accountLegalEntity.AccountLegalEntityId &&
                  s.SelectedLegalName == accountLegalEntity.AccountLegalEntityName
         )), Times.AtLeastOnce);
     }

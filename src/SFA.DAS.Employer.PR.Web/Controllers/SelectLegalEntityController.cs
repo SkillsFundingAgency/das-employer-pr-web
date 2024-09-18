@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
@@ -45,12 +46,11 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
 
         SelectLegalEntitiesViewModel model = GetViewModel(employerAccountId, sessionModel);
 
-        if (model.LegalEntities.Count == 1)
+        if (sessionModel.AccountLegalEntities.Count == 1)
         {
-
-            var legalEntity = model.LegalEntities[0];
-            sessionModel.SelectedLegalEntityId = _encodingService.Decode(legalEntity.Id, EncodingType.PublicAccountLegalEntityId);
-            sessionModel.SelectedLegalName = legalEntity.Name;
+            AccountLegalEntity legalEntity = sessionModel.AccountLegalEntities[0];
+            sessionModel.SelectedLegalEntityId = legalEntity.AccountLegalEntityId;
+            sessionModel.SelectedLegalName = legalEntity.AccountLegalEntityName;
             _sessionService.Set(sessionModel);
 
             return RedirectToRoute(RouteNames.SelectTrainingProvider, new { employerAccountId });
