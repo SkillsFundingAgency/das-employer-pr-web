@@ -71,7 +71,6 @@ public class ServiceController(IConfiguration _configuration, IStubAuthenticatio
     [Route("account-details", Name = RouteNames.StubAccount.DetailsPost)]
     public async Task<IActionResult> AccountDetails(StubAuthenticationViewModel model)
     {
-
         var claims = await _stubAuthenticationService.GetStubSignInClaims(model);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claims,
@@ -83,17 +82,18 @@ public class ServiceController(IConfiguration _configuration, IStubAuthenticatio
     [HttpGet]
     [Authorize(Policy = nameof(PolicyNames.IsAuthenticated))]
     [Route("Stub-Auth", Name = RouteNames.StubAccount.SignedIn)]
-    public IActionResult StubSignedIn()
+    public IActionResult StubSignedIn([FromQuery] string? returnUrl)
     {
 
         var employerAccounts = User.GetEmployerAccounts().Values.ToList();
 
+        string url = string.IsNullOrEmpty(returnUrl?.Trim('/')) ? Url.RouteUrl(RouteNames.Home, new { EmployerAccountId = employerAccounts[0].AccountId })! : returnUrl;
         var viewModel = new AccountStubViewModel
         {
             Email = User.FindFirstValue(ClaimTypes.Email)!,
             Id = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
             Accounts = employerAccounts,
-            ReturnUrl = Url.RouteUrl(RouteNames.Home, new { EmployerAccountId = employerAccounts[0].AccountId })!
+            ReturnUrl = url
         };
 
         return View(viewModel);

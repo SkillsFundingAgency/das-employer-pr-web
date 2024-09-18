@@ -1,4 +1,5 @@
 @using System.Security.Claims
+@using SFA.DAS.Employer.PR.Web.Infrastructure
 @using SFA.DAS.Employer.PR.Web.Models.StubAuth
 
 @model AccountStubViewModel
@@ -23,7 +24,7 @@
             @foreach (var account in Model.Accounts)
             {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@account.AccountId</td>
+                        <td class="govuk-table__cell"><a href="@Url.RouteUrl(RouteNames.Home, new { EmployerAccountId = account.AccountId})"> @account.AccountId</a></td>
                     <td class="govuk-table__cell">@account.Role</td>
                     <td class="govuk-table__cell">@account.EmployerName</td>
                 </tr>
