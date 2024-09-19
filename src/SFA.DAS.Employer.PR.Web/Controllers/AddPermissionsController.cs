@@ -12,12 +12,14 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.Services;
+using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.Employer.Shared.UI.Configuration;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/new/addPermissions", Name = RouteNames.AddPermissions)]
-public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<AddPermissionsSubmitViewViewModel> _validator) : Controller
+public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<AddPermissionsSubmitViewViewModel> _validator, UrlBuilder _urlBuilder, IConfiguration _configuration) : Controller
 {
     [HttpGet]
     public IActionResult Index([FromRoute] string employerAccountId)
@@ -61,7 +63,20 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
 
         TempData[TempDataKeys.NameOfProviderAdded] = sessionModel.ProviderName;
 
-        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+        return IsAccountTasksJourney()
+            ? Redirect(GetAccountsLink("CreateAccountAddProviderPermissionSuccess", employerAccountId))
+            : RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+    }
+
+    private bool IsAccountTasksJourney() => Request.HttpContext.Items.ContainsKey("AccountTasksKey");
+
+    private string GetAccountsLink(string path, string accountId)
+    {
+        var env = _configuration["EnvironmentName"]!;
+        var url = (env.Equals("LOCAL", StringComparison.InvariantCultureIgnoreCase))
+            ? $"{_configuration["EmployerAccountWebLocalUrl"]}{string.Format(MaRoutes.Accounts[path], accountId)}"
+            : _urlBuilder.AccountsLink(path, accountId);
+        return url;
     }
 
     private AddPermissionsViewModel? GetViewModel(string employerAccountId)
@@ -74,7 +89,10 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
         }
 
         var backLink = Url.RouteUrl(RouteNames.SelectTrainingProvider, new { employerAccountId });
-        var cancelLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
+        var cancelLink =
+            IsAccountTasksJourney()
+            ? GetAccountsLink("CreateAccountTaskListInAccount", employerAccountId)
+            : Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
 
         AddPermissionsViewModel viewModel = new AddPermissionsViewModel(sessionModel.SelectedLegalEntityId!.Value,
             sessionModel.SelectedLegalName!, sessionModel.ProviderName!, sessionModel.Ukprn!.Value, backLink!, cancelLink!);

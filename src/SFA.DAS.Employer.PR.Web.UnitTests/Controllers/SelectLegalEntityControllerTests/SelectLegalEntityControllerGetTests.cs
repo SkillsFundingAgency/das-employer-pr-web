@@ -47,7 +47,7 @@ public class SelectLegalEntityControllerGetTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
         /// Action
-        var result = await sut.Index(employerAccountId, cancellationToken);
+        var result = await sut.Index(employerAccountId, string.Empty, cancellationToken);
 
         ViewResult? viewResult = result.As<ViewResult>();
         var viewModel = viewResult.Model.As<SelectLegalEntitiesViewModel>();
@@ -76,7 +76,7 @@ public class SelectLegalEntityControllerGetTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
         /// Action
-        var result = await sut.Index(employerAccountId, cancellationToken);
+        var result = await sut.Index(employerAccountId, string.Empty, cancellationToken);
 
         RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
         redirectToRouteResult.RouteName.Should().Be(RouteNames.SelectTrainingProvider);
@@ -105,7 +105,7 @@ public class SelectLegalEntityControllerGetTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
         /// Action
-        await sut.Index(employerAccountId, cancellationToken);
+        await sut.Index(employerAccountId, string.Empty, cancellationToken);
 
         sessionServiceMock.Verify(s => s.Set(
             It.Is<AddTrainingProvidersSessionModel>(m => m.EmployerAccountId == employerAccountId
@@ -134,7 +134,7 @@ public class SelectLegalEntityControllerGetTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
         /// Action
-        await sut.Index(employerAccountId, cancellationToken);
+        await sut.Index(employerAccountId, string.Empty, cancellationToken);
 
         sessionServiceMock.Verify(s => s.Set(It.IsAny<AddTrainingProvidersSessionModel>()), Times.Never);
         outerApiClientMock.Verify(o => o.GetAccountLegalEntities(It.IsAny<long>(), It.IsAny<CancellationToken>()), Times.Never);

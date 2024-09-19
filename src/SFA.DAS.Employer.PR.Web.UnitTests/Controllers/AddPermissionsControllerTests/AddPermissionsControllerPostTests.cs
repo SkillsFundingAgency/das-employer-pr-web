@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoFixture.NUnit3;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -19,19 +20,18 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.AddPermissionsController
 
 public class AddPermissionsControllerPostTests
 {
-
     static readonly string YourTrainingProvidersLink = Guid.NewGuid().ToString();
 
     [Test, MoqAutoData]
     public async Task Post_Validated_ReturnsExpectedModel(
-        Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         string employerAccountId,
         long ukprn,
         long legalEntityId,
         CancellationToken cancellationToken)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
-
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
@@ -49,10 +49,7 @@ public class AddPermissionsControllerPostTests
             .Returns(new AddTrainingProvidersSessionModel
             { Ukprn = ukprn, SelectedLegalEntityId = legalEntityId, EmployerAccountId = employerAccountId });
 
-        AddPermissionsController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         Mock<ITempDataDictionary> tempDataMock = new();
         sut.TempData = tempDataMock.Object;
@@ -73,15 +70,15 @@ public class AddPermissionsControllerPostTests
     public async Task Post_Validated_SetsTempData(
         string addRecords,
         string recruitApprentices,
-        Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         string employerAccountId,
         long ukprn,
         long legalEntityId,
         string providerName,
         CancellationToken cancellationToken)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
-
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
         {
             PermissionToAddCohorts = addRecords,
@@ -101,10 +98,7 @@ public class AddPermissionsControllerPostTests
 
         var tempData = new TempDataDictionary(new DefaultHttpContext { User = user }, Mock.Of<ITempDataProvider>());
 
-        AddPermissionsController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
         sut.TempData = tempData;
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
@@ -122,15 +116,15 @@ public class AddPermissionsControllerPostTests
     public async Task Post_Validated_PostExpectedValues(
         string addRecords,
         string recruitApprentices,
-        Mock<IOuterApiClient> outerApiClientMock,
-        Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         string employerAccountId,
         long ukprn,
         long legalEntityId,
         CancellationToken cancellationToken)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
-
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
         {
             PermissionToAddCohorts = addRecords,
@@ -165,10 +159,7 @@ public class AddPermissionsControllerPostTests
             .Returns(new AddTrainingProvidersSessionModel
             { Ukprn = ukprn, SelectedLegalEntityId = legalEntityId, EmployerAccountId = employerAccountId });
 
-        AddPermissionsController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
         Mock<ITempDataDictionary> tempDataMock = new();
@@ -187,14 +178,14 @@ public class AddPermissionsControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_Validated_SessionModelExpired(
-        Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         string employerAccountId,
         long ukprn,
         long legalEntityId,
         CancellationToken cancellationToken)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
-
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
@@ -211,10 +202,7 @@ public class AddPermissionsControllerPostTests
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns((AddTrainingProvidersSessionModel)null!);
 
-        AddPermissionsController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
         var result = await sut.Index(employerAccountId, submitViewModel, cancellationToken);
@@ -225,12 +213,12 @@ public class AddPermissionsControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_Validated_EmployerAccountIdNotMatched(
-        Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         string employerAccountId,
         CancellationToken cancellationToken)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
-
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
@@ -247,14 +235,12 @@ public class AddPermissionsControllerPostTests
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = $"{employerAccountId}_other" });
 
-        AddPermissionsController sut = new(Mock.Of<IOuterApiClient>(), sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
-        var result = await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
+        /// Action
+        var result = await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
         RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
         redirectToRouteResult.RouteName.Should().Be(RouteNames.YourTrainingProviders);
@@ -262,17 +248,15 @@ public class AddPermissionsControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_ValidatedAndFailed_ReturnsExpectedModel(
-        Mock<IOuterApiClient> outerApiClientMock,
-        Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
-        string employerAccountId,
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock, [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Greedy] AddPermissionsController sut, string employerAccountId,
         long ukprn,
         long legalEntityId,
         string legalName,
         string providerName,
-        CancellationToken cancellationToken
-    )
+        CancellationToken cancellationToken)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel();
         validatorMock.Setup(m => m.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
         {
@@ -284,10 +268,7 @@ public class AddPermissionsControllerPostTests
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        AddPermissionsController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, validatorMock.Object)
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 

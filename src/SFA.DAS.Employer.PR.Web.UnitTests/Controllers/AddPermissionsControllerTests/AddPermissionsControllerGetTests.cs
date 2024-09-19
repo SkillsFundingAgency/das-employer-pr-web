@@ -1,5 +1,4 @@
 ﻿using AutoFixture.NUnit3;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Authentication;
@@ -20,17 +19,15 @@ public class AddPermissionsControllerGetTests
     [Test, MoqAutoData]
     public void NoSessionModel_RedirectsToYourTrainingProviders(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         string employerAccountId)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns((AddTrainingProvidersSessionModel)null!);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         var result = sut.Index(employerAccountId);
 
@@ -41,21 +38,19 @@ public class AddPermissionsControllerGetTests
     [Test, MoqAutoData]
     public void SessionModel_BuildsViewModel(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         long legalEntityId,
         string legalName,
         string providerName,
         long ukprn,
         string employerAccountId)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
@@ -72,21 +67,19 @@ public class AddPermissionsControllerGetTests
     [Test, MoqAutoData]
     public void SessionModel_CancelLinkAsExpected(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         long legalEntityId,
         string legalName,
         string providerName,
         long ukprn,
         string employerAccountId)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
@@ -100,21 +93,19 @@ public class AddPermissionsControllerGetTests
     [Test, MoqAutoData]
     public void SessionModel_BackLinkAsExpected(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] AddPermissionsController sut,
         long legalEntityId,
         string legalName,
         string providerName,
         long ukprn,
         string employerAccountId)
     {
-        var sessionServiceMock = new Mock<ISessionService>();
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        AddPermissionsController sut = new(outerApiMock.Object, sessionServiceMock.Object, Mock.Of<IValidator<AddPermissionsSubmitViewViewModel>>())
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
-        };
+        sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.SelectTrainingProvider, BackLink);
 
