@@ -89,7 +89,8 @@ AppSettings.Development.json file
     "url": "https://das-at-frnt-end.azureedge.net"
   },
   "ResourceEnvironmentName": "LOCAL",
-  "StubAuth": true
+  "StubAuth": true,
+  "EmployerAccountWebLocalUrl": "https://localhost:44344"
 } 
 ```
 

@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Web.AppStart;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Middleware;
 using SFA.DAS.Employer.PR.Web.Validators;
 using SFA.DAS.Employer.Shared.UI;
 
@@ -65,6 +66,7 @@ app
     .UseAuthorization()
     .UseSession()
     .UseMiddleware<SecurityHeadersMiddleware>()
+    .UseMiddleware<AccountTasksMiddleware>()
     .UseEndpoints(endpoints =>
     {
         endpoints.MapControllerRoute(
