@@ -22,7 +22,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
     {
         _sessionService.Delete<AddTrainingProvidersSessionModel>();
         var accountId = _encodingService.Decode(employerAccountId, EncodingType.AccountId);
-        var response = await _outerApiClient.GetAccountLegalEntities(accountId, cancellationToken);
+        var response = await _outerApiClient.GetEmployerRelationships(accountId, cancellationToken);
         var accountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name);
 
         var legalEntityModels = OrderPermissionsAndAddLinks(employerAccountId, accountLegalEntities);
@@ -57,7 +57,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         }
     }
 
-    private List<LegalEntityModel> OrderPermissionsAndAddLinks(string employerAccountId, IOrderedEnumerable<AccountLegalEntity> accountLegalEntities)
+    private List<LegalEntityModel> OrderPermissionsAndAddLinks(string employerAccountId, IOrderedEnumerable<LegalEntity> accountLegalEntities)
     {
         var legalEntityModels = new List<LegalEntityModel>();
 

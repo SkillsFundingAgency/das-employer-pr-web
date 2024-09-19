@@ -15,7 +15,7 @@ public class PermissionModel
     public string PermissionToAddRecords { get; set; } = null!;
     public string PermissionToRecruitApprentices { get; set; } = null!;
 
-    public static implicit operator PermissionModel(Permission permission)
+    public static implicit operator PermissionModel(ProviderPermission permission)
     {
         var model = new PermissionModel
         {

@@ -11,10 +11,10 @@ public class SessionService(IHttpContextAccessor _httpContextAccessor) : ISessio
 
     public string? Get(string key) => _httpContextAccessor.HttpContext?.Session.GetString(key);
 
-    public T Get<T>()
+    public T? Get<T>()
     {
         var json = Get(typeof(T).Name);
-        return (string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json))!;
+        return (string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json));
     }
 
     public void Delete(string key)

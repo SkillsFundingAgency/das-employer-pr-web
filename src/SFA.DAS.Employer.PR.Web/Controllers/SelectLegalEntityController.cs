@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
@@ -31,7 +32,7 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
 
             sessionModel = new AddTrainingProvidersSessionModel
             {
-                AccountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name).ToList(),
+                AccountLegalEntities = response.LegalEntities.OrderBy(a => a.AccountLegalEntityName).ToList(),
                 EmployerAccountId = employerAccountId
 
             };
@@ -45,23 +46,24 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
 
         SelectLegalEntitiesViewModel model = GetViewModel(employerAccountId, sessionModel);
 
-        if (model.LegalEntities.Count != 1)
+        if (sessionModel.AccountLegalEntities.Count == 1)
         {
-            return View(ViewPath, model);
+            AccountLegalEntity legalEntity = sessionModel.AccountLegalEntities[0];
+            sessionModel.SelectedLegalEntityId = legalEntity.AccountLegalEntityId;
+            sessionModel.SelectedLegalName = legalEntity.AccountLegalEntityName;
+            _sessionService.Set(sessionModel);
+
+            return RedirectToRoute(RouteNames.SelectTrainingProvider, new { employerAccountId });
         }
 
-        var legalEntity = model.LegalEntities[0];
-        sessionModel.SelectedLegalEntityId = legalEntity.LegalEntityId;
-        sessionModel.SelectedLegalName = legalEntity.Name;
-        _sessionService.Set(sessionModel);
-
-        return RedirectToRoute(RouteNames.SelectTrainingProvider, new { employerAccountId });
+        return View(ViewPath, model);
     }
 
     [HttpPost]
     public IActionResult Index([FromRoute] string employerAccountId, SelectLegalEntitiesSubmitViewModel submitModel)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
+        if (sessionModel == null) return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
 
         ValidationResult result = _validator.Validate(submitModel);
 
@@ -72,7 +74,7 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
             return View(ViewPath, model);
         }
 
-        SetSessionForSelectionMade(submitModel.LegalEntityId!.Value, sessionModel);
+        SetSessionForSelectionMade(submitModel.LegalEntityPublicHashedId!, sessionModel);
         return RedirectToRoute(RouteNames.SelectTrainingProvider, new { employerAccountId });
     }
 
@@ -87,9 +89,9 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
 
         foreach (var legalEntity in sessionModel.AccountLegalEntities)
         {
-            LegalEntityModel legalEntityToAdd = legalEntity;
+            AccountLegalEntityViewModel legalEntityToAdd = legalEntity;
 
-            if (legalEntity.Id == legalEntityId)
+            if (legalEntity.AccountLegalEntityId == legalEntityId)
             {
                 legalEntityToAdd.IsSelected = true;
             }
@@ -100,12 +102,11 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
         return model;
     }
 
-    private void SetSessionForSelectionMade(long legalEntityId, AddTrainingProvidersSessionModel sessionModel)
+    private void SetSessionForSelectionMade(string legalEntityId, AddTrainingProvidersSessionModel sessionModel)
     {
-        var legalEntity = sessionModel.AccountLegalEntities.First(l => l.Id == legalEntityId);
-        sessionModel.SelectedLegalEntityId = legalEntityId;
-        sessionModel.SelectedLegalName = legalEntity.Name;
+        var legalEntity = sessionModel.AccountLegalEntities.First(l => l.AccountLegalEntityPublicHashedId == legalEntityId);
+        sessionModel.SelectedLegalEntityId = legalEntity.AccountLegalEntityId;
+        sessionModel.SelectedLegalName = legalEntity.AccountLegalEntityName;
         _sessionService.Set(sessionModel);
-
     }
 }

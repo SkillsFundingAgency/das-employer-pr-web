@@ -13,7 +13,7 @@ public class LegalEntityModel
 
     public List<PermissionModel> Permissions { get; set; } = new();
 
-    public static implicit operator LegalEntityModel(AccountLegalEntity legalEntity)
+    public static implicit operator LegalEntityModel(LegalEntity legalEntity)
     {
         var model = new LegalEntityModel
         {

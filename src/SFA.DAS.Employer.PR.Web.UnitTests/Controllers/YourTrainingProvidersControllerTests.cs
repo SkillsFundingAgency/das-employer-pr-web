@@ -33,7 +33,7 @@ public class YourTrainingProvidersControllerTests
      )
     {
         encodingServiceMock.Setup(e => e.Decode(employerAccountId, EncodingType.AccountId)).Returns(accountId);
-        outerApiMock.Setup(o => o.GetAccountLegalEntities(accountId, It.IsAny<CancellationToken>()))
+        outerApiMock.Setup(o => o.GetEmployerRelationships(accountId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
@@ -43,7 +43,7 @@ public class YourTrainingProvidersControllerTests
         };
 
         var result = sut.Index(employerAccountId, new CancellationToken());
-        outerApiMock.Verify(o => o.GetAccountLegalEntities(accountId, It.IsAny<CancellationToken>()), Times.Once);
+        outerApiMock.Verify(o => o.GetEmployerRelationships(accountId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test]
@@ -70,10 +70,10 @@ public class YourTrainingProvidersControllerTests
         };
 
 
-        Permission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
+        ProviderPermission permission = new() { Operations = new List<Operation>(), ProviderName = "provider name", Ukprn = 12345678 };
         permission.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new List<Permission> { permission };
+        List<ProviderPermission> permissions = new List<ProviderPermission> { permission };
         SetupControllerAndClasses(outerApiMock, accountId, accountName, publicHashedId, permissions, sut, false);
         Task<IActionResult> result = sut.Index(employerAccountId, new CancellationToken());
 
@@ -110,10 +110,10 @@ public class YourTrainingProvidersControllerTests
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, roleToTest);
 
 
-        Permission permissionOther = new() { Operations = new List<Operation>() { Operation.CreateCohort }, ProviderName = "provider", Ukprn = 12345678 };
+        ProviderPermission permissionOther = new() { Operations = new List<Operation>() { Operation.CreateCohort }, ProviderName = "provider", Ukprn = 12345678 };
         permissionOther.Operations.Add(Operation.CreateCohort);
 
-        List<Permission> permissions = new List<Permission>
+        List<ProviderPermission> permissions = new List<ProviderPermission>
         {
             new() { Operations = new List<Operation>{ Operation.CreateCohort }, ProviderName = providerNameExpectedThird, Ukprn = 12345678 },
             new() { Operations = new List<Operation>{ Operation.CreateCohort }, ProviderName = providerNameExpectedFirst, Ukprn = 12345679 },
@@ -121,12 +121,12 @@ public class YourTrainingProvidersControllerTests
         };
 
 
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
             new()
             {
                 AccountId = accountId, Id = 1, Name = accountNameExpectedThird, PublicHashedId = "KJGH",
-                Permissions = new List<Permission> {permissionOther}
+                Permissions = new List<ProviderPermission> {permissionOther}
             },
             new()
             {
@@ -136,13 +136,13 @@ public class YourTrainingProvidersControllerTests
             new()
             {
                 AccountId = accountId, Id = 1, Name = accountNameExpectedSecond, PublicHashedId = "AVBC",
-                Permissions = new List<Permission> {permissionOther}
+                Permissions = new List<ProviderPermission> {permissionOther}
             },
         };
 
         encodingServiceMock.Setup(e => e.Decode(employerAccountId, EncodingType.AccountId)).Returns(accountId);
 
-        outerApiMock.Setup(o => o.GetAccountLegalEntities(It.IsAny<long>(), It.IsAny<CancellationToken>()))
+        outerApiMock.Setup(o => o.GetEmployerRelationships(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new GetEmployerRelationshipsQueryResponse(accountLegalEntities));
 
         YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>(), encodingServiceMock.Object)
@@ -189,7 +189,7 @@ public class YourTrainingProvidersControllerTests
         var accountName = "account name";
         var publicHashedId = "12123232";
 
-        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        var permission = new ProviderPermission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
         if (operation1 != null) permission.Operations.Add(operation1.Value);
         if (operation2 != null) permission.Operations.Add(operation2.Value);
 
@@ -200,7 +200,7 @@ public class YourTrainingProvidersControllerTests
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
-        var permissions = new List<Permission> { permission };
+        var permissions = new List<ProviderPermission> { permission };
         SetupControllerAndClasses(outerApiMock, accountId, accountName, publicHashedId, permissions, sut, false);
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.ChangePermissions, ChangePermissionsLink);
@@ -239,7 +239,7 @@ public class YourTrainingProvidersControllerTests
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
-        var permissions = new List<Permission>();
+        var permissions = new List<ProviderPermission>();
         SetupControllerAndClasses(outerApiMock, accountId, accountName, publicHashedId, permissions, sut, false);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
@@ -264,13 +264,13 @@ public class YourTrainingProvidersControllerTests
         var accountName = "account name";
         var publicHashedId = "12123232";
 
-        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        var permission = new ProviderPermission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
         permission.Operations.Add(Operation.CreateCohort);
         permission.Operations.Add(Operation.Recruitment);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
-        var permissions = new List<Permission> { permission };
+        var permissions = new List<ProviderPermission> { permission };
         SetupControllerAndClasses(outerApiMock, accountId, accountName, publicHashedId, permissions, sut, false);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
@@ -290,13 +290,13 @@ public class YourTrainingProvidersControllerTests
         var accountName = "account name";
         var publicHashedId = "12123232";
 
-        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        var permission = new ProviderPermission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
         permission.Operations.Add(Operation.CreateCohort);
         permission.Operations.Add(Operation.Recruitment);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
-        var permissions = new List<Permission> { permission };
+        var permissions = new List<ProviderPermission> { permission };
         SetupControllerAndClasses(outerApiMock, accountId, accountName, publicHashedId, permissions, sut, true);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
@@ -322,7 +322,7 @@ public class YourTrainingProvidersControllerTests
         var accountName = "account name";
         var publicHashedId = "12123232";
 
-        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        var permission = new ProviderPermission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
         permission.Operations.Add(Operation.CreateCohort);
         permission.Operations.Add(Operation.Recruitment);
 
@@ -332,7 +332,7 @@ public class YourTrainingProvidersControllerTests
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
-        var permissions = new List<Permission> { permission };
+        var permissions = new List<ProviderPermission> { permission };
         SetupControllerAndClasses(outerApiMock, accountId, accountName, publicHashedId, permissions, sut, false);
 
         Mock<ITempDataDictionary> tempDataMock = new();
@@ -366,7 +366,7 @@ public class YourTrainingProvidersControllerTests
         var accountName = "account name";
         var publicHashedId = "12123232";
 
-        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        var permission = new ProviderPermission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
         permission.Operations.Add(Operation.CreateCohort);
         permission.Operations.Add(Operation.Recruitment);
 
@@ -376,7 +376,7 @@ public class YourTrainingProvidersControllerTests
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
-        var permissions = new List<Permission> { permission };
+        var permissions = new List<ProviderPermission> { permission };
         SetupControllerAndClasses(outerApiMock, accountId, accountName, publicHashedId, permissions, sut, false);
 
         Mock<ITempDataDictionary> tempDataMock = new();
@@ -395,9 +395,9 @@ public class YourTrainingProvidersControllerTests
     }
 
     private static void SetupControllerAndClasses(Mock<IOuterApiClient> outerApiMock, int accountId, string accountName,
-        string publicHashedId, List<Permission> permissions, YourTrainingProvidersController sut, bool multipleAccounts)
+        string publicHashedId, List<ProviderPermission> permissions, YourTrainingProvidersController sut, bool multipleAccounts)
     {
-        List<AccountLegalEntity> accountLegalEntities = new List<AccountLegalEntity>
+        List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
             new()
             {
@@ -408,13 +408,13 @@ public class YourTrainingProvidersControllerTests
 
         if (multipleAccounts)
         {
-            accountLegalEntities.Add(new AccountLegalEntity
+            accountLegalEntities.Add(new LegalEntity
             { AccountId = 1234, Id = 2, Name = "name 2", PublicHashedId = "AFC", Permissions = permissions });
         }
 
         GetEmployerRelationshipsQueryResponse response = new GetEmployerRelationshipsQueryResponse(accountLegalEntities);
 
-        outerApiMock.Setup(o => o.GetAccountLegalEntities(accountId, It.IsAny<CancellationToken>()))
+        outerApiMock.Setup(o => o.GetEmployerRelationships(accountId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
         Mock<ITempDataDictionary> tempDataMock = new();

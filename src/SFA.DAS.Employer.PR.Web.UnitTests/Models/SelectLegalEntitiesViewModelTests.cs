@@ -1,5 +1,5 @@
 ﻿using AutoFixture.NUnit3;
-using SFA.DAS.Employer.PR.Domain.Models;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Models;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Models;

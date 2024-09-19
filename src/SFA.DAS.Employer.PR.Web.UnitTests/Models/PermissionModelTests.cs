@@ -19,7 +19,7 @@ public class PermissionModelTests
         string providerName,
         long ukprn)
     {
-        var permission = new Permission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
+        var permission = new ProviderPermission { Operations = new List<Operation>(), ProviderName = providerName, Ukprn = ukprn };
         if (operation1 != null) permission.Operations.Add(operation1.Value);
         if (operation2 != null) permission.Operations.Add(operation2.Value);
 

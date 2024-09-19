@@ -2,7 +2,7 @@
 
 public class SelectLegalEntitiesViewModel : SelectLegalEntitiesSubmitViewModel
 {
-    public List<LegalEntityModel> LegalEntities { get; set; } = new();
+    public List<AccountLegalEntityViewModel> LegalEntities { get; set; } = new();
     public string BackLink { get; set; }
 
     public SelectLegalEntitiesViewModel(string cancelUrl, string backLink)
@@ -13,6 +13,5 @@ public class SelectLegalEntitiesViewModel : SelectLegalEntitiesSubmitViewModel
 
 public class SelectLegalEntitiesSubmitViewModel
 {
-    public long? LegalEntityId { get; set; }
-    public string? LegalName { get; set; }
+    public string? LegalEntityPublicHashedId { get; set; }
 }
