@@ -1,21 +1,15 @@
 ﻿using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 
 namespace SFA.DAS.Employer.PR.Web.Middleware;
 
-public class AccountTasksMiddleware
+public class AccountTasksMiddleware(RequestDelegate _next, ISessionService _sessionService)
 {
-    private readonly RequestDelegate _next;
-
-    public AccountTasksMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         if (context.User.Identity?.IsAuthenticated == true)
         {
-            if (context.Session.TryGetValue(SessionKeys.AccountTasksKey, out var val))
+            if (_sessionService.Contains(SessionKeys.AccountTasksKey))
             {
                 context.Items[SessionKeys.AccountTasksKey] = true;
             }
@@ -24,7 +18,7 @@ public class AccountTasksMiddleware
                 // Check if referrer URL contains accountTasks=true
                 if (context.Request.Query.ContainsKey("AccountTasks"))
                 {
-                    context.Session.SetString(SessionKeys.AccountTasksKey, "true");
+                    _sessionService.Set(SessionKeys.AccountTasksKey, true.ToString());
                     context.Items.TryAdd(SessionKeys.AccountTasksKey, true);
                 }
             }

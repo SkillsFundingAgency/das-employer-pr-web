@@ -29,7 +29,12 @@ public class SessionService(IHttpContextAccessor _httpContextAccessor) : ISessio
 
     public bool Contains<T>()
     {
-        var result = _httpContextAccessor.HttpContext?.Session.Keys.Any(k => k == typeof(T).Name);
+        return Contains(typeof(T).Name);
+    }
+
+    public bool Contains(string key)
+    {
+        var result = _httpContextAccessor.HttpContext?.Session.Keys.Any(k => k == key);
         return result.GetValueOrDefault();
     }
 }
