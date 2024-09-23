@@ -24,7 +24,7 @@ public class AddPermissionsControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_Validated_ReturnsExpectedModel(
-        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitModel>> validatorMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
         string employerAccountId,
@@ -32,13 +32,13 @@ public class AddPermissionsControllerPostTests
         long legalEntityId,
         CancellationToken cancellationToken)
     {
-        AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
+        AddPermissionsSubmitModel submitViewModel = new AddPermissionsSubmitModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
             PermissionToRecruit = SetPermissions.RecruitApprentices.Yes
         };
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -70,7 +70,7 @@ public class AddPermissionsControllerPostTests
     public async Task Post_Validated_SetsTempData(
         string addRecords,
         string recruitApprentices,
-        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitModel>> validatorMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
         string employerAccountId,
@@ -79,13 +79,13 @@ public class AddPermissionsControllerPostTests
         string providerName,
         CancellationToken cancellationToken)
     {
-        AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
+        AddPermissionsSubmitModel submitViewModel = new AddPermissionsSubmitModel
         {
             PermissionToAddCohorts = addRecords,
             PermissionToRecruit = recruitApprentices
         };
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -117,7 +117,7 @@ public class AddPermissionsControllerPostTests
         string addRecords,
         string recruitApprentices,
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
-        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitModel>> validatorMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
         string employerAccountId,
@@ -125,7 +125,7 @@ public class AddPermissionsControllerPostTests
         long legalEntityId,
         CancellationToken cancellationToken)
     {
-        AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
+        AddPermissionsSubmitModel submitViewModel = new AddPermissionsSubmitModel
         {
             PermissionToAddCohorts = addRecords,
             PermissionToRecruit = recruitApprentices
@@ -148,7 +148,7 @@ public class AddPermissionsControllerPostTests
                 break;
         }
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -178,7 +178,7 @@ public class AddPermissionsControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_Validated_SessionModelExpired(
-        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitModel>> validatorMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
         string employerAccountId,
@@ -186,13 +186,13 @@ public class AddPermissionsControllerPostTests
         long legalEntityId,
         CancellationToken cancellationToken)
     {
-        AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
+        AddPermissionsSubmitModel submitViewModel = new AddPermissionsSubmitModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
             PermissionToRecruit = SetPermissions.RecruitApprentices.Yes
         };
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -213,19 +213,19 @@ public class AddPermissionsControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_Validated_EmployerAccountIdNotMatched(
-        [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<AddPermissionsSubmitModel>> validatorMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
         string employerAccountId,
         CancellationToken cancellationToken)
     {
-        AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
+        AddPermissionsSubmitModel submitViewModel = new AddPermissionsSubmitModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
             PermissionToRecruit = SetPermissions.RecruitApprentices.Yes
         };
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -249,7 +249,7 @@ public class AddPermissionsControllerPostTests
     [Test, MoqAutoData]
     public async Task Post_ValidatedAndFailed_ReturnsExpectedModel(
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
-        [Frozen] Mock<ISessionService> sessionServiceMock, [Frozen] Mock<IValidator<AddPermissionsSubmitViewViewModel>> validatorMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock, [Frozen] Mock<IValidator<AddPermissionsSubmitModel>> validatorMock,
         [Greedy] AddPermissionsController sut, string employerAccountId,
         long ukprn,
         long legalEntityId,
@@ -257,8 +257,8 @@ public class AddPermissionsControllerPostTests
         string providerName,
         CancellationToken cancellationToken)
     {
-        AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel();
-        validatorMock.Setup(m => m.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
+        AddPermissionsSubmitModel submitViewModel = new AddPermissionsSubmitModel();
+        validatorMock.Setup(m => m.Validate(It.IsAny<AddPermissionsSubmitModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
         {
             new("TestField","Test Message") { ErrorCode = "1001"}
         }));

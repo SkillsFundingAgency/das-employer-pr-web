@@ -19,7 +19,7 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/new/addPermissions", Name = RouteNames.AddPermissions)]
-public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<AddPermissionsSubmitViewViewModel> _validator, UrlBuilder _urlBuilder, IConfiguration _configuration) : Controller
+public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<AddPermissionsSubmitModel> _validator, UrlBuilder _urlBuilder, IConfiguration _configuration) : Controller
 {
     [HttpGet]
     public IActionResult Index([FromRoute] string employerAccountId)
@@ -34,7 +34,7 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromRoute] string employerAccountId, AddPermissionsSubmitViewViewModel submitViewModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, AddPermissionsSubmitModel submitViewModel, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
         if (sessionModel == null || sessionModel!.Ukprn == null || sessionModel!.SelectedLegalEntityId == null || sessionModel.EmployerAccountId != employerAccountId)
@@ -51,7 +51,7 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
             return View(model);
         }
 
-        var permissionDescriptions = (PermissionDescriptionsViewModel)submitViewModel;
+        var permissionDescriptions = (PermissionDescriptionsModel)submitViewModel;
 
         var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
@@ -61,20 +61,24 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
 
         await _outerApiClient.PostPermissions(command, cancellationToken);
 
+        _sessionService.Delete<AddTrainingProvidersSessionModel>();
+
+        if (IsAccountTasksJourney())
+        {
+            _sessionService.Delete(SessionKeys.AccountTasksKey);
+            return Redirect(GetAccountsLink("CreateAccountAddProviderPermissionSuccess", employerAccountId));
+        }
+
         TempData[TempDataKeys.NameOfProviderAdded] = sessionModel.ProviderName;
-
-        return IsAccountTasksJourney()
-            ? Redirect(GetAccountsLink("CreateAccountAddProviderPermissionSuccess", employerAccountId))
-            : RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
     }
-
-    private bool IsAccountTasksJourney() => Request.HttpContext.Items.ContainsKey("AccountTasksKey");
 
     private string GetAccountsLink(string path, string accountId)
     {
         var env = _configuration["EnvironmentName"]!;
+        string? employerWebUrl = _configuration["EmployerAccountWebLocalUrl"];
         var url = (env.Equals("LOCAL", StringComparison.InvariantCultureIgnoreCase))
-            ? $"{_configuration["EmployerAccountWebLocalUrl"]}{string.Format(MaRoutes.Accounts[path], accountId)}"
+            ? $"{employerWebUrl}{string.Format(MaRoutes.Accounts[path], accountId)}"
             : _urlBuilder.AccountsLink(path, accountId);
         return url;
     }
@@ -88,14 +92,15 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
             return null;
         }
 
-        var backLink = Url.RouteUrl(RouteNames.SelectTrainingProvider, new { employerAccountId });
         var cancelLink =
             IsAccountTasksJourney()
             ? GetAccountsLink("CreateAccountTaskListInAccount", employerAccountId)
             : Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
 
         AddPermissionsViewModel viewModel = new AddPermissionsViewModel(sessionModel.SelectedLegalEntityId!.Value,
-            sessionModel.SelectedLegalName!, sessionModel.ProviderName!, sessionModel.Ukprn!.Value, backLink!, cancelLink!);
+            sessionModel.SelectedLegalName!, sessionModel.ProviderName!, sessionModel.Ukprn!.Value, cancelLink!);
         return viewModel;
     }
+
+    private bool IsAccountTasksJourney() => _sessionService.Contains(SessionKeys.AccountTasksKey);
 }

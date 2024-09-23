@@ -1,5 +1,6 @@
 ﻿using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Controllers;
@@ -17,7 +18,7 @@ public class AddPermissionsControllerGetTests
     static readonly string BackLink = Guid.NewGuid().ToString();
 
     [Test, MoqAutoData]
-    public void NoSessionModel_RedirectsToYourTrainingProviders(
+    public void Get_NoSessionModel_RedirectsToYourTrainingProviders(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
@@ -25,6 +26,7 @@ public class AddPermissionsControllerGetTests
     {
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns((AddTrainingProvidersSessionModel)null!);
+        sessionServiceMock.Setup(s => s.Contains(SessionKeys.AccountTasksKey)).Returns(false);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
@@ -36,7 +38,7 @@ public class AddPermissionsControllerGetTests
     }
 
     [Test, MoqAutoData]
-    public void SessionModel_BuildsViewModel(
+    public void Get_SessionModel_BuildsViewModel(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
@@ -48,6 +50,7 @@ public class AddPermissionsControllerGetTests
     {
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
+        sessionServiceMock.Setup(s => s.Contains(SessionKeys.AccountTasksKey)).Returns(false);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
@@ -65,7 +68,7 @@ public class AddPermissionsControllerGetTests
     }
 
     [Test, MoqAutoData]
-    public void SessionModel_CancelLinkAsExpected(
+    public void Get_SessionHasNoAccountTasks_SetsCancelLinkToYourTrainingProvider(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
@@ -77,6 +80,7 @@ public class AddPermissionsControllerGetTests
     {
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
+        sessionServiceMock.Setup(s => s.Contains(SessionKeys.AccountTasksKey)).Returns(false);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
@@ -91,28 +95,34 @@ public class AddPermissionsControllerGetTests
     }
 
     [Test, MoqAutoData]
-    public void SessionModel_BackLinkAsExpected(
+    public void Get_SessionHasAccountTasks_SetsCancelLinkToAccountTaskList(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IConfiguration> configurationMock,
         [Greedy] AddPermissionsController sut,
         long legalEntityId,
         string legalName,
         string providerName,
         long ukprn,
-        string employerAccountId)
+        string employerAccountId,
+        string employerWebUrl)
     {
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { EmployerAccountId = employerAccountId, SelectedLegalEntityId = legalEntityId, SelectedLegalName = legalName, ProviderName = providerName, Ukprn = ukprn });
+        sessionServiceMock.Setup(s => s.Contains(SessionKeys.AccountTasksKey)).Returns(true);
+
+        configurationMock.Setup(c => c["EnvironmentName"]).Returns("LOCAL");
+        configurationMock.Setup(c => c["EmployerAccountWebLocalUrl"]).Returns(employerWebUrl);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         sut.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } };
 
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.SelectTrainingProvider, BackLink);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.YourTrainingProviders, YourTrainingProvidersLink);
 
         var result = sut.Index(employerAccountId);
 
         ViewResult? viewResult = result.As<ViewResult>();
         AddPermissionsViewModel? viewModel = viewResult.Model as AddPermissionsViewModel;
-        viewModel!.BackLink.Should().Be(BackLink);
+        viewModel!.CancelLink.Should().Contain("tasklist");
     }
 }
