@@ -1,7 +1,7 @@
 ﻿using AutoFixture.NUnit3;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
-using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Testing.AutoFixture;
 using System.Text.Json;
 

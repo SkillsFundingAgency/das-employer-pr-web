@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Employer.PR.Web.Infrastructure;
+﻿using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 
 namespace SFA.DAS.Employer.PR.Web.Middleware;
