@@ -293,11 +293,11 @@ public class AddPermissionsControllerPostTests
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Frozen] Mock<IConfiguration> configurationMock,
         [Greedy] AddPermissionsController sut,
-        CancellationToken cancellationToekn,
         long ukprn,
         long legalEntityId,
         string employerAccountId,
-        string webUrl
+        string webUrl,
+        CancellationToken cancellationToken
         )
     {
         /// arrange
@@ -317,12 +317,12 @@ public class AddPermissionsControllerPostTests
             .Returns(new AddTrainingProvidersSessionModel
             { Ukprn = ukprn, SelectedLegalEntityId = legalEntityId, EmployerAccountId = employerAccountId });
 
-        /// key setup
+        /// main setup
         sessionServiceMock.Setup(s => s.Contains(SessionKeys.AccountTasksKey)).Returns(true);
         configurationMock.Setup(c => c["EnvironmentName"]).Returns("LOCAL");
         configurationMock.Setup(c => c["EmployerAccountWebLocalUrl"]).Returns(webUrl);
 
-        var result = await sut.Index(employerAccountId, submitModel, cancellationToekn);
+        var result = await sut.Index(employerAccountId, submitModel, cancellationToken);
 
         result.As<RedirectResult>().Url.Contains("training-provider-success");
         sessionServiceMock.Verify(s => s.Delete(SessionKeys.AccountTasksKey), Times.Once);
@@ -334,11 +334,11 @@ public class AddPermissionsControllerPostTests
         [Frozen] Mock<IValidator<AddPermissionsSubmitModel>> validatorMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] AddPermissionsController sut,
-        CancellationToken cancellationToekn,
         long ukprn,
         long legalEntityId,
         string employerAccountId,
-        string webUrl
+        string webUrl,
+        CancellationToken cancellationToken
         )
     {
         /// arrange
@@ -358,7 +358,7 @@ public class AddPermissionsControllerPostTests
             .Returns(new AddTrainingProvidersSessionModel
             { Ukprn = ukprn, SelectedLegalEntityId = legalEntityId, EmployerAccountId = employerAccountId });
 
-        await sut.Index(employerAccountId, submitModel, cancellationToekn);
+        await sut.Index(employerAccountId, submitModel, cancellationToken);
 
         sessionServiceMock.Verify(s => s.Delete<AddTrainingProvidersSessionModel>(), Times.Once);
     }
