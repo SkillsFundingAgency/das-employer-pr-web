@@ -29,12 +29,7 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
             return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
-        SelectTrainingProviderViewModel model = new()
-        {
-            Name = sessionModel!.ProviderName,
-            Ukprn = sessionModel!.Ukprn.ToString()
-        };
-        return View(model);
+        return View(new SelectTrainingProviderViewModel());
     }
 
     [HttpPost]
