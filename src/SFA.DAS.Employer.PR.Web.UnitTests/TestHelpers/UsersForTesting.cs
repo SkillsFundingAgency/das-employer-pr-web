@@ -20,7 +20,7 @@ public static class UsersForTesting
 
         var role = roleToUse != null ? roleToUse.ToString() : "role";
 
-        EmployerIdentifier employerIdentifier = new(employerAccountId.ToString(), "das_account_name", role!);
+        EmployerIdentifier employerIdentifier = new() { AccountId = employerAccountId.ToString(), EmployerName = "das_account_name", Role = role! };
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifier } };
 
         var accountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));

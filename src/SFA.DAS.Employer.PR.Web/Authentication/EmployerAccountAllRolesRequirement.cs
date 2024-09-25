@@ -2,6 +2,6 @@
 
 namespace SFA.DAS.Employer.PR.Web.Authentication;
 
-public class EmployerOwnerRoleRequirement : IAuthorizationRequirement
+public class EmployerAccountAllRolesRequirement : IAuthorizationRequirement
 {
 }
