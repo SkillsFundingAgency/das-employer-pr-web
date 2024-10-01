@@ -27,4 +27,7 @@ public interface IOuterApiClient
 
     [Post("/permissions")]
     Task PostPermissions([Body] PostPermissionsCommand command, CancellationToken cancellationToken);
+
+    [Get("/requests/{requestId}")]
+    Task<GetRequestResponse?> GetRequest([Path] Guid requestId, CancellationToken cancellationToken);
 }
