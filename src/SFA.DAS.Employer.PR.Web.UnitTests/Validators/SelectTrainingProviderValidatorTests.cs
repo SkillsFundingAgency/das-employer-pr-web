@@ -4,17 +4,17 @@ using SFA.DAS.Employer.PR.Web.Validators;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Validators;
-public class SelectTrainingProviderSubmitModelValidatorTests
+public class SelectTrainingProviderValidatorTests
 {
     [Test, MoqAutoData]
     public void TestValidate_LegalEntitySet_Valid(string searchTerm)
     {
-        var model = new SelectTrainingProviderSubmitModel()
+        var model = new SelectTrainingProviderViewModel()
         {
             SearchTerm = searchTerm
         };
 
-        var sut = new SelectTrainingProviderSubmitModelValidator();
+        var sut = new SelectTrainingProviderValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldNotHaveValidationErrorFor(c => c.SearchTerm);
@@ -23,11 +23,11 @@ public class SelectTrainingProviderSubmitModelValidatorTests
     [Test]
     public void TestValidator_LegalEntityInvalid_ReturnsExpectedMessage()
     {
-        var model = new SelectTrainingProviderSubmitModel();
-        var sut = new SelectTrainingProviderSubmitModelValidator();
+        var model = new SelectTrainingProviderViewModel();
+        var sut = new SelectTrainingProviderValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.SearchTerm)
-            .WithErrorMessage(SelectTrainingProviderSubmitModelValidator.NoTrainingProviderSelectedErrorMessage);
+            .WithErrorMessage(SelectTrainingProviderValidator.NoTrainingProviderSelectedErrorMessage);
     }
 }

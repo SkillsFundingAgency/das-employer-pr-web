@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Employer.PR.Web.Infrastructure;
+﻿namespace SFA.DAS.Employer.PR.Web.Constants;
 
 public static class RouteValueKeys
 {

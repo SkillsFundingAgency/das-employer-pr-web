@@ -8,8 +8,11 @@ public class SelectTrainingProviderViewModelTests
     [Test, AutoData]
     public void Operator_ConvertsTo_SelectTrainingProviderViewModel(string backLink, string? name, string? ukprn)
     {
-        SelectTrainingProviderModel sut = new SelectTrainingProviderModel(backLink, name, ukprn);
-        sut.BackLink.Should().Be(backLink);
+        SelectTrainingProviderViewModel sut = new()
+        {
+            Name = name,
+            Ukprn = ukprn
+        };
         sut.Name.Should().Be(name);
         sut.Ukprn.Should().Be(ukprn);
     }

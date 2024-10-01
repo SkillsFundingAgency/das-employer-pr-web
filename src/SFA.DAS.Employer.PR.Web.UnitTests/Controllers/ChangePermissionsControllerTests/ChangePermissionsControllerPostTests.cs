@@ -25,21 +25,21 @@ public class ChangePermissionsControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_Validated_RedirectsToYourTrainingProviders(
-        Mock<IValidator<ChangePermissionsSubmitViewModel>> validatorMock,
+        Mock<IValidator<ChangePermissionsSubmitModel>> validatorMock,
         string employerAccountId,
         long ukprn,
         long legalEntityId,
         GetPermissionsResponse getPermissionsResponse,
         CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitModel submitViewModel = new ChangePermissionsSubmitModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
             PermissionToRecruit = SetPermissions.RecruitApprentices.Yes,
             LegalEntityId = legalEntityId,
             Ukprn = ukprn
         };
-        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -68,21 +68,21 @@ public class ChangePermissionsControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_GetPermissionsDoesNotExist_RedirectsToYourTrainingProviders(
-      Mock<IValidator<ChangePermissionsSubmitViewModel>> validatorMock,
+      Mock<IValidator<ChangePermissionsSubmitModel>> validatorMock,
       string employerAccountId,
       long ukprn,
       long legalEntityId,
       GetPermissionsResponse getPermissionsResponse,
       CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitModel submitViewModel = new ChangePermissionsSubmitModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
             PermissionToRecruit = SetPermissions.RecruitApprentices.Yes,
             LegalEntityId = legalEntityId,
             Ukprn = ukprn
         };
-        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -117,7 +117,7 @@ public class ChangePermissionsControllerPostTests
     public async Task Post_Validated_SetsTempData(
         string addRecords,
         string recruitApprentices,
-        Mock<IValidator<ChangePermissionsSubmitViewModel>> validatorMock,
+        Mock<IValidator<ChangePermissionsSubmitModel>> validatorMock,
         string employerAccountId,
         long ukprn,
         long legalEntityId,
@@ -125,7 +125,7 @@ public class ChangePermissionsControllerPostTests
         GetPermissionsResponse getPermissionsResponse,
         CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitModel submitViewModel = new ChangePermissionsSubmitModel
         {
             PermissionToAddCohorts = addRecords,
             PermissionToRecruit = recruitApprentices,
@@ -135,7 +135,7 @@ public class ChangePermissionsControllerPostTests
 
         getPermissionsResponse.ProviderName = providerName;
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -171,7 +171,7 @@ public class ChangePermissionsControllerPostTests
         string addRecords,
         string recruitApprentices,
         Mock<IOuterApiClient> outerApiClientMock,
-        Mock<IValidator<ChangePermissionsSubmitViewModel>> validatorMock,
+        Mock<IValidator<ChangePermissionsSubmitModel>> validatorMock,
         string employerAccountId,
         long ukprn,
         long legalEntityId,
@@ -179,7 +179,7 @@ public class ChangePermissionsControllerPostTests
         GetPermissionsResponse getPermissionsResponse,
         CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitModel submitViewModel = new ChangePermissionsSubmitModel
         {
             PermissionToAddCohorts = addRecords,
             PermissionToRecruit = recruitApprentices,
@@ -204,7 +204,7 @@ public class ChangePermissionsControllerPostTests
                 break;
         }
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -243,7 +243,7 @@ public class ChangePermissionsControllerPostTests
         string addRecords,
         string recruitApprentices,
         Mock<IOuterApiClient> outerApiClientMock,
-        Mock<IValidator<ChangePermissionsSubmitViewModel>> validatorMock,
+        Mock<IValidator<ChangePermissionsSubmitModel>> validatorMock,
         string employerAccountId,
         long ukprn,
         long legalEntityId,
@@ -251,7 +251,7 @@ public class ChangePermissionsControllerPostTests
         GetPermissionsResponse getPermissionsResponse,
         CancellationToken cancellationToken)
     {
-        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitModel submitViewModel = new ChangePermissionsSubmitModel
         {
             PermissionToAddCohorts = addRecords,
             PermissionToRecruit = recruitApprentices,
@@ -261,7 +261,7 @@ public class ChangePermissionsControllerPostTests
 
         var expectedOperations = new List<Operation>();
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangePermissionsSubmitModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
         ProviderPermission permission = new()
@@ -296,7 +296,7 @@ public class ChangePermissionsControllerPostTests
     [Test, MoqAutoData]
     public async Task Post_ValidatedAndFailed_ReturnsExpectedModel(
       Mock<IOuterApiClient> outerApiClientMock,
-      Mock<IValidator<ChangePermissionsSubmitViewModel>> validatorMock,
+      Mock<IValidator<ChangePermissionsSubmitModel>> validatorMock,
       string employerAccountId,
       long ukprn,
       long legalEntityId,
@@ -305,7 +305,7 @@ public class ChangePermissionsControllerPostTests
       CancellationToken cancellationToken
   )
     {
-        ChangePermissionsSubmitViewModel submitViewModel = new ChangePermissionsSubmitViewModel
+        ChangePermissionsSubmitModel submitViewModel = new ChangePermissionsSubmitModel
         {
             PermissionToAddCohorts = SetPermissions.AddRecords.No,
             PermissionToRecruit = SetPermissions.RecruitApprentices.No,
@@ -320,7 +320,7 @@ public class ChangePermissionsControllerPostTests
             ProviderName = providerName
         };
 
-        validatorMock.Setup(m => m.Validate(It.IsAny<ChangePermissionsSubmitViewModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
+        validatorMock.Setup(m => m.Validate(It.IsAny<ChangePermissionsSubmitModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
             {
                 new("TestField","Test Message") { ErrorCode = "1001"}
             }));

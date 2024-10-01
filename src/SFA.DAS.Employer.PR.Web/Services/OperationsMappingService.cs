@@ -6,7 +6,7 @@ namespace SFA.DAS.Employer.PR.Web.Services;
 
 public static class OperationsMappingService
 {
-    public static PermissionDescriptionsViewModel MapOperationsToDescriptions(List<Operation> operations)
+    public static PermissionDescriptionsModel MapOperationsToDescriptions(List<Operation> operations)
     {
         var permissionToAddCohorts = operations.Exists(o => o == Operation.CreateCohort)
             ? SetPermissions.AddRecords.Yes
@@ -23,10 +23,10 @@ public static class OperationsMappingService
             permissionToRecruit = SetPermissions.RecruitApprentices.YesWithReview;
         }
 
-        return new PermissionDescriptionsViewModel { PermissionToAddCohorts = permissionToAddCohorts, PermissionToRecruit = permissionToRecruit };
+        return new PermissionDescriptionsModel { PermissionToAddCohorts = permissionToAddCohorts, PermissionToRecruit = permissionToRecruit };
     }
 
-    public static List<Operation> MapDescriptionsToOperations(PermissionDescriptionsViewModel permissionDescriptionsViewModel)
+    public static List<Operation> MapDescriptionsToOperations(PermissionDescriptionsModel permissionDescriptionsViewModel)
     {
         var operations = new List<Operation>();
 

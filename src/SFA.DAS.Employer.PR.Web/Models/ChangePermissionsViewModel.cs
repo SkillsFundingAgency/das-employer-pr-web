@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Employer.PR.Web.Models;
 
-public class ChangePermissionsViewModel : ChangePermissionsSubmitViewModel
+public class ChangePermissionsViewModel : ChangePermissionsSubmitModel
 {
     public string BackLink { get; set; }
     public string CancelLink { get; set; }
@@ -22,7 +22,7 @@ public class ChangePermissionsViewModel : ChangePermissionsSubmitViewModel
     }
 }
 
-public class ChangePermissionsSubmitViewModel : PermissionDescriptionsViewModel
+public class ChangePermissionsSubmitModel : PermissionDescriptionsModel
 {
     public string PermissionToAddCohortsOriginal { get; set; } = null!;
     public string PermissionToRecruitOriginal { get; set; } = null!;

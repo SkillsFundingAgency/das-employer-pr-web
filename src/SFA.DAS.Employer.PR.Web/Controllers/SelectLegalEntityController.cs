@@ -21,7 +21,7 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
     public const string ViewPath = "~/Views/SelectLegalEntity/Index.cshtml";
 
     [HttpGet]
-    public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, [FromQuery] string? accountTasks, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
 
