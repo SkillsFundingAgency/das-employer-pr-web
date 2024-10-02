@@ -4,13 +4,13 @@ using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Models;
 
-public sealed class ProviderRequestModelTests
+public sealed class PermissionRequestModelTests
 {
     [Test]
     [MoqAutoData]
-    public void Operator_ConvertsTo_ProviderRequestModel(ProviderRequest request)
+    public void Operator_ConvertsTo_PermissionRequestModel(PermissionRequest request)
     {
-        ProviderRequestModel sut = request;
+        PermissionRequestModel sut = request;
 
         Assert.Multiple(() =>
         {

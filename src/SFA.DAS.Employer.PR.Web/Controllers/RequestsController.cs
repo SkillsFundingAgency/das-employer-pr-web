@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using static SFA.DAS.Employer.PR.Domain.Common.PermissionRequest;
 using static SFA.DAS.Employer.PR.Web.Infrastructure.RouteNames;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
@@ -14,15 +15,15 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
     [AllowAnonymous]
     public async Task<IActionResult> Index([FromRoute] Guid requestId, CancellationToken cancellationToken)
     {
-        GetRequestResponse? requestResponse = await _outerApiClient.GetRequest(requestId, cancellationToken);
+        GetPermissionRequestResponse? response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
-        if (requestResponse is null)
+        if (response is null)
         {
             return View(RequestViews.CannotViewRequest);
         }
         else
         {
-            if(requestResponse.ValidateRequest())
+            if(ValidatePermissionRequest(response))
             {
                 // Happy Path: To Do: CSP-1499
                 return RedirectToAction();
@@ -32,5 +33,10 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
                 return View(RequestViews.CannotViewRequest);
             }
         }
+    }
+
+    public static bool ValidatePermissionRequest(GetPermissionRequestResponse response)
+    {
+        return response.Status == nameof(RequestStatus.Sent) || response.Status == nameof(RequestStatus.New);
     }
 }

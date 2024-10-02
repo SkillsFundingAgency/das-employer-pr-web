@@ -11,7 +11,7 @@ public class LegalEntityModel
     public bool IsSelected { get; set; }
 
     public List<PermissionModel> Permissions { get; set; } = [];
-    public List<ProviderRequestModel> Requests { get; set; } = [];
+    public List<PermissionRequestModel> Requests { get; set; } = [];
 
     public static implicit operator LegalEntityModel(LegalEntity legalEntity)
     {
@@ -22,7 +22,7 @@ public class LegalEntityModel
             LegalEntityId = legalEntity.Id,
             Name = legalEntity.Name,
             Permissions = legalEntity.Permissions.Select(a => (PermissionModel)a).ToList(),
-            Requests = legalEntity.Requests.Select(a => (ProviderRequestModel)a).ToList()
+            Requests = legalEntity.Requests.Select(a => (PermissionRequestModel)a).ToList()
         };
 
         return model;

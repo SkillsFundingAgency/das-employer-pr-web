@@ -244,7 +244,8 @@ public class YourTrainingProvidersControllerTests
             Ukprn = ukprn 
         };
 
-        var request = new ProviderRequest { 
+        var request = new PermissionRequest
+        { 
             RequestId = Guid.NewGuid(), 
             Ukprn = ukprn, 
             Operations = [] 
@@ -264,7 +265,7 @@ public class YourTrainingProvidersControllerTests
         };
 
         var permissions = new List<ProviderPermission> { permission };
-        var requests = new List<ProviderRequest> { request };
+        var requests = new List<PermissionRequest> { request };
 
         SetupControllerAndClasses(
             outerApiMock, 
@@ -476,7 +477,7 @@ public class YourTrainingProvidersControllerTests
         List<ProviderPermission> permissions,
         YourTrainingProvidersController sut, 
         bool multipleAccounts,
-        List<ProviderRequest>? requests = null
+        List<PermissionRequest>? requests = null
     )
     {
         List<LegalEntity> accountLegalEntities = new List<LegalEntity>
