@@ -17,6 +17,14 @@ public sealed class GetRequestResponseTests
             RequestedBy = "RequestedBy",
             RequestedDate = DateTime.Now,
             Status = nameof(RequestStatus.Sent),
+            AccountLegalEntityId = 1,
+            EmployerOrganisationName = "EmployerOrganisationName",
+            EmployerContactFirstName = "EmployerContactFirstName",
+            EmployerContactLastName = "EmployerContactLastName",
+            EmployerContactEmail = "EmployerContactEmail",
+            EmployerPAYE = "EmployerPAYE",
+            EmployerAORN = "EmployerAORN",
+            UpdatedDate = DateTime.UtcNow
         };
 
         var isValid = requestResponse.ValidateRequest();
