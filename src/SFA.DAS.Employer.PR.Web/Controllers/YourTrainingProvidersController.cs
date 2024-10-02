@@ -45,11 +45,11 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
 
             foreach (var permissionModel in legalEntityModel.Permissions.OrderBy(p => p.ProviderName))
             {
-                var providerRequestModel = legalEntityModel.Requests.Find(a => a.Ukprn == permissionModel.Ukprn);
+                var permissionRequestModel = legalEntityModel.Requests.Find(a => a.Ukprn == permissionModel.Ukprn);
 
-                if(providerRequestModel is not null)
+                if(permissionRequestModel is not null)
                 {
-                    permissionModel.ActionLink = Url.RouteUrl(RouteNames.Requests, new { requestId = providerRequestModel.RequestId })!;
+                    permissionModel.ActionLink = Url.RouteUrl(RouteNames.Requests, new { requestId = permissionRequestModel.RequestId })!;
                     permissionModel.ActionLinkText = YourTrainingProviders.ViewRequestActionText;
                 }
                 else
