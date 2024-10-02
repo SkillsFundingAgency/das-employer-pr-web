@@ -49,7 +49,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
 
                 if(providerRequestModel is not null)
                 {
-                    permissionModel.ActionLink = Url.RouteUrl(RouteNames.Requests, new { requestId = providerRequestModel?.RequestId })!;
+                    permissionModel.ActionLink = Url.RouteUrl(RouteNames.Requests, new { requestId = providerRequestModel.RequestId })!;
                     permissionModel.ActionLinkText = YourTrainingProviders.ViewRequestActionText;
                 }
                 else
