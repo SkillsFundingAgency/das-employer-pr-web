@@ -33,4 +33,11 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
             }
         }
     }
+
+    [AllowAnonymous]
+    [Route("review")]
+    public IActionResult ReviewPermissionsRequest([FromRoute] Guid requestId, CancellationToken cancellationToken)
+    {
+        return View(RequestViews.ReviewPermissionsRequest);
+    }
 }

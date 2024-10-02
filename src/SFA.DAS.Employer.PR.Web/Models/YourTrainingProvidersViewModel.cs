@@ -1,6 +1,4 @@
-﻿using SFA.DAS.Employer.PR.Domain.Models;
-
-namespace SFA.DAS.Employer.PR.Web.Models;
+﻿namespace SFA.DAS.Employer.PR.Web.Models;
 
 public class YourTrainingProvidersViewModel
 {

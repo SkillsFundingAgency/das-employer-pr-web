@@ -28,6 +28,7 @@ public static class RouteNames
     public static class RequestViews
     {
         public const string CannotViewRequest = nameof(CannotViewRequest);
+        public const string ReviewPermissionsRequest = nameof(ReviewPermissionsRequest);
     }
 
     public static class ErrorViews
