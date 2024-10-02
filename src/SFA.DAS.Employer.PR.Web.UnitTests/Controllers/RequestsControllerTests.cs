@@ -64,7 +64,6 @@ public sealed class RequestsControllerTests
     [Test]
     public async Task Index_ShouldReturnCannotViewRequestView_WhenRequestIsInvalid()
     {
-        // Arrange
         var requestId = Guid.NewGuid();
         var invalidRequest = new GetRequestResponse
         {
@@ -87,7 +86,7 @@ public sealed class RequestsControllerTests
         Assert.Multiple(() =>
         {
             Assert.That(viewResult, Is.Not.Null);
-            Assert.That(RequestViews.CannotViewRequest, Is.EqualTo(viewResult.ViewName));
+            Assert.That(RequestViews.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
         });
     }
 }

@@ -87,7 +87,7 @@
             <tbody class="govuk-table__body">
                 @foreach (var permissionDetails in ale.Permissions)
                 {
-                    @if (@Model.IsOwner && ale.Requests.Any(a => a.Ukprn == permissionDetails.Ukprn))
+                    @if (@Model.IsOwner && ale.Requests.Exists(a => a.Ukprn == permissionDetails.Ukprn))
                     {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell govuk-!-padding-bottom-0 govuk-!-padding-top-3 border-bottom-override" colspan="4">

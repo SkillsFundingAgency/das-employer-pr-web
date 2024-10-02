@@ -45,7 +45,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
 
             foreach (var permissionModel in legalEntityModel.Permissions.OrderBy(p => p.ProviderName))
             {
-                var providerRequestModel = legalEntityModel.Requests.FirstOrDefault(a => a.Ukprn == permissionModel.Ukprn);
+                var providerRequestModel = legalEntityModel.Requests.Find(a => a.Ukprn == permissionModel.Ukprn);
 
                 if(providerRequestModel is not null)
                 {

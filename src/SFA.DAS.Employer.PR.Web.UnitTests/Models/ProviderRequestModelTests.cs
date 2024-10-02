@@ -16,7 +16,7 @@ public sealed class ProviderRequestModelTests
         {
             Assert.That(sut.Ukprn, Is.EqualTo(request.Ukprn));
             Assert.That(sut.RequestId, Is.EqualTo(request.RequestId));
-            Assert.That(sut.Operations.Count, Is.EqualTo(request.Operations.Count()));
+            Assert.That(sut.Operations.Count, Is.EqualTo(request.Operations.Length));
         });        
     }
 }
