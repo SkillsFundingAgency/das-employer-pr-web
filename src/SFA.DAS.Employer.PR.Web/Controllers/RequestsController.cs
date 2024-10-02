@@ -19,7 +19,7 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
 
         if (response is null)
         {
-            return View(RequestViews.CannotViewRequest);
+            return View(ViewNames.CannotViewRequest);
         }
         else
         {
@@ -30,7 +30,7 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
             }
             else
             {
-                return View(RequestViews.CannotViewRequest);
+                return View(ViewNames.CannotViewRequest);
             }
         }
     }

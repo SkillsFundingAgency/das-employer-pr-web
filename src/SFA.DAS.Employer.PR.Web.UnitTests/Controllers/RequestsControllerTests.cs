@@ -2,8 +2,8 @@
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Controllers;
+using SFA.DAS.Employer.PR.Web.Infrastructure;
 using static SFA.DAS.Employer.PR.Domain.Common.PermissionRequest;
-using static SFA.DAS.Employer.PR.Web.Infrastructure.RouteNames;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
@@ -34,7 +34,7 @@ public sealed class RequestsControllerTests
         Assert.Multiple(() =>
         {
             Assert.That(viewResult, Is.Not.Null);
-            Assert.That(RequestViews.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
+            Assert.That(ViewNames.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
         });
     }
 
@@ -87,7 +87,7 @@ public sealed class RequestsControllerTests
         Assert.Multiple(() =>
         {
             Assert.That(viewResult, Is.Not.Null);
-            Assert.That(RequestViews.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
+            Assert.That(ViewNames.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
         });
     }
 }
