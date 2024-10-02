@@ -10,7 +10,8 @@ public class PermissionModel
     public const string NoPermissionToAddRecordsText = "No";
     public const string NoPermissionToRecruitText = "No";
     public long Ukprn { get; set; }
-    public string ChangePermissionsLink { get; set; } = null!;
+    public string ActionLink { get; set; } = null!;
+    public string ActionLinkText { get; set; } = null!;
     public string ProviderName { get; set; } = null!;
     public string PermissionToAddRecords { get; set; } = null!;
     public string PermissionToRecruitApprentices { get; set; } = null!;
@@ -23,7 +24,7 @@ public class PermissionModel
             ProviderName = permission.ProviderName,
             PermissionToAddRecords = NoPermissionToAddRecordsText,
             PermissionToRecruitApprentices = NoPermissionToRecruitText,
-            ChangePermissionsLink = "#"
+            ActionLink = "#"
         };
 
         if (permission.Operations.Exists(x => x == Operation.CreateCohort))
