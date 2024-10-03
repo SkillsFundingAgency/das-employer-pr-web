@@ -24,15 +24,4 @@ public static class RouteNames
         public const string DetailsGet = "account-details-get";
         public const string SignedIn = "stub-signedin-get";
     }
-
-    public static class RequestViews
-    {
-        public const string CannotViewRequest = nameof(CannotViewRequest);
-        public const string ReviewPermissionsRequest = nameof(ReviewPermissionsRequest);
-    }
-
-    public static class ErrorViews
-    {
-        public const string PageNotFound = nameof(PageNotFound);
-    }
 }

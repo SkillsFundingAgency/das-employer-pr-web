@@ -2,7 +2,8 @@
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Controllers;
-using static SFA.DAS.Employer.PR.Web.Infrastructure.RouteNames;
+using SFA.DAS.Employer.PR.Web.Infrastructure;
+using static SFA.DAS.Employer.PR.Domain.Common.PermissionRequest;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
@@ -19,12 +20,12 @@ public sealed class RequestsControllerTests
     }
 
     [Test]
-    public async Task Index_ShouldReturnCannotViewRequestView_WhenRequestIsNull()
+    public async Task Index_ShouldReturnCannotViewRequestView_WhenRequestIsNotFound()
     {
         var requestId = Guid.NewGuid();
         _outerApiClientMock
             .Setup(api => api.GetRequest(requestId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((GetRequestResponse?)null);
+            .ReturnsAsync((GetPermissionRequestResponse?)null);
 
         var result = await _controller.Index(requestId, CancellationToken.None);
 
@@ -33,7 +34,7 @@ public sealed class RequestsControllerTests
         Assert.Multiple(() =>
         {
             Assert.That(viewResult, Is.Not.Null);
-            Assert.That(RequestViews.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
+            Assert.That(ViewNames.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
         });
     }
 
@@ -41,7 +42,7 @@ public sealed class RequestsControllerTests
     public async Task Index_ShouldRedirectToAction_WhenRequestIsValid()
     {
         var requestId = Guid.NewGuid();
-        var validRequest = new GetRequestResponse
+        var validRequest = new GetPermissionRequestResponse
         {
             RequestId = requestId,
             Status = nameof(RequestStatus.New),
@@ -65,7 +66,7 @@ public sealed class RequestsControllerTests
     public async Task Index_ShouldReturnCannotViewRequestView_WhenRequestIsInvalid()
     {
         var requestId = Guid.NewGuid();
-        var invalidRequest = new GetRequestResponse
+        var invalidRequest = new GetPermissionRequestResponse
         {
             RequestId = requestId,
             Status = nameof(RequestStatus.Accepted),
@@ -86,7 +87,7 @@ public sealed class RequestsControllerTests
         Assert.Multiple(() =>
         {
             Assert.That(viewResult, Is.Not.Null);
-            Assert.That(RequestViews.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
+            Assert.That(ViewNames.CannotViewRequest, Is.EqualTo(viewResult!.ViewName));
         });
     }
 }

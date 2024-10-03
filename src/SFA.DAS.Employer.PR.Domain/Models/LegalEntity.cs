@@ -7,5 +7,5 @@ public class LegalEntity
     public string Name { get; set; } = null!;
     public long AccountId { get; set; }
     public List<ProviderPermission> Permissions { get; set; } = [];
-    public List<ProviderRequest> Requests { get; set; } = [];
+    public List<PermissionRequest> Requests { get; set; } = [];
 }
