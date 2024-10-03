@@ -45,11 +45,18 @@ public sealed class RequestsControllerTests
         var validRequest = new GetPermissionRequestResponse
         {
             RequestId = requestId,
-            Status = nameof(RequestStatus.New),
-            RequestType = "TestRequest",
+            Status = RequestStatus.New,
+            RequestType = RequestType.Permission,
             ProviderName = "Test Provider",
             RequestedBy = "RequestedBy",
-            RequestedDate = DateTime.UtcNow
+            RequestedDate = DateTime.UtcNow,
+            AccountLegalEntityId = 2,
+            EmployerOrganisationName = "EmployerOrganisationName",
+            EmployerContactFirstName = "EmployerContactFirstName",
+            EmployerContactLastName = "EmployerContactLastName",
+            EmployerContactEmail = "EmployerContactEmail",
+            EmployerPAYE = "EmployerPAYE",
+            EmployerAORN = "EmployerAORN"
         };
 
         _outerApiClientMock
@@ -69,8 +76,8 @@ public sealed class RequestsControllerTests
         var invalidRequest = new GetPermissionRequestResponse
         {
             RequestId = requestId,
-            Status = nameof(RequestStatus.Accepted),
-            RequestType = "TestRequest",
+            Status = RequestStatus.Accepted,
+            RequestType = RequestType.Permission,
             ProviderName = "Test Provider",
             RequestedBy = "RequestedBy",
             RequestedDate = DateTime.UtcNow

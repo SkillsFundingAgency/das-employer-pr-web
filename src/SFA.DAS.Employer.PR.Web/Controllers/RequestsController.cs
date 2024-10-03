@@ -36,6 +36,6 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
 
     public static bool ValidatePermissionRequest(GetPermissionRequestResponse response)
     {
-        return response.Status == nameof(RequestStatus.Sent) || response.Status == nameof(RequestStatus.New);
+        return response.Status == RequestStatus.Sent || response.Status == RequestStatus.New;
     }
 }
