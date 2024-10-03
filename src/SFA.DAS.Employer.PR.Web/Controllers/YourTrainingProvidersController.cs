@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Constants;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
@@ -49,7 +50,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
 
                 if(permissionRequestModel is not null)
                 {
-                    permissionModel.ActionLink = Url.RouteUrl(RouteNames.Requests, new { requestId = permissionRequestModel.RequestId })!;
+                    permissionModel.ActionLink = MapRequestTypeToRoutes(permissionRequestModel.RequestType, permissionRequestModel.RequestId, employerAccountId);
                     permissionModel.ActionLinkText = YourTrainingProviders.ViewRequestActionText;
                 }
                 else
@@ -78,6 +79,25 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         SetSuccessBanner(yourTrainingProvidersViewModel);
 
         return yourTrainingProvidersViewModel;
+    }
+
+    private string MapRequestTypeToRoutes(RequestType requestType, Guid requestId, string employerAccountId)
+    {
+        switch(requestType)
+        {
+            case RequestType.Permission:
+                {
+                    return Url.RouteUrl(RouteNames.UpdatePermissions, new { requestId, employerAccountId })!;
+                }
+            case RequestType.CreateAccount:
+                {
+                    return Url.RouteUrl(RouteNames.CreateAccount, new { requestId, employerAccountId })!;
+                }
+            case RequestType:
+                {
+                    return Url.RouteUrl(RouteNames.AddAccount, new { requestId, employerAccountId })!;
+                }
+        }
     }
 
     private void SetSuccessBanner(YourTrainingProvidersViewModel model)

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Controllers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
-using static SFA.DAS.Employer.PR.Domain.Common.PermissionRequest;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 

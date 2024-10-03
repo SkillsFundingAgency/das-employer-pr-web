@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
-using static SFA.DAS.Employer.PR.Domain.Common.PermissionRequest;
-using static SFA.DAS.Employer.PR.Web.Infrastructure.RouteNames;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
