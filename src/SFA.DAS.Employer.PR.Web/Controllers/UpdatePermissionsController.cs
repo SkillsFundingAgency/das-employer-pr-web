@@ -46,18 +46,18 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
     [HttpPost]
     public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute]string accountId, ReviewPermissionsRequestSubmitViewModel model, CancellationToken cancellationToken)
     {
+        GetPermissionRequestResponse? response = await _outerApiClient.GetRequest(requestId, cancellationToken);
+
+        if (!ValidateRequest(response))
+        {
+            RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId = accountId });
+        }
+
         var result = _validator.Validate(model);
 
         if (!result.IsValid)
         {
             result.AddToModelState(ModelState);
-
-            GetPermissionRequestResponse? response = await _outerApiClient.GetRequest(requestId, cancellationToken);
-
-            if (response is null)
-            {
-                return View(ViewNames.CannotViewRequest);
-            }
 
             var reviewPermissionModel = new ReviewPermissionsRequestViewModel()
             {
