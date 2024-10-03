@@ -1,6 +1,7 @@
 ﻿using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Constants;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
@@ -248,7 +249,8 @@ public class YourTrainingProvidersControllerTests
         { 
             RequestId = Guid.NewGuid(), 
             Ukprn = ukprn, 
-            Operations = [] 
+            Operations = [],
+            RequestType = RequestType.Permission
         };
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
@@ -279,6 +281,7 @@ public class YourTrainingProvidersControllerTests
         );
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Requests, RequestIdLink);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.UpdatePermissions, RequestIdLink);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
 
