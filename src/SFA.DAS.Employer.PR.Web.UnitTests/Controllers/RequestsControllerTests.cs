@@ -56,7 +56,9 @@ public sealed class RequestsControllerTests
             EmployerContactLastName = "EmployerContactLastName",
             EmployerContactEmail = "EmployerContactEmail",
             EmployerPAYE = "EmployerPAYE",
-            EmployerAORN = "EmployerAORN"
+            EmployerAORN = "EmployerAORN",
+            Ukprn = 10000005,
+            UpdatedDate = DateTime.UtcNow
         };
 
         _outerApiClientMock
