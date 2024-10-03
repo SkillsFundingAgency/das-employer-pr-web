@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
-@model ReviewPermissionRequestViewModel
+@model ReviewPermissionsRequestViewModel
 
 @{
     ViewData["Title"] = "Review permission request";
@@ -48,7 +48,7 @@
         </table>
     </div>
     <div class="govuk-grid-column-two-thirds">
-        <form asp-route="@RouteNames.ReviewPermissionRequest" method="POST">
+        <form asp-route="@RouteNames.UpdatePermissions" method="POST">
             <div class="govuk-form-group">
                 <fieldset id="AcceptPermissions" class="govuk-fieldset" aria-describedby="contact-hint">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
@@ -74,7 +74,7 @@
             </div>
             <div class="govuk-button-group">
                 <button type="submit" id="continue" class="govuk-button govuk-!-margin-right-6" data-disable-on-submit="true">Confirm</button>
-                <a class="govuk-link" href="#">View your training providers</a>
+                <a class="govuk-link" href="@Model.ViewYourTrainingProvidersLink">View your training providers</a>
             </div>
         </form>
     </div>
