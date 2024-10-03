@@ -11,4 +11,11 @@ public static class PermissionRequest
         Expired,
         Deleted
     }
+
+    public enum RequestType : short
+    {
+        CreateAccount,
+        AddAccount,
+        Permission
+    }
 }

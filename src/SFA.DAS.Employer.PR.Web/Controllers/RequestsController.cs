@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using static SFA.DAS.Employer.PR.Domain.Common.PermissionRequest;
-using static SFA.DAS.Employer.PR.Web.Infrastructure.RouteNames;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -23,10 +23,9 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
         }
         else
         {
-            if(ValidatePermissionRequest(response))
+            if (ValidatePermissionRequest(response))
             {
-                // Happy Path: To Do: CSP-1499
-                return RedirectToAction();
+                return RedirectToAction(ViewNames.ReviewPermissionRequest, response.RequestId);
             }
             else
             {
@@ -38,12 +37,5 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
     public static bool ValidatePermissionRequest(GetPermissionRequestResponse response)
     {
         return response.Status == nameof(RequestStatus.Sent) || response.Status == nameof(RequestStatus.New);
-    }
-
-    [AllowAnonymous]
-    [Route("review")]
-    public IActionResult ReviewPermissionsRequest([FromRoute] Guid requestId, CancellationToken cancellationToken)
-    {
-        return View(RequestViews.ReviewPermissionsRequest);
     }
 }
