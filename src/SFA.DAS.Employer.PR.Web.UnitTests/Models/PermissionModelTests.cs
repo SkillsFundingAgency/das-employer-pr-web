@@ -28,6 +28,6 @@ public class PermissionModelTests
         sut.ProviderName.Should().Be(providerName);
         sut.PermissionToAddRecords.Should().Be(expectedPermissionToAddApprenticesText);
         sut.PermissionToRecruitApprentices.Should().Be(expectedPermissionToRecruitApprenticesText);
-        sut.ChangePermissionsLink.Should().Be("#");
+        sut.ActionLink.Should().Be("#");
     }
 }

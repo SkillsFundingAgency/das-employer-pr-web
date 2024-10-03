@@ -1,6 +1,8 @@
 ﻿using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using SFA.DAS.Employer.PR.Domain.Common;
+using SFA.DAS.Employer.PR.Domain.Constants;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
@@ -22,6 +24,7 @@ public class YourTrainingProvidersControllerTests
     static readonly string SelectLegalEntityUrl = Guid.NewGuid().ToString();
     static readonly string YourTrainingProviderUrl = Guid.NewGuid().ToString();
     static readonly string ChangePermissionsLink = Guid.NewGuid().ToString();
+    static readonly string RequestIdLink = Guid.NewGuid().ToString();
 
     [Test, MoqAutoData]
     public void Index_CallsOuterApiEndpoint(
@@ -218,7 +221,82 @@ public class YourTrainingProvidersControllerTests
         actualPermissionDetails.ProviderName.Should().Be(providerName);
         actualPermissionDetails.PermissionToAddRecords.Should().Be(expectedPermissionToAddApprenticesText);
         actualPermissionDetails.PermissionToRecruitApprentices.Should().Be(expectedPermissionToRecruitApprenticesText);
-        actualPermissionDetails.ChangePermissionsLink.Should().Be(ChangePermissionsLink);
+        actualPermissionDetails.ActionLink.Should().Be(ChangePermissionsLink);
+        actualPermissionDetails.ActionLinkText.Should().Be(YourTrainingProviders.ChangePermissionsActionText);
+    }
+
+    [Test]
+    [MoqAutoData]
+    public void EmployerRelationship_HasOutstandingRequest_ReturnsExpectedActionText(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<IEncodingService> encodingServiceMock,
+        string employerAccountId,
+        string providerName,
+        long ukprn
+    )
+    {
+        var accountId = 1123;
+        var accountName = "Account Name";
+        var publicHashedId = "12123232";
+
+        var permission = new ProviderPermission { 
+            Operations = [], 
+            ProviderName = providerName, 
+            Ukprn = ukprn 
+        };
+
+        var request = new PermissionRequest
+        { 
+            RequestId = Guid.NewGuid(), 
+            Ukprn = ukprn, 
+            Operations = [],
+            RequestType = RequestType.Permission
+        };
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+
+        encodingServiceMock.Setup(e => e.Decode(employerAccountId, EncodingType.AccountId)).Returns(accountId);
+
+        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>(), encodingServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext { 
+                HttpContext = new DefaultHttpContext { 
+                    User = user 
+                } 
+            }
+        };
+
+        var permissions = new List<ProviderPermission> { permission };
+        var requests = new List<PermissionRequest> { request };
+
+        SetupControllerAndClasses(
+            outerApiMock, 
+            accountId,
+            accountName, 
+            publicHashedId, 
+            permissions, 
+            sut, 
+            false, 
+            requests
+        );
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Requests, RequestIdLink);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.UpdatePermissions, RequestIdLink);
+
+        var result = sut.Index(employerAccountId, new CancellationToken());
+
+        var viewResult = result.Result.As<ViewResult>();
+        var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
+
+        var actualLegalEntity = viewModel!.LegalEntities.First();
+
+        var actualPermissionDetails = actualLegalEntity.Permissions.First();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(actualPermissionDetails.ActionLink, Is.EqualTo(RequestIdLink));
+            Assert.That(actualPermissionDetails.ActionLinkText, Is.EqualTo(YourTrainingProviders.ViewRequestActionText));
+        });
     }
 
     [Test, MoqAutoData]
@@ -394,15 +472,24 @@ public class YourTrainingProvidersControllerTests
         viewModel.PermissionsUpdatedForProviderText.Should().Be(expectedText);
     }
 
-    private static void SetupControllerAndClasses(Mock<IOuterApiClient> outerApiMock, int accountId, string accountName,
-        string publicHashedId, List<ProviderPermission> permissions, YourTrainingProvidersController sut, bool multipleAccounts)
+    private static void SetupControllerAndClasses(
+        Mock<IOuterApiClient> outerApiMock, 
+        int accountId, 
+        string accountName,
+        string publicHashedId, 
+        List<ProviderPermission> permissions,
+        YourTrainingProvidersController sut, 
+        bool multipleAccounts,
+        List<PermissionRequest>? requests = null
+    )
     {
         List<LegalEntity> accountLegalEntities = new List<LegalEntity>
         {
             new()
             {
                 AccountId = accountId, Id = 1, Name = accountName, PublicHashedId = publicHashedId,
-                Permissions = permissions
+                Permissions = permissions,
+                Requests = requests ?? []
             }
         };
 
