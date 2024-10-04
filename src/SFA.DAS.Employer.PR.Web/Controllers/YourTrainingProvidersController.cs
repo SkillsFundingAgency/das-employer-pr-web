@@ -70,7 +70,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
             }
         }
 
-        YourTrainingProvidersViewModel yourTrainingProvidersViewModel = new YourTrainingProvidersViewModel(legalEntityModels)
+        YourTrainingProvidersViewModel yourTrainingProvidersViewModel = new(legalEntityModels)
         {
             IsOwner = User.IsOwner(employerAccountId),
             AddTrainingProviderUrl = Url.RouteUrl(RouteNames.SelectLegalEntity, new { employerAccountId })!
@@ -91,12 +91,14 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
                 }
             case RequestType.CreateAccount:
                 {
-                    return Url.RouteUrl(RouteNames.CreateAccount, new { requestId, accountId = employerAccountId })!;
+                    return Url.RouteUrl(RouteNames.CreateAccounts, new { requestId, accountId = employerAccountId })!;
                 }
-            case RequestType:
+            case RequestType.AddAccount:
                 {
-                    return Url.RouteUrl(RouteNames.AddAccount, new { requestId, accountId = employerAccountId })!;
+                    return Url.RouteUrl(RouteNames.AddAccounts, new { requestId, accountId = employerAccountId })!;
                 }
+            default:
+                return string.Empty;
         }
     }
 

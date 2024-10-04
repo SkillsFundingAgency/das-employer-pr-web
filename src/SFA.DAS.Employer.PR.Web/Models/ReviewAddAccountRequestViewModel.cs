@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Employer.PR.Web.Models;
 
-public sealed class ReviewPermissionsRequestViewModel : ReviewPermissionsRequestSubmitViewModel, IReviewRequest
+public sealed class ReviewAddAccountRequestViewModel : ReviewAddAccountRequestSubmitViewModel, IReviewRequest
 {
     public required string ProviderName { get; set; }
     public string? AddApprenticeRecordsText { get; set; }
@@ -10,7 +10,7 @@ public sealed class ReviewPermissionsRequestViewModel : ReviewPermissionsRequest
     public required string ViewYourTrainingProvidersLink { get; set; }
 }
 
-public class ReviewPermissionsRequestSubmitViewModel : PermissionDescriptionsViewModel
+public class ReviewAddAccountRequestSubmitViewModel : PermissionDescriptionsViewModel
 {
     public bool? AcceptPermissions { get; set; }
 }

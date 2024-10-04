@@ -95,8 +95,8 @@ public class UpdatePermissionsControllerTests
             Assert.That(ViewNames.ReviewPermissionsRequest, Is.EqualTo(result.ViewName));
             Assert.That(model, Is.Not.Null);
             Assert.That("Test Provider", Is.EqualTo(model!.ProviderName));
-            Assert.That(ReviewPermissions.Yes, Is.EqualTo(model!.AddApprenticeRecordsText));
-            Assert.That(ReviewPermissions.No, Is.EqualTo(model!.RecruitApprenticesText));
+            Assert.That(ReviewRequest.Yes, Is.EqualTo(model!.AddApprenticeRecordsText));
+            Assert.That(ReviewRequest.No, Is.EqualTo(model!.RecruitApprenticesText));
         });
     }
 

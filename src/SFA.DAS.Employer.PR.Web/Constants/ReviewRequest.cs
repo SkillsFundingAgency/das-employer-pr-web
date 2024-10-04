@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Employer.PR.Web.Constants;
 
-public static class ReviewPermissions
+public static class ReviewRequest
 {
     public const string Yes = "Yes";
     public const string YesWithEmployerReview = "Yes, employer will review records";
