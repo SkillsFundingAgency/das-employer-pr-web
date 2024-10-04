@@ -14,6 +14,7 @@ using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
+using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
@@ -52,12 +53,17 @@ public class UpdatePermissionsControllerTests
         _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((GetPermissionRequestResponse?)null);
 
-        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None) as ViewResult;
+        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
-            Assert.That(result, Is.Not.Null);
-            Assert.That(ViewNames.PageNotFound, Is.EqualTo(result!.ViewName));
+            Assert.That(result, Is.InstanceOf<RedirectToActionResult>());
+
+            var redirectResult = result as RedirectToActionResult;
+
+            Assert.That(redirectResult!.ActionName, Is.EqualTo("HttpStatusCodeHandler"));
+            Assert.That(redirectResult.ControllerName, Is.EqualTo(RouteNames.Error));
+            Assert.That(redirectResult.RouteValues!["statusCode"], Is.EqualTo((int)HttpStatusCode.NotFound));
         });
     }
 

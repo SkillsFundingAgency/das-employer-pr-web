@@ -12,6 +12,7 @@ using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
+using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -26,7 +27,7 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
 
         if (!IsValidRequest(response))
         {
-            return View(ViewNames.PageNotFound);
+            return RedirectToAction("HttpStatusCodeHandler", RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
         }
 
         var model = CreateReviewPermissionsRequestViewModel(response!, accountId);

@@ -19,6 +19,7 @@ public static class RouteNames
     public const string UpdatePermissions = nameof(UpdatePermissions);
     public const string AddAccount = nameof(AddAccount);
     public const string CreateAccount = nameof(CreateAccount);
+    public const string Error = nameof(Error);
 
     public static class StubAccount
     {
