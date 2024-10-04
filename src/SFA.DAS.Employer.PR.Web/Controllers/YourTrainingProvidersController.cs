@@ -110,12 +110,40 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
             return;
         }
 
-        var nameOfProviderUpdated = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
+        var requestTypeActioned = TempData[TempDataKeys.RequestTypeActioned]?.ToString();
+        if (requestTypeActioned != null)
+        {
+            SetPermissionActionedBannerDetails(model, requestTypeActioned);
+            return;
+        }
 
+        var nameOfProviderUpdated = TempData[TempDataKeys.NameOfProviderUpdated];
         if (nameOfProviderUpdated != null)
         {
-            model.PermissionsUpdatedForProvider = nameOfProviderUpdated;
+            model.PermissionsUpdatedForProvider = nameOfProviderUpdated.ToString()!.ToUpper();
             model.PermissionsUpdatedForProviderText = $"You've set permissions for {model.PermissionsUpdatedForProvider}";
+        }
+    }
+
+    private void SetPermissionActionedBannerDetails(YourTrainingProvidersViewModel model, string requestTypeActioned)
+    {
+        string? providerName = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
+        string requestActionTempValue = TempData[TempDataKeys.RequestAction]!.ToString()!;
+
+        RequestAction requestAction = (RequestAction)Enum.Parse(typeof(RequestAction), requestActionTempValue);
+        RequestType requestType = (RequestType)Enum.Parse(typeof(RequestType), requestTypeActioned);
+
+        switch (requestType)
+        {
+            case RequestType.Permission:
+                {
+                    model.PermissionsUpdatedForProvider = string.IsNullOrWhiteSpace(providerName) ? null : providerName;
+                    model.PermissionsUpdatedForProviderText =
+                        requestAction == RequestAction.Accepted ?
+                            $"You've set {model.PermissionsUpdatedForProvider}’s permissions." :
+                            $"You've declined {model.PermissionsUpdatedForProvider}’s permission request.";
+                }
+                break;
         }
     }
 }

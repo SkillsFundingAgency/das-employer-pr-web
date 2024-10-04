@@ -30,4 +30,10 @@ public interface IOuterApiClient
 
     [Get("/requests/{requestId}")]
     Task<GetPermissionRequestResponse?> GetRequest([Path] Guid requestId, CancellationToken cancellationToken);
+
+    [Post("/requests/{requestId}/permission/accepted")]
+    Task<GetPermissionRequestResponse?> AcceptPermissionsRequest([Path] Guid requestId, [Body] AcceptPermissionsRequestModel model, CancellationToken cancellationToken);
+
+    [Post("/requests/{requestId}/permission/declined")]
+    Task<GetPermissionRequestResponse?> DeclineRequest([Path] Guid requestId, [Body] DeclineRequestModel model, CancellationToken cancellationToken);
 }
