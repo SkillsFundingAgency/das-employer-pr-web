@@ -24,7 +24,8 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
         {
             if (ValidatePermissionRequest(response))
             {
-                return RedirectToAction(ViewNames.ReviewPermissionsRequest, response.RequestId);
+                // Happy Path: - Related to devens work - InProgress
+                return RedirectToAction();
             }
             else
             {
