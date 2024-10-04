@@ -111,7 +111,12 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
         model.AddApprenticeRecordsText = operations.Contains(Operation.CreateCohort) ? ReviewPermissions.Yes : ReviewPermissions.No;
         model.RecruitApprenticesText = operations.Contains(Operation.Recruitment)
             ? ReviewPermissions.Yes
-            : operations.Contains(Operation.RecruitmentRequiresReview)
+            : SetRecruitRequiresReviewText(operations);
+    }
+
+    private static string SetRecruitRequiresReviewText(Operation[] operations)
+    {
+        return operations.Contains(Operation.RecruitmentRequiresReview)
                 ? ReviewPermissions.YesWithEmployerReview
                 : ReviewPermissions.No;
     }
