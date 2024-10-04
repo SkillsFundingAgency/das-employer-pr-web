@@ -45,7 +45,7 @@ public class UpdatePermissionsControllerTests
     }
 
     [Test]
-    public async Task GetIndex_InvalidResponse_ReturnsPageNotFoundView()
+    public async Task GetIndex_WhenInvalidResponse_ReturnsPageNotFoundView()
     {
         var requestId = Guid.NewGuid();
 
@@ -62,7 +62,7 @@ public class UpdatePermissionsControllerTests
     }
 
     [Test]
-    public async Task GetIndex_ValidResponse_ReturnsReviewPermissionsView()
+    public async Task GetIndex_WhenValidResponse_ReturnsReviewPermissionsView()
     {
         var requestId = Guid.NewGuid();
 
@@ -95,7 +95,7 @@ public class UpdatePermissionsControllerTests
     }
 
     [Test]
-    public async Task PostIndex_ValidRequest_ValidModel_AcceptPermissions_RedirectsToYourTrainingProviders()
+    public async Task PostIndex_WhenValidModel_RedirectsToYourTrainingProviders()
     {
         var requestId = Guid.NewGuid();
         var model = new ReviewPermissionsRequestSubmitViewModel { AcceptPermissions = true };
@@ -124,7 +124,7 @@ public class UpdatePermissionsControllerTests
     }
 
     [Test]
-    public async Task PostIndex_InvalidRequest_RedirectsToYourTrainingProviders()
+    public async Task PostIndex_WhenInvalidRequest_RedirectsToYourTrainingProviders()
     {
         var requestId = Guid.NewGuid();
         var model = new ReviewPermissionsRequestSubmitViewModel();
@@ -142,7 +142,7 @@ public class UpdatePermissionsControllerTests
     }
 
     [Test]
-    public async Task PostIndex_ValidRequest_InvalidModel_ReturnsReviewPermissionsView()
+    public async Task PostIndex_WhenInvalidModel_ReturnsReviewPermissionsView()
     {
         var requestId = Guid.NewGuid();
         var model = new ReviewPermissionsRequestSubmitViewModel();
@@ -180,7 +180,7 @@ public class UpdatePermissionsControllerTests
     }
 
     [Test]
-    public async Task PostIndex_Sets_TempData_On_AcceptPermissions()
+    public async Task PostIndex_OnAcceptPermissions_SetsTempData()
     {
         var requestId = Guid.NewGuid();
         var model = new ReviewPermissionsRequestSubmitViewModel { AcceptPermissions = true };
@@ -221,7 +221,7 @@ public class UpdatePermissionsControllerTests
     }
 
     [Test]
-    public async Task PostIndex_Sets_TempData_On_DeclinePermissions()
+    public async Task PostIndex_OnDeclinePermissions_SetsTempData()
     {
         var requestId = Guid.NewGuid();
         var accountId = "test-account-id";
