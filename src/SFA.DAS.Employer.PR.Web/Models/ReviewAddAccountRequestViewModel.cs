@@ -12,5 +12,5 @@ public sealed class ReviewAddAccountRequestViewModel : ReviewAddAccountRequestSu
 
 public class ReviewAddAccountRequestSubmitViewModel : PermissionDescriptionsViewModel
 {
-    public bool? AcceptPermissions { get; set; }
+    public bool? AcceptAddAccountRequest { get; set; }
 }

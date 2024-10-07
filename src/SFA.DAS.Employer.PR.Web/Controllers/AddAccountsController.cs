@@ -37,7 +37,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
     {
         GetPermissionRequestResponse? response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
-        if (!ReviewRequestHelper.IsValidRequest(response, RequestType.Permission))
+        if (!ReviewRequestHelper.IsValidRequest(response, RequestType.AddAccount))
         {
             return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId = accountId });
         }
@@ -45,7 +45,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         if (!IsModelValid(model))
         {
             var reviewPermissionModel = CreateReviewAddAccountRequestViewModel(response!, accountId);
-            return View(ViewNames.ReviewPermissionsRequest, reviewPermissionModel);
+            return View(ViewNames.ReviewAddAccountsRequest, reviewPermissionModel);
         }
 
         var userId = User.GetUserId().ToString();
@@ -53,7 +53,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         TempData[TempDataKeys.NameOfProviderUpdated] = response!.ProviderName;
         TempData[TempDataKeys.RequestTypeActioned] = response.RequestType.ToString();
 
-        bool acceptRequest = model.AcceptPermissions!.Value;
+        bool acceptRequest = model.AcceptAddAccountRequest!.Value;
         await HandleAddAccountRequest(requestId, userId, acceptRequest, cancellationToken);
 
         return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId = accountId });
@@ -76,7 +76,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
     {
         if (acceptRequest)
         {
-            await _outerApiClient.AcceptPermissionsRequest(requestId, new AcceptPermissionsRequestModel(userId), cancellationToken); // TO-DO update
+            await _outerApiClient.AcceptAddAccountRequest(requestId, new AcceptAddAccountRequestModel(userId), cancellationToken); // TO-DO update
             TempData[TempDataKeys.RequestAction] = RequestAction.Accepted.ToString();
         }
         else

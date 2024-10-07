@@ -35,7 +35,7 @@ public interface IOuterApiClient
     Task AcceptPermissionsRequest([Path] Guid requestId, [Body] AcceptPermissionsRequestModel model, CancellationToken cancellationToken);
 
     [Post("/requests/{requestId}/addaccount/accepted")]
-    Task<GetPermissionRequestResponse?> AcceptAddAccountRequest([Path] Guid requestId, [Body] AcceptAddAccountRequestModel model, CancellationToken cancellationToken);
+    Task AcceptAddAccountRequest([Path] Guid requestId, [Body] AcceptAddAccountRequestModel model, CancellationToken cancellationToken);
 
     [Post("/requests/{requestId}/permission/declined")]
     Task DeclineRequest([Path] Guid requestId, [Body] DeclineRequestModel model, CancellationToken cancellationToken);
