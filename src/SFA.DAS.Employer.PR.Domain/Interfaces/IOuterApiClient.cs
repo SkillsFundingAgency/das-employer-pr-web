@@ -27,4 +27,7 @@ public interface IOuterApiClient
 
     [Post("/permissions")]
     Task PostPermissions([Body] PostPermissionsCommand command, CancellationToken cancellationToken);
+
+    [Get("/requests/{requestId}/createaccount/validate")]
+    Task<ValidateCreateAccountRequestResponse> ValidateCreateAccountRequest([Path] Guid requestId, CancellationToken cancellationToken);
 }
