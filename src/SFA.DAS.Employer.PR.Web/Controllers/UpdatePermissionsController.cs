@@ -17,11 +17,11 @@ using System.Net;
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
-[Route("accounts/{accountId}/updatepermissions/{requestId}", Name = RouteNames.UpdatePermissions)]
+[Route("accounts/{employerAccountId}/updatepermissions/{requestId}", Name = RouteNames.UpdatePermissions)]
 public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient, IValidator<ReviewPermissionsRequestSubmitViewModel> _validator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string accountId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         var response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
@@ -30,24 +30,24 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
             return RedirectToAction("HttpStatusCodeHandler", RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
         }
 
-        var model = CreateReviewPermissionsRequestViewModel(response!, accountId);
+        var model = CreateReviewPermissionsRequestViewModel(response!, employerAccountId);
 
         return View(ViewNames.ReviewPermissionsRequest, model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute]string accountId, ReviewPermissionsRequestSubmitViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute]string employerAccountId, ReviewPermissionsRequestSubmitViewModel model, CancellationToken cancellationToken)
     {
         GetPermissionRequestResponse? response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
         if (!ReviewRequestHelper.IsValidRequest(response, RequestType.Permission))
         {
-            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId = accountId });
+            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
         if (!IsModelValid(model))
         {
-            var reviewPermissionModel = CreateReviewPermissionsRequestViewModel(response!, accountId);
+            var reviewPermissionModel = CreateReviewPermissionsRequestViewModel(response!, employerAccountId);
             return View(ViewNames.ReviewPermissionsRequest, reviewPermissionModel);
         }
 
@@ -59,15 +59,15 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
         bool acceptRequest = model.AcceptPermissions!.Value;
         await HandlePermissionsRequest(requestId, userId, acceptRequest, cancellationToken);
 
-        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId = accountId });
+        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
     }
 
-    private ReviewPermissionsRequestViewModel CreateReviewPermissionsRequestViewModel(GetPermissionRequestResponse response, string accountId)
+    private ReviewPermissionsRequestViewModel CreateReviewPermissionsRequestViewModel(GetPermissionRequestResponse response, string employerAccountId)
     {
         var viewModel = new ReviewPermissionsRequestViewModel
         {
             ProviderName = response.ProviderName,
-            ViewYourTrainingProvidersLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId = accountId })!
+            ViewYourTrainingProvidersLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!
         };
 
         ReviewRequestHelper.MapOperationsToDescriptions(ref viewModel, response.Operations);

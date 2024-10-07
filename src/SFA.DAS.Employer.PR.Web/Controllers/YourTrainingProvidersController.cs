@@ -87,7 +87,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         {
             case RequestType.Permission:
                 {
-                    return Url.RouteUrl(RouteNames.UpdatePermissions, new { requestId, accountId = employerAccountId })!;
+                    return Url.RouteUrl(RouteNames.UpdatePermissions, new { requestId, employerAccountId })!;
                 }
             case RequestType.CreateAccount:
                 {
