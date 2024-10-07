@@ -22,9 +22,9 @@ public class RequestsController(IOuterApiClient _outerApiClient) : Controller
         }
         else
         {
-            if(ValidatePermissionRequest(response))
+            if (ValidatePermissionRequest(response))
             {
-                // Happy Path: To Do: CSP-1499
+                // Happy Path: - Related to devens work - InProgress
                 return RedirectToAction();
             }
             else

@@ -12,7 +12,7 @@ public class ErrorController(ILogger<ErrorController> _logger) : Controller
 {
     [AllowAnonymous]
     [Route("{statusCode}")]
-    public IActionResult HttpStatusCodeHandler(int statusCode)
+    public IActionResult HttpStatusCodeHandler([FromRoute]int statusCode)
     {
         switch (statusCode)
         {
