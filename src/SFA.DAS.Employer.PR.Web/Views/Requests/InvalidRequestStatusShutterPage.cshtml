@@ -1,0 +1,25 @@
+﻿@using SFA.DAS.Employer.PR.Web.Models.Requests
+
+@model InvalidRequestStatusShutterPageViewModel
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-form-group">
+            <h1 class="govuk-heading-l">
+                Cannot create account
+            </h1>
+            <p class="govuk-body">
+                You cannot create an apprenticeship service account using this link. This might be because:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>the request has expired</li>
+                <li>you or someone from your organisation declined the request</li>
+                <li>the details the training provider used are no longer valid (for example, the PAYE scheme has closed)</li>
+            </ul>
+            <p class="govuk-body">
+                Contact the training provider if you want them to resend the request to create an account. Or you can <a href="@Model.AccountsUrl">create an apprenticeship service account</a> yourself.
+            </p>
+        </div>
+    </div>
+</div>

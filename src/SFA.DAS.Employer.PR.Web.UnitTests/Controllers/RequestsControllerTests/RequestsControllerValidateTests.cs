@@ -1,8 +1,11 @@
 ﻿using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
+using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Controllers;
+using SFA.DAS.Employer.PR.Web.Models.Requests;
+using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.RequestsControllerTests;
@@ -16,10 +19,55 @@ public class RequestsControllerValidateTests
         Guid requestId,
         CancellationToken cancellationToken)
     {
-        outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(new ValidateCreateAccountRequestResponse { IsRequestValid = false });
+        ValidateCreateAccountRequestResponse response = new() { IsRequestValid = false };
+        outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
 
         var result = await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RequestsController.PageNotFoundViewPath);
+    }
+
+    [Test, MoqAutoData]
+    public async Task Validate_InvalidRequestStatus_ReturnsInvalidRequestStatusShutterPage(
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] UrlBuilder builder,
+        [Greedy] RequestsController sut,
+        Guid requestId,
+        CancellationToken cancellationToken)
+    {
+        ValidateCreateAccountRequestResponse response = new()
+        {
+            IsRequestValid = true,
+            Status = RequestStatus.New,
+            HasValidaPaye = true
+        };
+        outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+
+        var result = await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
+
+        result.As<ViewResult>().ViewName.Should().Be(RequestsController.InvalidRequestStatusShutterPageViewPath);
+        result.As<ViewResult>().Model.As<InvalidRequestStatusShutterPageViewModel>().AccountsUrl.Should().Be(builder.AccountsLink());
+    }
+
+    [Test, MoqAutoData]
+    public async Task Validate_InvalidPayeDetails_ReturnsInvalidRequestStatusShutterPage(
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] UrlBuilder builder,
+        [Greedy] RequestsController sut,
+        Guid requestId,
+        CancellationToken cancellationToken)
+    {
+        ValidateCreateAccountRequestResponse response = new()
+        {
+            IsRequestValid = true,
+            Status = RequestStatus.Sent,
+            HasValidaPaye = false
+        };
+        outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+
+        var result = await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
+
+        result.As<ViewResult>().ViewName.Should().Be(RequestsController.InvalidRequestStatusShutterPageViewPath);
+        result.As<ViewResult>().Model.As<InvalidRequestStatusShutterPageViewModel>().AccountsUrl.Should().Be(builder.AccountsLink());
     }
 }
