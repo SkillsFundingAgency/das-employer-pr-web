@@ -26,6 +26,6 @@ public class AddPermissionsSubmitViewModelValidator : AbstractValidator<AddPermi
 
     private static bool AddPermissionsBothNoFalse(AddPermissionsSubmitViewViewModel viewModel, string? addRecords)
     {
-        return !(viewModel.PermissionToAddCohorts == SetPermissions.AddRecords.No && viewModel.PermissionToRecruit == SetPermissions.RecruitApprentices.No);
+        return !(viewModel.PermissionToAddCohorts == ManageRequests.No && viewModel.PermissionToRecruit == ManageRequests.No);
     }
 }

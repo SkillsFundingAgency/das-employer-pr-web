@@ -171,11 +171,11 @@ public class YourTrainingProvidersControllerTests
     }
 
     [Test]
-    [MoqInlineAutoData(Operation.CreateCohort, Operation.Recruitment, PermissionModel.PermissionToAddRecordsText, PermissionModel.PermissionToRecruitText)]
-    [MoqInlineAutoData(Operation.CreateCohort, Operation.RecruitmentRequiresReview, PermissionModel.PermissionToAddRecordsText, PermissionModel.PermissionToRecruitReviewAdvertsText)]
-    [MoqInlineAutoData(Operation.CreateCohort, null, PermissionModel.PermissionToAddRecordsText, PermissionModel.NoPermissionToRecruitText)]
-    [MoqInlineAutoData(Operation.Recruitment, null, PermissionModel.NoPermissionToAddRecordsText, PermissionModel.PermissionToRecruitText)]
-    [MoqInlineAutoData(Operation.RecruitmentRequiresReview, null, PermissionModel.NoPermissionToAddRecordsText, PermissionModel.PermissionToRecruitReviewAdvertsText)]
+    [MoqInlineAutoData(Operation.CreateCohort, Operation.Recruitment, ManageRequests.YesWithEmployerRecordReview, ManageRequests.Yes)]
+    [MoqInlineAutoData(Operation.CreateCohort, Operation.RecruitmentRequiresReview, ManageRequests.YesWithEmployerRecordReview, ManageRequests.YesWithEmployerAdvertReview)]
+    [MoqInlineAutoData(Operation.CreateCohort, null, ManageRequests.YesWithEmployerRecordReview, ManageRequests.No)]
+    [MoqInlineAutoData(Operation.Recruitment, null, ManageRequests.No, ManageRequests.Yes)]
+    [MoqInlineAutoData(Operation.RecruitmentRequiresReview, null, ManageRequests.No, ManageRequests.YesWithEmployerAdvertReview)]
     public void ReturnsExpectedPermissionTexts(
         Operation? operation1,
         Operation? operation2,

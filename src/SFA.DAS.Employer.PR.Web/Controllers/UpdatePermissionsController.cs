@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Net;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,6 @@ using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Helpers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -27,7 +27,7 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
 
         if (!ReviewRequestHelper.IsValidRequest(response, RequestType.Permission))
         {
-            return RedirectToAction("HttpStatusCodeHandler", RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
+            return RedirectToAction(nameof(ErrorController.HttpStatusCodeHandler), RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
         }
 
         var model = CreateReviewPermissionsRequestViewModel(response!, employerAccountId);

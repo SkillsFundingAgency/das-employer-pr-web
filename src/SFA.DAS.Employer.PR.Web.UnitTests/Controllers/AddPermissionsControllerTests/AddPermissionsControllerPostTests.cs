@@ -12,6 +12,7 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -34,8 +35,8 @@ public class AddPermissionsControllerPostTests
 
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
         {
-            PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
-            PermissionToRecruit = SetPermissions.RecruitApprentices.Yes
+            PermissionToAddCohorts = OperationsMappingService.Yes,
+            PermissionToRecruit = OperationsMappingService.Yes
         };
 
         validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
@@ -65,11 +66,11 @@ public class AddPermissionsControllerPostTests
     }
 
     [Test]
-    [MoqInlineAutoData(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.Yes)]
-    [MoqInlineAutoData(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.YesWithReview)]
-    [MoqInlineAutoData(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.No)]
-    [MoqInlineAutoData(SetPermissions.AddRecords.No, SetPermissions.RecruitApprentices.Yes)]
-    [MoqInlineAutoData(SetPermissions.AddRecords.No, SetPermissions.RecruitApprentices.YesWithReview)]
+    [MoqInlineAutoData(OperationsMappingService.Yes, OperationsMappingService.Yes)]
+    [MoqInlineAutoData(OperationsMappingService.Yes, OperationsMappingService.YesWithReview)]
+    [MoqInlineAutoData(OperationsMappingService.Yes, OperationsMappingService.No)]
+    [MoqInlineAutoData(OperationsMappingService.No, OperationsMappingService.Yes)]
+    [MoqInlineAutoData(OperationsMappingService.No, OperationsMappingService.YesWithReview)]
     public async Task Post_Validated_SetsTempData(
         string addRecords,
         string recruitApprentices,
@@ -114,11 +115,11 @@ public class AddPermissionsControllerPostTests
     }
 
     [Test]
-    [MoqInlineAutoData(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.Yes)]
-    [MoqInlineAutoData(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.YesWithReview)]
-    [MoqInlineAutoData(SetPermissions.AddRecords.Yes, SetPermissions.RecruitApprentices.No)]
-    [MoqInlineAutoData(SetPermissions.AddRecords.No, SetPermissions.RecruitApprentices.Yes)]
-    [MoqInlineAutoData(SetPermissions.AddRecords.No, SetPermissions.RecruitApprentices.YesWithReview)]
+    [MoqInlineAutoData(OperationsMappingService.Yes, OperationsMappingService.Yes)]
+    [MoqInlineAutoData(OperationsMappingService.Yes, OperationsMappingService.YesWithReview)]
+    [MoqInlineAutoData(OperationsMappingService.Yes, OperationsMappingService.No)]
+    [MoqInlineAutoData(OperationsMappingService.No, OperationsMappingService.Yes)]
+    [MoqInlineAutoData(OperationsMappingService.No, OperationsMappingService.YesWithReview)]
     public async Task Post_Validated_PostExpectedValues(
         string addRecords,
         string recruitApprentices,
@@ -139,17 +140,17 @@ public class AddPermissionsControllerPostTests
 
         var expectedOperations = new List<Operation>();
 
-        if (addRecords == SetPermissions.AddRecords.Yes)
+        if (addRecords == OperationsMappingService.Yes)
         {
             expectedOperations.Add(Operation.CreateCohort);
         }
 
         switch (recruitApprentices)
         {
-            case SetPermissions.RecruitApprentices.Yes:
+            case OperationsMappingService.Yes:
                 expectedOperations.Add(Operation.Recruitment);
                 break;
-            case SetPermissions.RecruitApprentices.YesWithReview:
+            case OperationsMappingService.YesWithReview:
                 expectedOperations.Add(Operation.RecruitmentRequiresReview);
                 break;
         }
@@ -197,8 +198,8 @@ public class AddPermissionsControllerPostTests
 
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
         {
-            PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
-            PermissionToRecruit = SetPermissions.RecruitApprentices.Yes
+            PermissionToAddCohorts = OperationsMappingService.Yes,
+            PermissionToRecruit = OperationsMappingService.Yes
         };
 
         validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());
@@ -233,8 +234,8 @@ public class AddPermissionsControllerPostTests
 
         AddPermissionsSubmitViewViewModel submitViewModel = new AddPermissionsSubmitViewViewModel
         {
-            PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
-            PermissionToRecruit = SetPermissions.RecruitApprentices.Yes
+            PermissionToAddCohorts = OperationsMappingService.Yes,
+            PermissionToRecruit = OperationsMappingService.Yes
         };
 
         validatorMock.Setup(v => v.Validate(It.IsAny<AddPermissionsSubmitViewViewModel>())).Returns(new ValidationResult());

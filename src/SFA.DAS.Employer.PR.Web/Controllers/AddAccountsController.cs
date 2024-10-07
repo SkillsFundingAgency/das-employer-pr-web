@@ -14,37 +14,37 @@ using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
-[Route("accounts/{accountId}/addaccount/{requestId}", Name = RouteNames.AddAccounts)]
+[Route("accounts/{employerAccountId}/addaccount/{requestId}", Name = RouteNames.AddAccounts)]
 public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IValidator<ReviewAddAccountRequestSubmitViewModel> _validator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string accountId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         var response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
         if (!ReviewRequestHelper.IsValidRequest(response, RequestType.AddAccount))
         {
-            return RedirectToAction("HttpStatusCodeHandler", RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
+            return RedirectToAction(nameof(ErrorController.HttpStatusCodeHandler), RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
         }
 
-        var model = CreateReviewAddAccountRequestViewModel(response!, accountId);
+        var model = CreateReviewAddAccountRequestViewModel(response!, employerAccountId);
 
         return View(ViewNames.ReviewAddAccountsRequest, model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string accountId, ReviewAddAccountRequestSubmitViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, ReviewAddAccountRequestSubmitViewModel model, CancellationToken cancellationToken)
     {
         GetPermissionRequestResponse? response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
         if (!ReviewRequestHelper.IsValidRequest(response, RequestType.AddAccount))
         {
-            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId = accountId });
+            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
         if (!IsModelValid(model))
         {
-            var reviewPermissionModel = CreateReviewAddAccountRequestViewModel(response!, accountId);
+            var reviewPermissionModel = CreateReviewAddAccountRequestViewModel(response!, employerAccountId);
             return View(ViewNames.ReviewAddAccountsRequest, reviewPermissionModel);
         }
 
@@ -56,7 +56,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         bool acceptRequest = model.AcceptAddAccountRequest!.Value;
         await HandleAddAccountRequest(requestId, userId, acceptRequest, cancellationToken);
 
-        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId = accountId });
+        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
     }
 
     private ReviewAddAccountRequestViewModel CreateReviewAddAccountRequestViewModel(GetPermissionRequestResponse response, string accountId)
@@ -81,8 +81,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         }
         else
         {
-            await _outerApiClient.DeclineRequest(requestId, new DeclineRequestModel(userId), cancellationToken);
-            TempData[TempDataKeys.RequestAction] = RequestAction.Declined.ToString();
+            // CSP-1505: Decline add & permissions request - Redirect to shutter page for confirmation of decline.
         }
     }
 

@@ -1,14 +1,10 @@
 ﻿using SFA.DAS.Employer.PR.Domain.Models;
+using SFA.DAS.Employer.PR.Web.Constants;
 
 namespace SFA.DAS.Employer.PR.Web.Models;
 
 public class PermissionModel
 {
-    public const string PermissionToAddRecordsText = "Yes, employer will review records";
-    public const string PermissionToRecruitReviewAdvertsText = "Yes, employer will review adverts";
-    public const string PermissionToRecruitText = "Yes";
-    public const string NoPermissionToAddRecordsText = "No";
-    public const string NoPermissionToRecruitText = "No";
     public long Ukprn { get; set; }
     public string ActionLink { get; set; } = null!;
     public string ActionLinkText { get; set; } = null!;
@@ -22,24 +18,24 @@ public class PermissionModel
         {
             Ukprn = permission.Ukprn,
             ProviderName = permission.ProviderName,
-            PermissionToAddRecords = NoPermissionToAddRecordsText,
-            PermissionToRecruitApprentices = NoPermissionToRecruitText,
+            PermissionToAddRecords = ManageRequests.No,
+            PermissionToRecruitApprentices = ManageRequests.No,
             ActionLink = "#"
         };
 
         if (permission.Operations.Exists(x => x == Operation.CreateCohort))
         {
-            model.PermissionToAddRecords = PermissionToAddRecordsText;
+            model.PermissionToAddRecords = ManageRequests.YesWithEmployerRecordReview;
         }
 
         if (permission.Operations.Exists(x => x == Operation.RecruitmentRequiresReview))
         {
-            model.PermissionToRecruitApprentices = PermissionToRecruitReviewAdvertsText;
+            model.PermissionToRecruitApprentices = ManageRequests.YesWithEmployerAdvertReview;
         }
 
         if (permission.Operations.Exists(x => x == Operation.Recruitment))
         {
-            model.PermissionToRecruitApprentices = PermissionToRecruitText;
+            model.PermissionToRecruitApprentices = ManageRequests.Yes;
         }
 
         return model;

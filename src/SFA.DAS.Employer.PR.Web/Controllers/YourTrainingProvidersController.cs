@@ -50,7 +50,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
 
                 if(permissionRequestModel is not null)
                 {
-                    permissionModel.ActionLink = MapRequestTypeToRoutes(permissionRequestModel.RequestType, permissionRequestModel.RequestId, employerAccountId);
+                    permissionModel.ActionLink = MapRequestTypeToRoute(permissionRequestModel.RequestType, permissionRequestModel.RequestId, employerAccountId);
                     permissionModel.ActionLinkText = YourTrainingProviders.ViewRequestActionText;
                 }
                 else
@@ -81,25 +81,17 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         return yourTrainingProvidersViewModel;
     }
 
-    private string MapRequestTypeToRoutes(RequestType requestType, Guid requestId, string employerAccountId)
+    private string MapRequestTypeToRoute(RequestType requestType, Guid requestId, string employerAccountId)
     {
-        switch(requestType)
+        string? routeName = requestType switch
         {
-            case RequestType.Permission:
-                {
-                    return Url.RouteUrl(RouteNames.UpdatePermissions, new { requestId, employerAccountId })!;
-                }
-            case RequestType.CreateAccount:
-                {
-                    return Url.RouteUrl(RouteNames.CreateAccounts, new { requestId, accountId = employerAccountId })!;
-                }
-            case RequestType.AddAccount:
-                {
-                    return Url.RouteUrl(RouteNames.AddAccounts, new { requestId, accountId = employerAccountId })!;
-                }
-            default:
-                return string.Empty;
-        }
+            RequestType.Permission => RouteNames.UpdatePermissions,
+            RequestType.CreateAccount => RouteNames.CreateAccounts,
+            RequestType.AddAccount => RouteNames.AddAccounts,
+            _ => null
+        };
+
+        return Url.RouteUrl(routeName, new { requestId, employerAccountId })!;
     }
 
     private void SetSuccessBanner(YourTrainingProvidersViewModel model)
@@ -146,6 +138,12 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
                             $"You've declined {model.PermissionsUpdatedForProvider}’s permission request.";
                 }
                 break;
+            case RequestType.AddAccount:
+                {
+                    model.PermissionsUpdatedForProvider = string.IsNullOrWhiteSpace(providerName) ? null : providerName;
+                    model.PermissionsUpdatedForProviderText = $"You've added {model.PermissionsUpdatedForProvider} and set their permissions.";
+                }
+            break;
         }
     }
 }

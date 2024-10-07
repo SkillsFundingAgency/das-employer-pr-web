@@ -17,16 +17,16 @@ public static class ReviewRequestHelper
 
     public static void MapOperationsToDescriptions<T>(ref T model, Operation[] operations) where T : IReviewRequest
     {
-        model.AddApprenticeRecordsText = operations.Contains(Operation.CreateCohort) ? ReviewRequest.Yes : ReviewRequest.No;
+        model.AddApprenticeRecordsText = operations.Contains(Operation.CreateCohort) ? ManageRequests.YesWithEmployerRecordReview : ManageRequests.No;
         model.RecruitApprenticesText = operations.Contains(Operation.Recruitment)
-            ? ReviewRequest.Yes
+            ? ManageRequests.Yes
             : SetRecruitRequiresReviewText(operations);
     }
 
     private static string SetRecruitRequiresReviewText(Operation[] operations)
     {
         return operations.Contains(Operation.RecruitmentRequiresReview)
-                ? ReviewRequest.YesWithEmployerReview
-                : ReviewRequest.No;
+                ? ManageRequests.YesWithEmployerAdvertReview
+                : ManageRequests.No;
     }
 }
