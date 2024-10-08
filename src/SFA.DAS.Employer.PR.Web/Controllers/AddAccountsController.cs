@@ -57,9 +57,8 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         TempData[TempDataKeys.RequestTypeActioned] = response.RequestType.ToString();
 
         bool acceptRequest = model.AcceptAddAccountRequest!.Value;
-        await HandleAddAccountRequest(requestId, userId, acceptRequest, cancellationToken);
 
-        return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+        return await HandleAddAccountRequest(requestId, employerAccountId, response!.ProviderName, userId, acceptRequest, cancellationToken);
     }
 
     private ReviewAddAccountRequestViewModel CreateReviewAddAccountRequestViewModel(GetPermissionRequestResponse response, string accountId)
@@ -75,16 +74,21 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         return viewModel;
     }
 
-    private async Task HandleAddAccountRequest(Guid requestId, string userId, bool acceptRequest, CancellationToken cancellationToken)
+    private async Task<IActionResult> HandleAddAccountRequest(Guid requestId, string employerAccountId, string providerName, string userId, bool acceptRequest, CancellationToken cancellationToken)
     {
         if (acceptRequest)
         {
-            await _outerApiClient.AcceptAddAccountRequest(requestId, new AcceptAddAccountRequestModel(userId), cancellationToken); // TO-DO update
+            await _outerApiClient.AcceptAddAccountRequest(requestId, new AcceptAddAccountRequestModel(userId), cancellationToken);
             TempData[TempDataKeys.RequestAction] = RequestAction.Accepted.ToString();
+
+            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
         else
         {
-            // CSP-1505: Decline add & permissions request - Redirect to shutter page for confirmation of decline.
+            return View(
+                nameof(ViewNames.DeclineAddAccountRequestShutter), 
+                new DeclineAddAccountRequestViewModel() { ProviderName = providerName }
+            );
         }
     }
 
