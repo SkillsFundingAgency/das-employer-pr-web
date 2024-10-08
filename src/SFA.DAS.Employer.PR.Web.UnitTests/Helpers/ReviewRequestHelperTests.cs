@@ -61,9 +61,8 @@ public sealed class ReviewRequestHelperTests
     public void MapOperationsToDescriptions_WhenCreateCohortOperationDoesNotExist_SetsAddApprenticeRecordsTextToNo()
     {
         var sut = new ReviewAddAccountRequestViewModel() { ProviderName = "Provider Name", ViewYourTrainingProvidersLink = "link" };
-        var operations = new Operation[] { };
 
-        ReviewRequestHelper.MapOperationsToDescriptions(ref sut, operations);
+        ReviewRequestHelper.MapOperationsToDescriptions(ref sut, []);
 
         Assert.That(sut.AddApprenticeRecordsText, Is.EqualTo(ManageRequests.No));
     }
@@ -94,9 +93,8 @@ public sealed class ReviewRequestHelperTests
     public void MapOperationsToDescriptions_WhenNoRelevantOperationExists_SetsRecruitApprenticesTextToNo()
     {
         var sut = new ReviewAddAccountRequestViewModel() { ProviderName = "Provider Name", ViewYourTrainingProvidersLink = "link" };
-        var operations = new Operation[] { };
 
-        ReviewRequestHelper.MapOperationsToDescriptions(ref sut, operations);
+        ReviewRequestHelper.MapOperationsToDescriptions(ref sut, []);
 
         Assert.That(sut.RecruitApprenticesText, Is.EqualTo(ManageRequests.No));
     }
