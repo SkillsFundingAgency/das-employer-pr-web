@@ -15,6 +15,7 @@ public static class RouteNames
     public const string GetRegisteredProviders = nameof(GetRegisteredProviders);
     public const string AddPermissions = nameof(AddPermissions);
     public const string ChangePermissions = nameof(ChangePermissions);
+    public const string CreateAccountCheckDetails = nameof(CreateAccountCheckDetails);
 
     public static class StubAccount
     {
