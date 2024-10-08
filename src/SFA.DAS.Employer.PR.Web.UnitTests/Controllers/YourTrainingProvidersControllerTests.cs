@@ -608,6 +608,76 @@ public class YourTrainingProvidersControllerTests
         });
     }
 
+    [Test]
+    [MoqInlineAutoData]
+    public void SuccessBanner_AddAccountRequestAccepted_AddsCorrectValuesToModel(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] YourTrainingProvidersController sut,
+        string employerAccountId,
+        string providerName,
+        long ukprn
+    )
+    {
+        var permission = new ProviderPermission
+        {
+            Operations = [Operation.CreateCohort, Operation.Recruitment],
+            ProviderName = providerName,
+            Ukprn = ukprn
+        };
+
+        sessionServiceMock.Setup(x =>
+            x.Get<AddTrainingProvidersSessionModel>()).Returns(
+                new AddTrainingProvidersSessionModel
+                {
+                    SuccessfulAddition = true,
+                    ProviderName = providerName
+                }
+        );
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+
+        sut.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = user
+            }
+        };
+
+        var permissions = new List<ProviderPermission> { permission };
+
+        SetupControllerAndClasses(
+            outerApiMock,
+            accountId: 1123,
+            accountName: "Skills Training",
+            publicHashedId: "12123232",
+            permissions,
+            sut,
+            multipleAccounts: false
+        );
+
+        Mock<ITempDataDictionary> tempDataMock = new();
+
+        tempDataMock.Setup(t => t[TempDataKeys.NameOfProviderUpdated]).Returns(providerName);
+        tempDataMock.Setup(t => t[TempDataKeys.RequestTypeActioned]).Returns(RequestType.AddAccount.ToString());
+        tempDataMock.Setup(t => t[TempDataKeys.RequestAction]).Returns(RequestAction.Accepted.ToString());
+
+        sut.TempData = tempDataMock.Object;
+
+        var result = sut.Index(employerAccountId, new CancellationToken());
+
+        var viewResult = result.Result.As<ViewResult>();
+        var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel!.ShowPermissionsUpdatedBanner(), Is.True);
+            Assert.That(viewModel.PermissionsUpdatedForProvider, Is.EqualTo(providerName.ToUpper()));
+            Assert.That(viewModel.PermissionsUpdatedForProviderText, Is.EqualTo($"You've added {providerName.ToUpper()} and set their permissions."));
+        });
+    }
+
     private static void SetupControllerAndClasses(
         Mock<IOuterApiClient> outerApiMock, 
         int accountId, 
