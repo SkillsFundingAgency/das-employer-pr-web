@@ -8,22 +8,24 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-form-group">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-6">
-                Are you sure you want to add @Model.ProviderName.ToUpper()
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">
+                This training provider has not been added to your account
             </h1>
-            <p class="govuk-body">
-                @Model.ProviderName.ToUpper() should have confirmed these permissions with you before sending the request.
-            </p>
-            <p class="govuk-body">
-                If you do not want to add this training provider, select <b>Do not add training provider</b>. We’ll email @Model.ProviderName.ToUpper() to let them know.
-                If the permissions are not correct, they can correct them and send you another request.
-            </p>
         </div>
-        <div class="govuk-button-group">
-            <form asp-route="@RouteNames.DeclineAddAccount" method="POST">
-                <button type="submit" id="confirm" class="govuk-button govuk-button--warning" data-disable-on-submit="true">Do not add training provider</button>
-            </form>
+        <div class="govuk-form-group">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-6 govuk-!-margin-top-6">
+                What happens next?
+            </h2>
+            <p class="govuk-body">
+                We’ve emailed @Model.ProviderName.ToUpper() to let them know you’ve declined their request to be added as a training provider.
+            </p>
+            <p class="govuk-body">
+                If the permissions were not correct, you can ask them to send a new request. Or you can add them yourself from <a class="govuk-link" href="@Model.ManageTrainingProvidersUrl">Manage training providers</a>.
+            </p>
+            <p class="govuk-body">
+                If this training provider has used your details without your consent, <a class="govuk-link" href="#">contact the Apprenticeship service helpdesk</a> .
+            </p>
         </div>
     </div>
 </div>

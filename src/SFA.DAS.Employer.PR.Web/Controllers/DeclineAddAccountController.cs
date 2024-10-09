@@ -32,10 +32,8 @@ public sealed class DeclineAddAccountController(IOuterApiClient _outerApiClient)
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public IActionResult Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        // Route to CSP-1506
-
-        return View();
+        return RedirectToRoute(RouteNames.DeclineAddAccountConfirmation, new { requestId, employerAccountId });
     }
 }

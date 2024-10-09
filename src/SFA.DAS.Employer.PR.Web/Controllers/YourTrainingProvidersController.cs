@@ -107,7 +107,12 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         var requestTypeActioned = TempData[TempDataKeys.RequestTypeActioned]?.ToString();
         if (requestTypeActioned != null)
         {
-            SetPermissionActionedBannerDetails(model, requestTypeActioned);
+            var requestActionTempValue = TempData[TempDataKeys.RequestAction];
+            if(requestActionTempValue != null)
+            {
+                SetPermissionActionedBannerDetails(model, requestTypeActioned, requestActionTempValue.ToString()!);
+            }
+                
             return;
         }
 
@@ -119,12 +124,11 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         }
     }
 
-    private void SetPermissionActionedBannerDetails(YourTrainingProvidersViewModel model, string requestTypeActioned)
+    private void SetPermissionActionedBannerDetails(YourTrainingProvidersViewModel model, string requestTypeActioned, string requestAction)
     {
         string? providerName = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
-        string requestActionTempValue = TempData[TempDataKeys.RequestAction]!.ToString()!;
-
-        RequestAction requestAction = (RequestAction)Enum.Parse(typeof(RequestAction), requestActionTempValue);
+  
+        RequestAction requestActionEnum = (RequestAction)Enum.Parse(typeof(RequestAction), requestAction);
         RequestType requestType = (RequestType)Enum.Parse(typeof(RequestType), requestTypeActioned);
 
         switch (requestType)
@@ -133,7 +137,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
                 {
                     model.PermissionsUpdatedForProvider = string.IsNullOrWhiteSpace(providerName) ? null : providerName;
                     model.PermissionsUpdatedForProviderText =
-                        requestAction == RequestAction.Accepted ?
+                        requestActionEnum == RequestAction.Accepted ?
                             $"You've set {model.PermissionsUpdatedForProvider}’s permissions." :
                             $"You've declined {model.PermissionsUpdatedForProvider}’s permission request.";
                 }

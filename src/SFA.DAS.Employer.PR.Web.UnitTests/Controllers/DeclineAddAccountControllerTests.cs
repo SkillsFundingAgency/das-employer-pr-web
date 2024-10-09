@@ -6,12 +6,10 @@ using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
-using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
@@ -94,6 +92,22 @@ public sealed class DeclineAddAccountControllerTests
             Assert.That(model, Is.Not.Null);
             Assert.That("Test Provider", Is.EqualTo(model!.ProviderName));
             Assert.That(AddAccountsUrl, Is.EqualTo(model!.BackLink));
+        });
+    }
+
+    [Test]
+    public void PostIndex_ShouldRedirectToDeclineAddAccountConfirmationRoute_WithCorrectParameters()
+    {
+        var requestId = Guid.NewGuid();
+
+        var result = _controller.Index(requestId, employerAccountId, CancellationToken.None) as RedirectToRouteResult;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(RouteNames.DeclineAddAccountConfirmation, Is.EqualTo(result!.RouteName));
+            Assert.That(requestId, Is.EqualTo(result.RouteValues?["requestId"]));
+            Assert.That(employerAccountId, Is.EqualTo(result.RouteValues?["employerAccountId"]));
         });
     }
 }
