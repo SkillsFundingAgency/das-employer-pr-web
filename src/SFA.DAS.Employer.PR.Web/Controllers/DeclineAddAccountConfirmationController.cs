@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Authentication;
-using SFA.DAS.Employer.PR.Web.Extensions;
+using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Helpers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
@@ -18,16 +18,17 @@ public sealed class DeclineAddAccountConfirmationController(IOuterApiClient _out
     {
         var requestResponse = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
-        if (!ReviewRequestHelper.IsValidRequest(requestResponse, RequestType.AddAccount))
+        if(ReviewRequestHelper.IsValidRequest(requestResponse, RequestType.AddAccount))
         {
             return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
-        await _outerApiClient.DeclineRequest(
-            requestId, 
-            new Domain.OuterApi.Permissions.DeclineRequestModel(User.GetUserId().ToString()),
-            cancellationToken
-        );
+        var requestDeclinedConfirmation = (Guid?)TempData[TempDataKeys.RequestDeclinedConfirmation];
+
+        if(requestDeclinedConfirmation is null || requestDeclinedConfirmation.Value != requestId)
+        {
+            return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
+        }
 
         DeclineAddAccountConfirmationViewModel model = new()
         {

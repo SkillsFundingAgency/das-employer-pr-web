@@ -9,4 +9,5 @@ public static class TempDataKeys
     public const string NameOfProviderUpdated = nameof(NameOfProviderUpdated);
     public const string RequestTypeActioned = nameof(RequestTypeActioned);
     public const string RequestAction = nameof(RequestAction);
+    public const string RequestDeclinedConfirmation = nameof(RequestDeclinedConfirmation);
 }

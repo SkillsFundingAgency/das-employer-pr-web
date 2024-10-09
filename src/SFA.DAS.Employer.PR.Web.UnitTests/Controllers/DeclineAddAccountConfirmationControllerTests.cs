@@ -13,6 +13,8 @@ using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
 using System.Threading;
+using SFA.DAS.Employer.PR.Web.Constants;
+using System.Configuration.Provider;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
@@ -42,12 +44,21 @@ public sealed class DeclineAddAccountConfirmationControllerTests
     }
 
     [Test]
-    public async Task GetIndex_WhenInvalidResponse_ReturnsYourTrainingProvidersView()
+    public async Task GetIndex_ValidResponse_ReturnsYourTrainingProvidersView()
     {
         var requestId = Guid.NewGuid();
 
+        var response = new GetPermissionRequestResponse
+        {
+            ProviderName = "Test Provider",
+            RequestType = RequestType.AddAccount,
+            Status = RequestStatus.New,
+            Operations = [Operation.CreateCohort],
+            RequestedBy = Guid.NewGuid().ToString()
+        };
+
         _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((GetPermissionRequestResponse?)null);
+            .ReturnsAsync(response);
 
         var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
 
@@ -61,7 +72,7 @@ public sealed class DeclineAddAccountConfirmationControllerTests
     }
 
     [Test]
-    public async Task GetIndex_WhenValidResponse_DeclinesRequestAndReturnsView()
+    public async Task GetIndex_DeclinedRequestWithPopuatedTempData_ReturnsView()
     {
         var requestId = Guid.NewGuid();
 
@@ -69,7 +80,7 @@ public sealed class DeclineAddAccountConfirmationControllerTests
         {
             ProviderName = "Test Provider",
             RequestType = RequestType.AddAccount,
-            Status = RequestStatus.New,
+            Status = RequestStatus.Declined,
             Operations = [Operation.CreateCohort],
             RequestedBy = Guid.NewGuid().ToString()
         };
@@ -81,14 +92,12 @@ public sealed class DeclineAddAccountConfirmationControllerTests
             )
         ).ReturnsAsync(response);
 
+        Mock<ITempDataDictionary> tempDataMock = new();
+        tempDataMock.Setup(t => t[TempDataKeys.RequestDeclinedConfirmation]).Returns(requestId);
+
+        _controller.TempData = tempDataMock.Object;
+
         var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result, Is.Not.Null);
-            
-        });
-
         var viewResult = result as ViewResult;
         var model = viewResult!.Model as DeclineAddAccountConfirmationViewModel;
 
@@ -97,13 +106,42 @@ public sealed class DeclineAddAccountConfirmationControllerTests
             Assert.That("Test Provider", Is.EqualTo(model!.ProviderName));
             Assert.That(YourTrainingProvidersUrl, Is.EqualTo(model.ManageTrainingProvidersUrl));
         });
-        
-        _outerApiClientMock.Verify(x => x.DeclineRequest(
+    }
+
+    [Test]
+    public async Task GetIndex_WhenDeclinedRequestWithInvalidRequestId_ReturnsYourTrainingProvidersView()
+    {
+        var requestId = Guid.NewGuid();
+
+        var response = new GetPermissionRequestResponse
+        {
+            ProviderName = "Test Provider",
+            RequestType = RequestType.AddAccount,
+            Status = RequestStatus.Declined,
+            Operations = [Operation.CreateCohort],
+            RequestedBy = Guid.NewGuid().ToString()
+        };
+
+        _outerApiClientMock.Setup(x =>
+            x.GetRequest(
                 requestId,
-                It.IsAny<DeclineRequestModel>(),
-                CancellationToken.None
-            ), 
-            Times.Once
-        );
+                It.IsAny<CancellationToken>()
+            )
+        ).ReturnsAsync(response);
+
+        Mock<ITempDataDictionary> tempDataMock = new();
+        tempDataMock.Setup(t => t[TempDataKeys.RequestDeclinedConfirmation]).Returns(Guid.NewGuid());
+
+        _controller.TempData = tempDataMock.Object;
+
+        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<RedirectToRouteResult>());
+            var redirectResult = result as RedirectToRouteResult;
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(RouteNames.YourTrainingProviders, Is.EqualTo(redirectResult?.RouteName)!);
+        });
     }
 }

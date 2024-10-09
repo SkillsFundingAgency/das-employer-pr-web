@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Controllers;
@@ -96,18 +97,27 @@ public sealed class DeclineAddAccountControllerTests
     }
 
     [Test]
-    public void PostIndex_ShouldRedirectToDeclineAddAccountConfirmationRoute_WithCorrectParameters()
+    public async Task PostIndex_ShouldRedirectToDeclineAddAccountConfirmationRoute_WithCorrectParameters()
     {
         var requestId = Guid.NewGuid();
 
-        var result = _controller.Index(requestId, employerAccountId, CancellationToken.None) as RedirectToRouteResult;
+        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
+        var redirect = result as RedirectToRouteResult;
+
+        _outerApiClientMock.Verify(x => x.DeclineRequest(
+                requestId,
+                It.IsAny<DeclineRequestModel>(),
+                CancellationToken.None
+            ),
+            Times.Once
+        );
 
         Assert.Multiple(() =>
         {
             Assert.That(result, Is.Not.Null);
-            Assert.That(RouteNames.DeclineAddAccountConfirmation, Is.EqualTo(result!.RouteName));
-            Assert.That(requestId, Is.EqualTo(result.RouteValues?["requestId"]));
-            Assert.That(employerAccountId, Is.EqualTo(result.RouteValues?["employerAccountId"]));
+            Assert.That(RouteNames.DeclineAddAccountConfirmation, Is.EqualTo(redirect!.RouteName));
+            Assert.That(requestId, Is.EqualTo(redirect.RouteValues?["requestId"]));
+            Assert.That(employerAccountId, Is.EqualTo(redirect.RouteValues?["employerAccountId"]));
         });
     }
 }

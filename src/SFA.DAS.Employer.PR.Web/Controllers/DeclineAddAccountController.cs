@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Authentication;
+using SFA.DAS.Employer.PR.Web.Constants;
+using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Helpers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
@@ -32,8 +34,16 @@ public sealed class DeclineAddAccountController(IOuterApiClient _outerApiClient)
     }
 
     [HttpPost]
-    public IActionResult Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
+        await _outerApiClient.DeclineRequest(
+            requestId,
+            new Domain.OuterApi.Permissions.DeclineRequestModel(User.GetUserId().ToString()),
+            cancellationToken
+        );
+
+        TempData[TempDataKeys.RequestDeclinedConfirmation] = requestId.ToString();
+
         return RedirectToRoute(RouteNames.DeclineAddAccountConfirmation, new { requestId, employerAccountId });
     }
 }
