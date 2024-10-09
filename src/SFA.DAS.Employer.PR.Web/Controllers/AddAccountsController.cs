@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Net;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,6 @@ using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Helpers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -21,7 +21,7 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IValidator<ReviewAddAccountRequestSubmitViewModel> _validator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, [FromQuery] bool? acceptAddAccountRequest, CancellationToken cancellationToken)
     {
         var response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
@@ -30,7 +30,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
             return RedirectToAction(nameof(ErrorController.HttpStatusCodeHandler), RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
         }
 
-        var model = CreateReviewAddAccountRequestViewModel(response!, employerAccountId);
+        var model = CreateReviewAddAccountRequestViewModel(response!, employerAccountId, acceptAddAccountRequest);
 
         return View(ViewNames.ReviewAddAccountsRequest, model);
     }
@@ -47,7 +47,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
 
         if (!IsModelValid(model))
         {
-            var reviewPermissionModel = CreateReviewAddAccountRequestViewModel(response!, employerAccountId);
+            var reviewPermissionModel = CreateReviewAddAccountRequestViewModel(response!, employerAccountId, null);
             return View(ViewNames.ReviewAddAccountsRequest, reviewPermissionModel);
         }
 
@@ -61,12 +61,13 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         return await HandleAddAccountRequest(requestId, employerAccountId, response!.ProviderName, userId, acceptRequest, cancellationToken);
     }
 
-    private ReviewAddAccountRequestViewModel CreateReviewAddAccountRequestViewModel(GetPermissionRequestResponse response, string accountId)
+    private ReviewAddAccountRequestViewModel CreateReviewAddAccountRequestViewModel(GetPermissionRequestResponse response, string accountId, bool? acceptAddAccountRequest)
     {
         var viewModel = new ReviewAddAccountRequestViewModel
         {
             ProviderName = response.ProviderName,
-            ViewYourTrainingProvidersLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId = accountId })!
+            ViewYourTrainingProvidersLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId = accountId })!,
+            AcceptAddAccountRequest = acceptAddAccountRequest
         };
 
         ReviewRequestHelper.MapOperationsToDescriptions(ref viewModel, response.Operations);
@@ -85,10 +86,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         }
         else
         {
-            return View(
-                nameof(ViewNames.DeclineAddAccountRequestShutter), 
-                new DeclineAddAccountRequestViewModel() { ProviderName = providerName }
-            );
+            return RedirectToRoute(RouteNames.DeclineAddAccount, new { employerAccountId, requestId, acceptAddAccountRequest = acceptRequest });
         }
     }
 

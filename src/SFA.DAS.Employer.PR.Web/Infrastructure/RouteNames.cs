@@ -18,6 +18,7 @@ public static class RouteNames
     public const string Requests = nameof(Requests);
     public const string UpdatePermissions = nameof(UpdatePermissions);
     public const string AddAccounts = nameof(AddAccounts);
+    public const string DeclineAddAccount = nameof(DeclineAddAccount);
     public const string CreateAccounts = nameof(CreateAccounts);
     public const string Error = nameof(Error);
 

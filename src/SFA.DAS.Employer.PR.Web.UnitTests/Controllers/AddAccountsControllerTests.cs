@@ -53,7 +53,7 @@ public class AddAccountsControllerTests
         _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((GetPermissionRequestResponse?)null);
 
-        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
+        var result = await _controller.Index(requestId, employerAccountId, acceptAddAccountRequest: null, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
@@ -84,7 +84,7 @@ public class AddAccountsControllerTests
         _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None) as ViewResult;
+        var result = await _controller.Index(requestId, employerAccountId, acceptAddAccountRequest: null, CancellationToken.None) as ViewResult;
 
         Assert.That(result, Is.Not.Null);
 
