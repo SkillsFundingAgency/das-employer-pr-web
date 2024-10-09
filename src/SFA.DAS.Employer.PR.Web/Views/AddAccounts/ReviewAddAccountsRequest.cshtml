@@ -61,13 +61,13 @@
                     </legend>
                     <div class="govuk-radios" data-module="govuk-radios">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="acceptAddAccountRequestYes" name="AcceptAddAccountRequest" type="radio" value="true" @(Model.AcceptAddAccountRequest.HasValue && Model.AcceptAddAccountRequest.Value ? "checked" : "")>
+                            <input class="govuk-radios__input" id="acceptAddAccountRequestYes" name="AcceptAddAccountRequest" type="radio" value="true" @(Model.AcceptAddAccountRequestYesRadioCheck)>
                             <label class="govuk-label govuk-radios__label" for="acceptAddAccountRequestYes">
                                 Yes, I want to add @Model.ProviderName.ToUpper()
                             </label>
                         </div>
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="acceptAddAccountRequestNo" name="AcceptAddAccountRequest" type="radio" value="false" @(Model.AcceptAddAccountRequest.HasValue && !Model.AcceptAddAccountRequest.Value ? "checked" : "")>
+                            <input class="govuk-radios__input" id="acceptAddAccountRequestNo" name="AcceptAddAccountRequest" type="radio" value="false" @(Model.AcceptAddAccountRequestNoRadioCheck)>
                             <label class="govuk-label govuk-radios__label" for="acceptAddAccountRequestNo">
                                 No, I do not want to add @Model.ProviderName.ToUpper()
                             </label>

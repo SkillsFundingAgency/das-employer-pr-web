@@ -58,7 +58,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
 
         bool acceptRequest = model.AcceptAddAccountRequest!.Value;
 
-        return await HandleAddAccountRequest(requestId, employerAccountId, response!.ProviderName, userId, acceptRequest, cancellationToken);
+        return await HandleAddAccountRequest(requestId, employerAccountId, userId, acceptRequest, cancellationToken);
     }
 
     private ReviewAddAccountRequestViewModel CreateReviewAddAccountRequestViewModel(GetPermissionRequestResponse response, string accountId, bool? acceptAddAccountRequest)
@@ -75,7 +75,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         return viewModel;
     }
 
-    private async Task<IActionResult> HandleAddAccountRequest(Guid requestId, string employerAccountId, string providerName, string userId, bool acceptRequest, CancellationToken cancellationToken)
+    private async Task<IActionResult> HandleAddAccountRequest(Guid requestId, string employerAccountId, string userId, bool acceptRequest, CancellationToken cancellationToken)
     {
         if (acceptRequest)
         {
