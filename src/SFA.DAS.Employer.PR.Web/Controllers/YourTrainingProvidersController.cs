@@ -128,8 +128,8 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
     {
         string? providerName = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
   
-        RequestAction requestActionEnum = (RequestAction)Enum.Parse(typeof(RequestAction), requestAction);
-        RequestType requestType = (RequestType)Enum.Parse(typeof(RequestType), requestTypeActioned);
+        RequestAction requestActionEnum = Enum.Parse<RequestAction>(requestAction);
+        RequestType requestType = Enum.Parse<RequestType>(requestTypeActioned);
 
         switch (requestType)
         {
