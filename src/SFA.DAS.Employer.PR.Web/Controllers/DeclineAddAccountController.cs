@@ -8,6 +8,7 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
+
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/requests/{requestId}/decline", Name = RouteNames.DeclineAddAccount)]
 public sealed class DeclineAddAccountController(IOuterApiClient _outerApiClient) : Controller
