@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Employer.PR.Domain.Interfaces;
+using System.Reflection;
 
 namespace SFA.DAS.Employer.PR.Web.Models;
 
@@ -13,4 +14,20 @@ public sealed class ReviewAddAccountRequestViewModel : ReviewAddAccountRequestSu
 public class ReviewAddAccountRequestSubmitViewModel : PermissionDescriptionsViewModel
 {
     public bool? AcceptAddAccountRequest { get; set; }
+
+    public string AcceptAddAccountRequestYesRadioCheck
+    {
+        get
+        {
+            return AcceptAddAccountRequest.HasValue && AcceptAddAccountRequest.Value ? "checked" : "";
+        }
+    }
+
+    public string AcceptAddAccountRequestNoRadioCheck
+    {
+        get
+        {
+            return AcceptAddAccountRequest.HasValue && !AcceptAddAccountRequest.Value ? "checked" : "";
+        }
+    }
 }

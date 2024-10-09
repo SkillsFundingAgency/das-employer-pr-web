@@ -53,7 +53,7 @@ public class AddAccountsControllerTests
         _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((GetPermissionRequestResponse?)null);
 
-        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
+        var result = await _controller.Index(requestId, employerAccountId, acceptAddAccountRequest: null, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
@@ -84,7 +84,7 @@ public class AddAccountsControllerTests
         _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None) as ViewResult;
+        var result = await _controller.Index(requestId, employerAccountId, acceptAddAccountRequest: null, CancellationToken.None) as ViewResult;
 
         Assert.That(result, Is.Not.Null);
 
@@ -182,6 +182,44 @@ public class AddAccountsControllerTests
         {
             Assert.That(returnedModel, Is.Not.Null);
             Assert.That("Test Provider", Is.EqualTo(returnedModel!.ProviderName));
+        });
+    }
+
+    [Test]
+    public async Task PostIndex_WhenDeclinedRequest_ReturnsConfirmDeclineAddAccountShutterView()
+    {
+        var requestId = Guid.NewGuid();
+        var model = new ReviewAddAccountRequestSubmitViewModel()
+        {
+            AcceptAddAccountRequest = false
+        };
+
+        var response = new GetPermissionRequestResponse
+        {
+            ProviderName = "Test Provider",
+            RequestType = RequestType.AddAccount,
+            Status = RequestStatus.New,
+            Operations = [Operation.CreateCohort],
+            RequestedBy = Guid.NewGuid().ToString()
+        };
+
+        _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        var validationResult = new ValidationResult();
+        _validatorMock.Setup(x => x.Validate(It.IsAny<ReviewAddAccountRequestSubmitViewModel>()))
+            .Returns(validationResult);
+
+        var result = await _controller.Index(requestId, employerAccountId, model, CancellationToken.None);
+        var redirectResult = result as RedirectToRouteResult;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(RouteNames.DeclineAddAccount, Is.EqualTo(redirectResult?.RouteName));
+            Assert.That(employerAccountId, Is.EqualTo(redirectResult?.RouteValues?["employerAccountId"]!));
+            Assert.That(requestId, Is.EqualTo(redirectResult?.RouteValues?["requestId"]!));
+            Assert.That(model.AcceptAddAccountRequest, Is.EqualTo(redirectResult?.RouteValues?["acceptAddAccountRequest"]!));
         });
     }
 
