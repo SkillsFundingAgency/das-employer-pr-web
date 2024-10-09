@@ -21,7 +21,6 @@ public class ReviewAddAccountRequestSubmitViewModel : PermissionDescriptionsView
         {
             return AcceptAddAccountRequest.HasValue && AcceptAddAccountRequest.Value ? "checked" : "";
         }
-        private set { }
     }
 
     public string AcceptAddAccountRequestNoRadioCheck
@@ -30,6 +29,5 @@ public class ReviewAddAccountRequestSubmitViewModel : PermissionDescriptionsView
         {
             return AcceptAddAccountRequest.HasValue && !AcceptAddAccountRequest.Value ? "checked" : "";
         }
-        private set { }
     }
 }
