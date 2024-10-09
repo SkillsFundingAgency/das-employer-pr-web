@@ -186,6 +186,44 @@ public class AddAccountsControllerTests
     }
 
     [Test]
+    public async Task PostIndex_WhenDeclinedRequest_ReturnsConfirmDeclineAddAccountShutterView()
+    {
+        var requestId = Guid.NewGuid();
+        var model = new ReviewAddAccountRequestSubmitViewModel()
+        {
+            AcceptAddAccountRequest = false
+        };
+
+        var response = new GetPermissionRequestResponse
+        {
+            ProviderName = "Test Provider",
+            RequestType = RequestType.AddAccount,
+            Status = RequestStatus.New,
+            Operations = [Operation.CreateCohort],
+            RequestedBy = Guid.NewGuid().ToString()
+        };
+
+        _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        var validationResult = new ValidationResult();
+        _validatorMock.Setup(x => x.Validate(It.IsAny<ReviewAddAccountRequestSubmitViewModel>()))
+            .Returns(validationResult);
+
+        var result = await _controller.Index(requestId, employerAccountId, model, CancellationToken.None);
+        var redirectResult = result as RedirectToRouteResult;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(RouteNames.DeclineAddAccount, Is.EqualTo(redirectResult?.RouteName));
+            Assert.That(employerAccountId, Is.EqualTo(redirectResult?.RouteValues?["employerAccountId"]!));
+            Assert.That(requestId, Is.EqualTo(redirectResult?.RouteValues?["requestId"]!));
+            Assert.That(model.AcceptAddAccountRequest, Is.EqualTo(redirectResult?.RouteValues?["acceptAddAccountRequest"]!));
+        });
+    }
+
+    [Test]
     public async Task PostIndex_OnAcceptPermissions_SetsTempData()
     {
         var requestId = Guid.NewGuid();
