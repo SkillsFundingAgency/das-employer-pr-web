@@ -78,7 +78,18 @@ public class AddAccountsControllerTests
             RequestType = RequestType.AddAccount,
             Status = RequestStatus.New,
             Operations = [Operation.CreateCohort],
-            RequestedBy = Guid.NewGuid().ToString()
+            RequestedBy = Guid.NewGuid().ToString(),
+            RequestId = Guid.NewGuid(),
+            Ukprn = 1,
+            RequestedDate = DateTime.UtcNow,
+            AccountLegalEntityId = 1,
+            EmployerOrganisationName = "EmployerOrganisationName",
+            EmployerContactFirstName = "EmployerContactFirstName",
+            EmployerContactLastName = "EmployerContactLastName",
+            EmployerContactEmail = "EmployerContactEmail",
+            EmployerPAYE = "EmployerPAYE",
+            EmployerAORN = "EmployerAORN",
+            UpdatedDate = DateTime.UtcNow
         };
 
         _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
