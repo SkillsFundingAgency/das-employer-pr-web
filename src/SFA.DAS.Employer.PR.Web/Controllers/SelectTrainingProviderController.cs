@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Net;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +10,12 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Encoding;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/new/selectProvider", Name = RouteNames.SelectTrainingProvider)]
-public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IEncodingService _encodingService, IValidator<SelectTrainingProviderSubmitModel> _validator) : Controller
+public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IEncodingService _encodingService, IValidator<SelectTrainingProviderViewModel> _validator) : Controller
 {
     public const string ShutterPageViewPath = "~/Views/AddPermissions/ShutterPage.cshtml";
 
@@ -29,14 +29,11 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
             return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
-        var backLink = SetBackLink(employerAccountId, sessionModel.AccountLegalEntities.Count);
-
-        SelectTrainingProviderModel model = new SelectTrainingProviderModel(backLink!, sessionModel!.ProviderName, sessionModel!.Ukprn.ToString());
-        return View(model);
+        return View(new SelectTrainingProviderViewModel());
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromRoute] string employerAccountId, SelectTrainingProviderSubmitModel submitModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] string employerAccountId, SelectTrainingProviderViewModel submitModel, CancellationToken cancellationToken)
     {
         var sessionModel = _sessionService.Get<AddTrainingProvidersSessionModel>();
 
@@ -50,8 +47,7 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
 
         if (!result.IsValid)
         {
-            var model = GetViewModel(employerAccountId, null, null);
-            model.BackLink = SetBackLink(employerAccountId, sessionModel.AccountLegalEntities.Count);
+            SelectTrainingProviderViewModel model = new();
             result.AddToModelState(ModelState);
             return View(model);
         }
@@ -79,24 +75,5 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
             );
 
         return View(ShutterPageViewPath, shutterPageViewModel);
-    }
-
-    private string SetBackLink(string employerAccountId, int numberOfLegalEntities)
-    {
-        var backLink = Url.RouteUrl(RouteNames.SelectLegalEntity, new { employerAccountId });
-
-        if (numberOfLegalEntities == 1)
-        {
-            backLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
-        }
-
-        return backLink!;
-    }
-
-    private SelectTrainingProviderModel GetViewModel(string employerAccountId, string? name, string? ukprn)
-    {
-        var backLink = Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId });
-        SelectTrainingProviderModel model = new SelectTrainingProviderModel(backLink!, name, ukprn);
-        return model;
     }
 }

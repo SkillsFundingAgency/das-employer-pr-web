@@ -5,7 +5,7 @@ using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Employer.PR.Web.Validators;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Validators;
-public class AddPermissionsSubmitViewModelValidatorTests
+public class AddPermissionsValidatorTests
 {
     [TestCase(OperationsMappingService.Yes, OperationsMappingService.Yes)]
     [TestCase(OperationsMappingService.No, OperationsMappingService.Yes)]
@@ -14,13 +14,13 @@ public class AddPermissionsSubmitViewModelValidatorTests
     [TestCase(OperationsMappingService.Yes, OperationsMappingService.No)]
     public void AddRecordsAndRecruitApprenticesSet_Valid(string addRecordsSelection, string recruitApprenticesSelection)
     {
-        var model = new AddPermissionsSubmitViewViewModel()
+        var model = new AddPermissionsSubmitModel()
         {
             PermissionToAddCohorts = addRecordsSelection,
             PermissionToRecruit = recruitApprenticesSelection
         };
 
-        var sut = new AddPermissionsSubmitViewModelValidator();
+        var sut = new AddPermissionsValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldNotHaveAnyValidationErrors();
@@ -33,47 +33,47 @@ public class AddPermissionsSubmitViewModelValidatorTests
     [TestCase(OperationsMappingService.No)]
     public void AddRecordsNotSet_InvalidWithExpectedMessage(string recruitApprenticesSelection)
     {
-        var model = new AddPermissionsSubmitViewViewModel()
+        var model = new AddPermissionsSubmitModel()
         {
             PermissionToRecruit = recruitApprenticesSelection
         };
 
-        var sut = new AddPermissionsSubmitViewModelValidator();
+        var sut = new AddPermissionsValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.PermissionToAddCohorts)
-            .WithErrorMessage(AddPermissionsSubmitViewModelValidator.AddRecordsNotSelectedErrorMessage);
+            .WithErrorMessage(AddPermissionsValidator.AddRecordsNotSelectedErrorMessage);
     }
 
     [TestCase(OperationsMappingService.Yes)]
     [TestCase(OperationsMappingService.No)]
     public void RecruitApprenticesNotSet_InvalidWithExpectedMessage(string addRecordsSelection)
     {
-        var model = new AddPermissionsSubmitViewViewModel()
+        var model = new AddPermissionsSubmitModel()
         {
             PermissionToAddCohorts = addRecordsSelection
         };
 
-        var sut = new AddPermissionsSubmitViewModelValidator();
+        var sut = new AddPermissionsValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.PermissionToRecruit)
-            .WithErrorMessage(AddPermissionsSubmitViewModelValidator.RecruitApprenticesNotSelectedErrorMessage);
+            .WithErrorMessage(AddPermissionsValidator.RecruitApprenticesNotSelectedErrorMessage);
     }
 
     [Test]
     public void AddRecordsNo_RecruitApprenticesNo_InvalidWithExpectedMessage()
     {
-        var model = new AddPermissionsSubmitViewViewModel
+        var model = new AddPermissionsSubmitModel
         {
             PermissionToAddCohorts = OperationsMappingService.No,
             PermissionToRecruit = OperationsMappingService.No
         };
 
-        var sut = new AddPermissionsSubmitViewModelValidator();
+        var sut = new AddPermissionsValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.PermissionToAddCohorts)
-            .WithErrorMessage(AddPermissionsSubmitViewModelValidator.BothSelectionsAreNoErrorMessage);
+            .WithErrorMessage(AddPermissionsValidator.BothSelectionsAreNoErrorMessage);
     }
 }

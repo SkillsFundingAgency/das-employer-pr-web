@@ -7,12 +7,11 @@ public class AddPermissionsViewModelTests
     [Test, AutoData]
     public void Constructor_BuildsViewModel(long legalEntityId, string legalName, string providerName, long ukprn, string backLink, string cancelLink)
     {
-        var sut = new AddPermissionsViewModel(legalEntityId, legalName, providerName, ukprn, backLink, cancelLink);
+        var sut = new AddPermissionsViewModel(legalEntityId, legalName, providerName, ukprn, cancelLink);
         sut.LegalEntityId.Should().Be(legalEntityId);
         sut.LegalName.Should().Be(legalName);
         sut.ProviderName.Should().Be(providerName);
         sut.Ukprn.Should().Be(ukprn);
-        sut.BackLink.Should().Be(backLink);
         sut.CancelLink.Should().Be(cancelLink);
     }
 }

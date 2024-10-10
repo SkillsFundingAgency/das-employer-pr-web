@@ -1,11 +1,11 @@
 ﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model SelectTrainingProviderModel
+@model SelectTrainingProviderViewModel
 @{
     ViewData["Title"] = "Select training provider";
 }
 @section breadcrumb {
-    <a href="@Model.BackLink" class="govuk-back-link">Back</a>
+    <a class="das-js-back-link">Back</a>
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -25,8 +25,7 @@
                     </p>
                     <span asp-validation-for="SearchTerm" class="govuk-error-message"></span>
                     <div data-module="govuk-input">
-                        <input id="SearchTerm" type="text"
-                               asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete"/>
+                        <input id="SearchTerm" type="text" asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete"/>
 
                         <label class="govuk-visually-hidden">Search Result: @Model.Name, @Model.Ukprn</label>
                     </div>

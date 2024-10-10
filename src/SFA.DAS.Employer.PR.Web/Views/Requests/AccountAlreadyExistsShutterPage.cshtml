@@ -1,0 +1,19 @@
+﻿@using SFA.DAS.Employer.PR.Web.Models.Requests
+
+@model InvalidCreateAccountRequestShutterPageViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-form-group">
+            <h1 class="govuk-heading-l">
+                Account already exists
+            </h1>
+            <p class="govuk-body">
+                An apprenticeship service account has already been set up using this link or the details you provided to the training provider.
+            </p>
+            <p class="govuk-body">
+                <a href="@Model.AccountsUrl">Sign in to your apprenticeship service account</a>
+            </p>
+        </div>
+    </div>
+</div>

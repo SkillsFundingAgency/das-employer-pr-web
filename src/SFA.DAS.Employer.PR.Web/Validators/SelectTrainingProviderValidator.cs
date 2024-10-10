@@ -3,11 +3,11 @@ using SFA.DAS.Employer.PR.Web.Models;
 
 namespace SFA.DAS.Employer.PR.Web.Validators;
 
-public class SelectTrainingProviderSubmitModelValidator : AbstractValidator<SelectTrainingProviderSubmitModel>
+public class SelectTrainingProviderValidator : AbstractValidator<SelectTrainingProviderViewModel>
 {
     public const string NoTrainingProviderSelectedErrorMessage = "Select a training provider";
 
-    public SelectTrainingProviderSubmitModelValidator()
+    public SelectTrainingProviderValidator()
     {
         RuleFor(s => s.SearchTerm)
             .NotEmpty()

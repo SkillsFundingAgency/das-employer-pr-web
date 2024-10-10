@@ -4,13 +4,13 @@ using SFA.DAS.Employer.PR.Web.Models;
 
 namespace SFA.DAS.Employer.PR.Web.Validators;
 
-public class AddPermissionsSubmitViewModelValidator : AbstractValidator<AddPermissionsSubmitViewViewModel>
+public class AddPermissionsValidator : AbstractValidator<AddPermissionsSubmitModel>
 {
     public const string AddRecordsNotSelectedErrorMessage = "Select the permissions you want to set for Add apprentice records";
     public const string RecruitApprenticesNotSelectedErrorMessage = "Select the permissions you want to set for Recruit apprentices";
     public const string BothSelectionsAreNoErrorMessage = "You must select yes for at least one permission for add apprentice records or recruit apprentices";
 
-    public AddPermissionsSubmitViewModelValidator()
+    public AddPermissionsValidator()
     {
         RuleFor(s => s.PermissionToAddCohorts)
             .Cascade(CascadeMode.Stop)
@@ -24,7 +24,7 @@ public class AddPermissionsSubmitViewModelValidator : AbstractValidator<AddPermi
             .WithMessage(RecruitApprenticesNotSelectedErrorMessage);
     }
 
-    private static bool AddPermissionsBothNoFalse(AddPermissionsSubmitViewViewModel viewModel, string? addRecords)
+    private static bool AddPermissionsBothNoFalse(AddPermissionsSubmitModel viewModel, string? addRecords)
     {
         return !(viewModel.PermissionToAddCohorts == ManageRequests.No && viewModel.PermissionToRecruit == ManageRequests.No);
     }

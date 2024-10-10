@@ -1,8 +1,8 @@
-﻿using SFA.DAS.Employer.PR.Domain.Models;
+﻿using System.Text.Json;
+using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Testing.AutoFixture;
-using System.Text.Json;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Extensions;
 public class ClaimsPrincipalCheckUserAccountAccessTests
@@ -15,7 +15,7 @@ public class ClaimsPrincipalCheckUserAccountAccessTests
         bool expectedResponse,
         EmployerIdentifier employerIdentifier)
     {
-        var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", userRoleRequired.ToString());
+        var employerIdentifierToUse = new EmployerIdentifier { AccountId = employerIdentifier.AccountId.ToUpper(), EmployerName = "name", Role = userRoleRequired.ToString() };
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
         var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
         var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
@@ -55,7 +55,7 @@ public class ClaimsPrincipalCheckUserAccountAccessTests
         string employerAccountId,
         EmployerIdentifier employerIdentifier)
     {
-        var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", "Owner");
+        var employerIdentifierToUse = new EmployerIdentifier { AccountId = employerIdentifier.AccountId.ToUpper(), EmployerName = "name", Role = "Owner" };
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
         var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
         var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });
@@ -70,7 +70,7 @@ public class ClaimsPrincipalCheckUserAccountAccessTests
         string employerAccountId,
         EmployerIdentifier employerIdentifier)
     {
-        var employerIdentifierToUse = new EmployerIdentifier(employerIdentifier.AccountId.ToUpper(), "name", "Non-Role");
+        var employerIdentifierToUse = new EmployerIdentifier { AccountId = employerIdentifier.AccountId.ToUpper(), EmployerName = "name", Role = "Non-Role" };
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifierToUse } };
         var claim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
         var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(new[] { claim }) });

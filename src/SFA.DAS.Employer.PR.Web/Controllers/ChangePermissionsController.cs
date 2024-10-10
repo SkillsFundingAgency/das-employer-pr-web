@@ -17,7 +17,7 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
 [Route("accounts/{employerAccountId}/providers/{ukprn}/changePermissions", Name = RouteNames.ChangePermissions)]
-public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncodingService _encodingService, IValidator<ChangePermissionsSubmitViewModel> _validator) : Controller
+public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncodingService _encodingService, IValidator<ChangePermissionsSubmitModel> _validator) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, [FromQuery] string legalEntityPublicHashedId,
@@ -38,7 +38,7 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
 
     [HttpPost]
     public async Task<IActionResult> Index([FromRoute] string employerAccountId,
-        ChangePermissionsSubmitViewModel submitViewModel, CancellationToken cancellationToken)
+        ChangePermissionsSubmitModel submitViewModel, CancellationToken cancellationToken)
     {
         var model = await GetViewModel(employerAccountId, submitViewModel.LegalEntityId, submitViewModel.Ukprn, cancellationToken);
 
@@ -55,7 +55,7 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
             return View(model);
         }
 
-        var permissionDescriptions = (PermissionDescriptionsViewModel)submitViewModel;
+        var permissionDescriptions = (PermissionDescriptionsModel)submitViewModel;
 
         var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 

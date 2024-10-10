@@ -5,7 +5,7 @@ using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Employer.PR.Web.Validators;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Validators;
-public class ChangePermissionsSubmitViewModelValidatorTests
+public class ChangePermissionsValidatorTests
 {
     [TestCase(OperationsMappingService.Yes, OperationsMappingService.Yes, OperationsMappingService.Yes, OperationsMappingService.YesWithReview)]
     [TestCase(OperationsMappingService.Yes, OperationsMappingService.Yes, OperationsMappingService.Yes, OperationsMappingService.No)]
@@ -39,7 +39,7 @@ public class ChangePermissionsSubmitViewModelValidatorTests
     [TestCase(OperationsMappingService.No, OperationsMappingService.Yes, OperationsMappingService.YesWithReview, OperationsMappingService.No)]
     public void AddRecordsAndRecruitApprenticesChanged_Valid(string addRecordsSelected, string addRecordsOriginal, string recruitApprenticesSelected, string recruitApprenticesOriginal)
     {
-        var model = new ChangePermissionsSubmitViewModel()
+        var model = new ChangePermissionsSubmitModel()
         {
             PermissionToAddCohorts = addRecordsSelected,
             PermissionToAddCohortsOriginal = addRecordsOriginal,
@@ -47,7 +47,7 @@ public class ChangePermissionsSubmitViewModelValidatorTests
             PermissionToRecruitOriginal = recruitApprenticesOriginal
         };
 
-        var sut = new ChangePermissionsSubmitViewModelValidator();
+        var sut = new ChangePermissionsValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldNotHaveAnyValidationErrors();
@@ -61,7 +61,7 @@ public class ChangePermissionsSubmitViewModelValidatorTests
     [TestCase(OperationsMappingService.No, OperationsMappingService.YesWithReview)]
     public void NoPermissionsChanged_InvalidWithExpectedMessage(string addRecordsSet, string recruitApprenticesSet)
     {
-        var model = new ChangePermissionsSubmitViewModel()
+        var model = new ChangePermissionsSubmitModel()
         {
             PermissionToAddCohorts = addRecordsSet,
             PermissionToAddCohortsOriginal = addRecordsSet,
@@ -69,11 +69,11 @@ public class ChangePermissionsSubmitViewModelValidatorTests
             PermissionToRecruitOriginal = recruitApprenticesSet
         };
 
-        var sut = new ChangePermissionsSubmitViewModelValidator();
+        var sut = new ChangePermissionsValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.PermissionToAddCohorts)
-            .WithErrorMessage(ChangePermissionsSubmitViewModelValidator.NotChangedPermissionsErrorMessage);
+            .WithErrorMessage(ChangePermissionsValidator.NotChangedPermissionsErrorMessage);
     }
 
 }

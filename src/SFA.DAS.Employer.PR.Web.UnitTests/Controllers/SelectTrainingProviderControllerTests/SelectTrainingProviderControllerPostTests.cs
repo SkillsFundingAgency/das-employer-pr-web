@@ -24,7 +24,7 @@ public class SelectTrainingProviderControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_Validated_RelationshipDoesntExist_RedirectToAddPermissions(
-        Mock<IValidator<SelectTrainingProviderSubmitModel>> validatorMock,
+        Mock<IValidator<SelectTrainingProviderViewModel>> validatorMock,
         string employerAccountId,
         int ukprn,
         string name,
@@ -48,13 +48,13 @@ public class SelectTrainingProviderControllerPostTests
         outerApiClientMock.Setup(o => o.GetPermissions(ukprn, accountLegalEntityId, cancellationToken))
             .ReturnsAsync(new Response<GetPermissionsResponse>(string.Empty, new(HttpStatusCode.NotFound), () => expected));
 
-        SelectTrainingProviderSubmitModel submitModel = new SelectTrainingProviderSubmitModel
+        SelectTrainingProviderViewModel submitModel = new SelectTrainingProviderViewModel
         {
             Name = name,
             Ukprn = ukprn.ToString(),
         };
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
@@ -75,7 +75,7 @@ public class SelectTrainingProviderControllerPostTests
     [MoqInlineAutoData(null)]
     public async Task Post_EmployerAccountIdNotMatched_RedirectToYourTrainingProviders(
         string? employerAccountIdOther,
-        Mock<IValidator<SelectTrainingProviderSubmitModel>> validatorMock,
+        Mock<IValidator<SelectTrainingProviderViewModel>> validatorMock,
         string employerAccountId,
         int ukprn,
         string name,
@@ -109,13 +109,13 @@ public class SelectTrainingProviderControllerPostTests
         outerApiClientMock.Setup(o => o.GetPermissions(ukprn, accountLegalEntityId, cancellationToken))
             .ReturnsAsync(new Response<GetPermissionsResponse>(string.Empty, new(HttpStatusCode.OK), () => expected));
 
-        SelectTrainingProviderSubmitModel submitModel = new SelectTrainingProviderSubmitModel
+        SelectTrainingProviderViewModel submitModel = new SelectTrainingProviderViewModel
         {
             Name = name,
             Ukprn = ukprn.ToString(),
         };
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
@@ -131,7 +131,7 @@ public class SelectTrainingProviderControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_ValidatedAndFailed_ReturnsExpectedModel(
-        Mock<IValidator<SelectTrainingProviderSubmitModel>> validatorMock,
+        Mock<IValidator<SelectTrainingProviderViewModel>> validatorMock,
         AccountLegalEntity accountLegalEntity,
         string employerAccountId,
         CancellationToken cancellationToken)
@@ -142,8 +142,8 @@ public class SelectTrainingProviderControllerPostTests
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
             .Returns(new AddTrainingProvidersSessionModel { AccountLegalEntities = accountLegalEntities, EmployerAccountId = employerAccountId });
 
-        SelectTrainingProviderSubmitModel submitModel = new SelectTrainingProviderSubmitModel();
-        validatorMock.Setup(m => m.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
+        SelectTrainingProviderViewModel submitModel = new SelectTrainingProviderViewModel();
+        validatorMock.Setup(m => m.Validate(It.IsAny<SelectTrainingProviderViewModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
         {
             new("TestField","Test Message") { ErrorCode = "1001"}
         }));
@@ -158,15 +158,14 @@ public class SelectTrainingProviderControllerPostTests
         var result = await sut.Index(employerAccountId, submitModel, cancellationToken);
 
         ViewResult? viewResult = result.As<ViewResult>();
-        SelectTrainingProviderModel? viewModel = viewResult.Model as SelectTrainingProviderModel;
+        SelectTrainingProviderViewModel? viewModel = viewResult.Model as SelectTrainingProviderViewModel;
 
-        viewModel!.BackLink.Should().Be(YourTrainingProvidersLink);
         sessionServiceMock.Verify(s => s.Set(It.IsAny<AddTrainingProvidersSessionModel>()), Times.Never);
     }
 
     [Test, MoqAutoData]
     public async Task Post_LegalEntityUkprnAlreadyExists_DirectsToShutterPage(
-        Mock<IValidator<SelectTrainingProviderSubmitModel>> validatorMock,
+        Mock<IValidator<SelectTrainingProviderViewModel>> validatorMock,
         string employerAccountId,
         int ukprn,
         string name,
@@ -195,13 +194,13 @@ public class SelectTrainingProviderControllerPostTests
         outerApiClientMock.Setup(o => o.GetPermissions(ukprn, accountLegalEntityId, cancellationToken))
             .ReturnsAsync(new Response<GetPermissionsResponse>(string.Empty, new(HttpStatusCode.OK), () => expected));
 
-        SelectTrainingProviderSubmitModel submitModel = new SelectTrainingProviderSubmitModel
+        SelectTrainingProviderViewModel submitModel = new()
         {
             Name = name,
             Ukprn = ukprn.ToString(),
         };
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {
@@ -221,7 +220,7 @@ public class SelectTrainingProviderControllerPostTests
 
     [Test, MoqAutoData]
     public async Task Post_LegalEntityUkprnAlreadyExists_DirectsToShutterPage_CorrectAddPermissionsLink(
-       Mock<IValidator<SelectTrainingProviderSubmitModel>> validatorMock,
+       Mock<IValidator<SelectTrainingProviderViewModel>> validatorMock,
        string employerAccountId,
        int ukprn,
        string name,
@@ -250,13 +249,13 @@ public class SelectTrainingProviderControllerPostTests
         outerApiClientMock.Setup(o => o.GetPermissions(ukprn, accountLegalEntityId, cancellationToken))
             .ReturnsAsync(new Response<GetPermissionsResponse>(string.Empty, new(HttpStatusCode.OK), () => expected));
 
-        SelectTrainingProviderSubmitModel submitModel = new SelectTrainingProviderSubmitModel
+        SelectTrainingProviderViewModel submitModel = new SelectTrainingProviderViewModel
         {
             Name = name,
             Ukprn = ukprn.ToString(),
         };
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderSubmitModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<SelectTrainingProviderViewModel>())).Returns(new ValidationResult());
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         SelectTrainingProviderController sut = new(outerApiClientMock.Object, sessionServiceMock.Object, Mock.Of<IEncodingService>(), validatorMock.Object)
         {

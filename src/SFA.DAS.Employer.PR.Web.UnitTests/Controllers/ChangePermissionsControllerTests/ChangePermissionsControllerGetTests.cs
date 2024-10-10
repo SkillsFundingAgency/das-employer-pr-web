@@ -42,7 +42,7 @@ public class ChangePermissionsControllerGetTests
         encodingServiceMock.Setup(x => x.Decode(legalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId)).Returns(legalEntityId);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        ChangePermissionsController sut = new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitViewModel>>())
+        ChangePermissionsController sut = new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -75,7 +75,7 @@ public class ChangePermissionsControllerGetTests
         encodingServiceMock.Setup(x => x.Decode(legalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId)).Returns(legalEntityId);
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        ChangePermissionsController sut = new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitViewModel>>())
+        ChangePermissionsController sut = new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitModel>>())
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
@@ -131,7 +131,7 @@ public class ChangePermissionsControllerGetTests
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         ChangePermissionsController sut =
-            new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitViewModel>>())
+            new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitModel>>())
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
             };
@@ -177,7 +177,7 @@ public class ChangePermissionsControllerGetTests
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         ChangePermissionsController sut =
-            new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitViewModel>>())
+            new(outerApiClientMock.Object, encodingServiceMock.Object, Mock.Of<IValidator<ChangePermissionsSubmitModel>>())
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
             };
@@ -239,7 +239,7 @@ public class ChangePermissionsControllerGetTests
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
         ChangePermissionsController sut =
             new(outerApiClientMock.Object, encodingServiceMock.Object,
-                Mock.Of<IValidator<ChangePermissionsSubmitViewModel>>())
+                Mock.Of<IValidator<ChangePermissionsSubmitModel>>())
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
             };

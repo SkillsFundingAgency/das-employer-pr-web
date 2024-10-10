@@ -1,3 +1,8 @@
 ﻿namespace SFA.DAS.Employer.PR.Domain.Models;
 
-public record EmployerIdentifier(string AccountId, string EmployerName, string Role);
+public class EmployerIdentifier
+{
+    public string AccountId { get; set; } = null!;
+    public string EmployerName { get; set; } = null!;
+    public string Role { get; set; } = null!;
+}

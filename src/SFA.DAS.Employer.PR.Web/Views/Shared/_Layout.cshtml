@@ -9,6 +9,8 @@
     ViewBag.HideHeaderBorder = true;
     var footerModel = new FooterModel { AccountId = accountId, UsePrivacyV2 = true };
 
+    bool isAccountTasksJourney = Context.Items.ContainsKey("AccountTasksKey");
+    ViewBag.ShowNav = !isAccountTasksJourney;
 }
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">

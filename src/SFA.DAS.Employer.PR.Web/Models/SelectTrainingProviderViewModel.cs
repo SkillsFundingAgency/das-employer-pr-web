@@ -1,18 +1,6 @@
 ﻿namespace SFA.DAS.Employer.PR.Web.Models;
 
-public class SelectTrainingProviderModel : SelectTrainingProviderSubmitModel
-{
-    public string BackLink { get; set; }
-
-    public SelectTrainingProviderModel(string backLink, string? name, string? ukprn)
-    {
-        BackLink = backLink;
-        Name = name;
-        Ukprn = ukprn;
-    }
-}
-
-public class SelectTrainingProviderSubmitModel
+public class SelectTrainingProviderViewModel
 {
     public string? SearchTerm { get; set; }
     public string? Name { get; set; }
