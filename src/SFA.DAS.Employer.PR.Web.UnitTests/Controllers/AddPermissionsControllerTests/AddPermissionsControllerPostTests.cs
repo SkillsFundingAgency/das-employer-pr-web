@@ -310,8 +310,8 @@ public class AddPermissionsControllerPostTests
 
         AddPermissionsSubmitModel submitModel = new()
         {
-            PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
-            PermissionToRecruit = SetPermissions.RecruitApprentices.No
+            PermissionToAddCohorts = OperationsMappingService.Yes,
+            PermissionToRecruit = OperationsMappingService.No
         };
 
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())
@@ -351,8 +351,8 @@ public class AddPermissionsControllerPostTests
 
         AddPermissionsSubmitModel submitModel = new()
         {
-            PermissionToAddCohorts = SetPermissions.AddRecords.Yes,
-            PermissionToRecruit = SetPermissions.RecruitApprentices.No
+            PermissionToAddCohorts = OperationsMappingService.Yes,
+            PermissionToRecruit = OperationsMappingService.No
         };
 
         sessionServiceMock.Setup(x => x.Get<AddTrainingProvidersSessionModel>())

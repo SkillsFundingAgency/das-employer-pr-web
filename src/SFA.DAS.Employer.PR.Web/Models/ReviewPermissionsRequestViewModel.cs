@@ -10,7 +10,7 @@ public sealed class ReviewPermissionsRequestViewModel : ReviewPermissionsRequest
     public required string ViewYourTrainingProvidersLink { get; set; }
 }
 
-public class ReviewPermissionsRequestSubmitViewModel : PermissionDescriptionsViewModel
+public class ReviewPermissionsRequestSubmitViewModel : PermissionDescriptionsModel
 {
     public bool? AcceptPermissions { get; set; }
 }

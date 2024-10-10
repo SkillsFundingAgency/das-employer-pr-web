@@ -11,7 +11,7 @@ public sealed class ReviewAddAccountRequestViewModel : ReviewAddAccountRequestSu
     public required string ViewYourTrainingProvidersLink { get; set; }
 }
 
-public class ReviewAddAccountRequestSubmitViewModel : PermissionDescriptionsViewModel
+public class ReviewAddAccountRequestSubmitViewModel : PermissionDescriptionsModel
 {
     public bool? AcceptAddAccountRequest { get; set; }
 

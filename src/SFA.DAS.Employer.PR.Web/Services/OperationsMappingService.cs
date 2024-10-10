@@ -9,7 +9,6 @@ public static class OperationsMappingService
     public const string No = "No";
     public const string YesWithReview = "YesWithReview";
 
-    public static PermissionDescriptionsViewModel MapOperationsToDescriptions(List<Operation> operations)
     public static PermissionDescriptionsModel MapOperationsToDescriptions(List<Operation> operations)
     {
         var permissionToAddCohorts = operations.Exists(o => o == Operation.CreateCohort)
