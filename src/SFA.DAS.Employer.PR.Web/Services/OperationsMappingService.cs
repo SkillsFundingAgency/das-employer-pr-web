@@ -1,26 +1,29 @@
 ﻿using SFA.DAS.Employer.PR.Domain.Models;
-using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Models;
 
 namespace SFA.DAS.Employer.PR.Web.Services;
 
 public static class OperationsMappingService
 {
+    public const string Yes = "Yes";
+    public const string No = "No";
+    public const string YesWithReview = "YesWithReview";
+
     public static PermissionDescriptionsModel MapOperationsToDescriptions(List<Operation> operations)
     {
         var permissionToAddCohorts = operations.Exists(o => o == Operation.CreateCohort)
-            ? SetPermissions.AddRecords.Yes
-            : SetPermissions.AddRecords.No;
+            ? Yes
+            : No;
 
-        var permissionToRecruit = SetPermissions.RecruitApprentices.No;
+        var permissionToRecruit = No;
 
         if (operations.Exists(o => o == Operation.Recruitment))
         {
-            permissionToRecruit = SetPermissions.RecruitApprentices.Yes;
+            permissionToRecruit = Yes;
         }
         else if (operations.Exists(o => o == Operation.RecruitmentRequiresReview))
         {
-            permissionToRecruit = SetPermissions.RecruitApprentices.YesWithReview;
+            permissionToRecruit = YesWithReview;
         }
 
         return new PermissionDescriptionsModel { PermissionToAddCohorts = permissionToAddCohorts, PermissionToRecruit = permissionToRecruit };
@@ -30,16 +33,16 @@ public static class OperationsMappingService
     {
         var operations = new List<Operation>();
 
-        if (permissionDescriptionsViewModel.PermissionToAddCohorts == SetPermissions.AddRecords.Yes)
+        if (permissionDescriptionsViewModel.PermissionToAddCohorts == Yes)
         {
             operations.Add(Operation.CreateCohort);
         }
 
-        if (permissionDescriptionsViewModel.PermissionToRecruit == SetPermissions.RecruitApprentices.Yes)
+        if (permissionDescriptionsViewModel.PermissionToRecruit == Yes)
         {
             operations.Add(Operation.Recruitment);
         }
-        else if (permissionDescriptionsViewModel.PermissionToRecruit == SetPermissions.RecruitApprentices.YesWithReview)
+        else if (permissionDescriptionsViewModel.PermissionToRecruit == YesWithReview)
         {
             operations.Add(Operation.RecruitmentRequiresReview);
         }

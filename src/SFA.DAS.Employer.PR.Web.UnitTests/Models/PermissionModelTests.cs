@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Employer.PR.Domain.Models;
+using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -6,12 +7,12 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Models;
 public class PermissionModelTests
 {
     [Test]
-    [MoqInlineAutoData(Operation.CreateCohort, Operation.Recruitment, PermissionModel.PermissionToAddRecordsText, PermissionModel.PermissionToRecruitText)]
-    [MoqInlineAutoData(Operation.CreateCohort, Operation.RecruitmentRequiresReview, PermissionModel.PermissionToAddRecordsText, PermissionModel.PermissionToRecruitReviewAdvertsText)]
-    [MoqInlineAutoData(Operation.CreateCohort, null, PermissionModel.PermissionToAddRecordsText, PermissionModel.NoPermissionToRecruitText)]
-    [MoqInlineAutoData(Operation.Recruitment, null, PermissionModel.NoPermissionToAddRecordsText, PermissionModel.PermissionToRecruitText)]
-    [MoqInlineAutoData(Operation.RecruitmentRequiresReview, null, PermissionModel.NoPermissionToAddRecordsText, PermissionModel.PermissionToRecruitReviewAdvertsText)]
-    [MoqInlineAutoData(null, null, PermissionModel.NoPermissionToAddRecordsText, PermissionModel.NoPermissionToRecruitText)]
+    [MoqInlineAutoData(Operation.CreateCohort, Operation.Recruitment, ManageRequests.YesWithEmployerRecordReview, ManageRequests.Yes)]
+    [MoqInlineAutoData(Operation.CreateCohort, Operation.RecruitmentRequiresReview, ManageRequests.YesWithEmployerRecordReview, ManageRequests.YesWithEmployerAdvertReview)]
+    [MoqInlineAutoData(Operation.CreateCohort, null, ManageRequests.YesWithEmployerRecordReview, ManageRequests.No)]
+    [MoqInlineAutoData(Operation.Recruitment, null, ManageRequests.No, ManageRequests.Yes)]
+    [MoqInlineAutoData(Operation.RecruitmentRequiresReview, null, ManageRequests.No, ManageRequests.YesWithEmployerAdvertReview)]
+    [MoqInlineAutoData(null, null, ManageRequests.No, ManageRequests.No)]
     public void Operator_ConvertsTo_PermissionsModel(Operation? operation1,
         Operation? operation2,
         string expectedPermissionToAddApprenticesText,
@@ -28,6 +29,6 @@ public class PermissionModelTests
         sut.ProviderName.Should().Be(providerName);
         sut.PermissionToAddRecords.Should().Be(expectedPermissionToAddApprenticesText);
         sut.PermissionToRecruitApprentices.Should().Be(expectedPermissionToRecruitApprenticesText);
-        sut.ChangePermissionsLink.Should().Be("#");
+        sut.ActionLink.Should().Be("#");
     }
 }

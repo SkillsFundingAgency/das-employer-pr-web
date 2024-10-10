@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Employer.PR.Domain.Models;
+﻿namespace SFA.DAS.Employer.PR.Domain.Common;
 
 public enum RequestStatus : short
 {

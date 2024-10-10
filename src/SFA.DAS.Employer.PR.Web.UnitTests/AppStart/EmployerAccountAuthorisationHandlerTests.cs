@@ -28,7 +28,6 @@ public class EmployerAccountAuthorisationHandlerTests
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
         EmployerAccountAuthorisationHandler sut)
     {
-        //Arrange
         employerIdentifier.Role = roleInClaim;
         employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifier } };

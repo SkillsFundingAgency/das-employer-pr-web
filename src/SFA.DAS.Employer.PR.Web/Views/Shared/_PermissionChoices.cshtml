@@ -1,4 +1,4 @@
-﻿@using SFA.DAS.Employer.PR.Web.Constants
+﻿@using SFA.DAS.Employer.PR.Web.Services
 @using SFA.DAS.Employer.PR.Web.TagHelpers
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model SFA.DAS.Employer.PR.Web.Models.PermissionDescriptionsModel
@@ -13,13 +13,13 @@
     <span asp-validation-for="PermissionToAddCohorts" class="govuk-error-message"></span>
     <div class="govuk-radios" id="PermissionToAddCohorts" data-module="govuk-radios">
         <div class="govuk-radios__item">
-            <input asp-for="PermissionToAddCohorts" class="govuk-radios__input" id="addRecords-1" type="radio" value="@SetPermissions.AddRecords.Yes">
+            <input asp-for="PermissionToAddCohorts" class="govuk-radios__input" id="addRecords-1" type="radio" value="@OperationsMappingService.Yes">
             <label class="govuk-label govuk-radios__label" for="addRecords-1">
                 Yes, but I want final review of apprentice records
             </label>
         </div>
         <div class="govuk-radios__item">
-            <input asp-for="PermissionToAddCohorts" class="govuk-radios__input" id="addRecords-2" type="radio" value="@SetPermissions.AddRecords.No">
+            <input asp-for="PermissionToAddCohorts" class="govuk-radios__input" id="addRecords-2" type="radio" value="@OperationsMappingService.No">
             <label class="govuk-label govuk-radios__label" for="addRecords-2">
                 No
             </label>
@@ -37,19 +37,19 @@
     <span asp-validation-for="PermissionToRecruit" class="govuk-error-message"></span>
     <div class="govuk-radios" id="PermissionToRecruit" data-module="govuk-radios">
         <div class="govuk-radios__item">
-            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-1" type="radio" value="@SetPermissions.RecruitApprentices.Yes">
+            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-1" type="radio" value="@OperationsMappingService.Yes">
             <label class="govuk-label govuk-radios__label" for="recruitApprentices-1">
                 Yes
             </label>
         </div>
         <div class="govuk-radios__item">
-            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-2" type="radio" value="@SetPermissions.RecruitApprentices.YesWithReview">
+            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-2" type="radio" value="@OperationsMappingService.YesWithReview">
             <label class="govuk-label govuk-radios__label" for="recruitApprentices-2">
                 Yes, but I want to review adverts before they're advertised
             </label>
         </div>
         <div class="govuk-radios__item">
-            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-3" type="radio" value="@SetPermissions.RecruitApprentices.No">
+            <input asp-for="PermissionToRecruit" class="govuk-radios__input" id="recruitApprentices-3" type="radio" value="@OperationsMappingService.No">
             <label class="govuk-label govuk-radios__label" for="recruitApprentices-3">
                 No
             </label>

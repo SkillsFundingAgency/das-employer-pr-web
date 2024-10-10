@@ -7,8 +7,8 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Services;
 public class OperationsMappingServiceOperationsToDescriptionsTests
 {
     [Test]
-    [InlineAutoData(Operation.CreateCohort, SetPermissions.AddRecords.Yes)]
-    [InlineAutoData(null, SetPermissions.AddRecords.No)]
+    [InlineAutoData(Operation.CreateCohort, OperationsMappingService.Yes)]
+    [InlineAutoData(null, OperationsMappingService.No)]
     public void PermissionToAddRecords_FromOperations(Operation? operation, string expectedPermissionText)
     {
         var operationsToCheck = new List<Operation>();
@@ -18,13 +18,13 @@ public class OperationsMappingServiceOperationsToDescriptionsTests
         }
         var permissions = OperationsMappingService.MapOperationsToDescriptions(operationsToCheck);
         permissions.PermissionToAddCohorts.Should().Be(expectedPermissionText);
-        permissions.PermissionToRecruit.Should().Be(SetPermissions.RecruitApprentices.No);
+        permissions.PermissionToRecruit.Should().Be(OperationsMappingService.No);
     }
 
     [Test]
-    [InlineAutoData(Operation.Recruitment, SetPermissions.RecruitApprentices.Yes)]
-    [InlineAutoData(Operation.RecruitmentRequiresReview, SetPermissions.RecruitApprentices.YesWithReview)]
-    [InlineAutoData(null, SetPermissions.RecruitApprentices.No)]
+    [InlineAutoData(Operation.Recruitment, OperationsMappingService.Yes)]
+    [InlineAutoData(Operation.RecruitmentRequiresReview, OperationsMappingService.YesWithReview)]
+    [InlineAutoData(null, OperationsMappingService.No)]
     public void PermissionToAddRecruit_FromOperations(Operation? operation, string expectedPermissionText)
     {
         var operationsToCheck = new List<Operation>();
@@ -35,16 +35,16 @@ public class OperationsMappingServiceOperationsToDescriptionsTests
 
         var permissions = OperationsMappingService.MapOperationsToDescriptions(operationsToCheck);
         permissions.PermissionToRecruit.Should().Be(expectedPermissionText);
-        permissions.PermissionToAddCohorts.Should().Be(SetPermissions.AddRecords.No);
+        permissions.PermissionToAddCohorts.Should().Be(OperationsMappingService.No);
     }
 
     [Test]
-    [InlineAutoData(null, SetPermissions.AddRecords.No, Operation.Recruitment, SetPermissions.RecruitApprentices.Yes)]
-    [InlineAutoData(null, SetPermissions.AddRecords.No, Operation.RecruitmentRequiresReview, SetPermissions.RecruitApprentices.YesWithReview)]
-    [InlineAutoData(null, SetPermissions.AddRecords.No, null, SetPermissions.RecruitApprentices.No)]
-    [InlineAutoData(Operation.CreateCohort, SetPermissions.AddRecords.Yes, Operation.Recruitment, SetPermissions.RecruitApprentices.Yes)]
-    [InlineAutoData(Operation.CreateCohort, SetPermissions.AddRecords.Yes, Operation.RecruitmentRequiresReview, SetPermissions.RecruitApprentices.YesWithReview)]
-    [InlineAutoData(Operation.CreateCohort, SetPermissions.AddRecords.Yes, null, SetPermissions.RecruitApprentices.No)]
+    [InlineAutoData(null, OperationsMappingService.No, Operation.Recruitment, OperationsMappingService.Yes)]
+    [InlineAutoData(null, OperationsMappingService.No, Operation.RecruitmentRequiresReview, OperationsMappingService.YesWithReview)]
+    [InlineAutoData(null, OperationsMappingService.No, null, OperationsMappingService.No)]
+    [InlineAutoData(Operation.CreateCohort, OperationsMappingService.Yes, Operation.Recruitment, OperationsMappingService.Yes)]
+    [InlineAutoData(Operation.CreateCohort, OperationsMappingService.Yes, Operation.RecruitmentRequiresReview, OperationsMappingService.YesWithReview)]
+    [InlineAutoData(Operation.CreateCohort, OperationsMappingService.Yes, null, OperationsMappingService.No)]
     public void PermissionsForBothTypes_TwoOperationsChecked(
         Operation? addRecordsOperation,
         string expectedAddRecord,

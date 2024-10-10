@@ -1,0 +1,31 @@
+﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using SFA.DAS.Employer.PR.Web.Models;
+@model DeclineAddAccountConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Decline add account - Confirmation";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">
+                This training provider has not been added to your account
+            </h1>
+        </div>
+        <div class="govuk-form-group">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-6 govuk-!-margin-top-6">
+                What happens next?
+            </h2>
+            <p class="govuk-body">
+                We’ve emailed @Model.ProviderName.ToUpper() to let them know you’ve declined their request to be added as a training provider.
+            </p>
+            <p class="govuk-body">
+                If the permissions were not correct, you can ask them to send a new request. Or you can add them yourself from <a class="govuk-link" href="@Model.ManageTrainingProvidersUrl">Manage training providers</a>.
+            </p>
+            <p class="govuk-body">
+                If this training provider has used your details without your consent, <a class="govuk-link" href="https://assessors.apprenticeships.education.gov.uk/Home/ContactUs">contact the Apprenticeship service helpdesk</a> .
+            </p>
+        </div>
+    </div>
+</div>
