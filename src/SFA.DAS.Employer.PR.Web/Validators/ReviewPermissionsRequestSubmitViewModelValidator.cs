@@ -5,7 +5,7 @@ namespace SFA.DAS.Employer.PR.Web.Validators;
 
 public class ReviewPermissionsRequestSubmitViewModelValidator : AbstractValidator<ReviewPermissionsRequestSubmitViewModel>
 {
-    public const string AcceptPermissionsValidationMessage = "Please select an option";
+    public const string AcceptPermissionsValidationMessage = "Select if you want to accept this permissions request";
 
     public ReviewPermissionsRequestSubmitViewModelValidator()
     {

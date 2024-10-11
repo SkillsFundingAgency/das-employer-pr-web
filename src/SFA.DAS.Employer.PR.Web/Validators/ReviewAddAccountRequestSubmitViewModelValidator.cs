@@ -5,7 +5,7 @@ namespace SFA.DAS.Employer.PR.Web.Validators;
 
 public class ReviewAddAccountRequestSubmitViewModelValidator : AbstractValidator<ReviewAddAccountRequestSubmitViewModel>
 {
-    public const string AcceptAddAccountRequestValidationMessage = "Please select an option";
+    public const string AcceptAddAccountRequestValidationMessage = "Select whether or not you want to add this training provider";
 
     public ReviewAddAccountRequestSubmitViewModelValidator()
     {

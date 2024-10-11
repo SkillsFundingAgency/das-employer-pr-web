@@ -1,4 +1,6 @@
 ﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using SFA.DAS.Employer.PR.Web.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ReviewPermissionsRequestViewModel
 
 @{
@@ -53,21 +55,24 @@
                 <fieldset id="AcceptPermissions" class="govuk-fieldset" aria-describedby="contact-hint">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         <h1 class="govuk-fieldset__heading">
-                            Do you accept the permissions requested by @Model.ProviderName.ToUpper()
+                            Do you accept the permissions requested by @Model.ProviderName.ToUpper()?
                         </h1>
                     </legend>
-                    <div class="govuk-radios" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="acceptPermissionsYes" name="AcceptPermissions" type="radio" value="true">
-                            <label class="govuk-label govuk-radios__label" for="acceptPermissionsYes">
-                                Yes, I accept these permissions
-                            </label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="acceptPermissionsNo" name="AcceptPermissions" type="radio" value="false">
-                            <label class="govuk-label govuk-radios__label" for="acceptPermissionsNo">
-                                No, I want to keep their current permissions
-                            </label>
+                    <div esfa-validation-marker-for="@Model.AcceptPermissions" class="govuk-form-group">
+                        <span asp-validation-for="AcceptPermissions" class="govuk-error-message"></span>
+                        <div class="govuk-radios" data-module="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input asp-for="AcceptPermissions" class="govuk-radios__input" id="acceptPermissionsYes" name="AcceptPermissions" type="radio" value="true">
+                                <label class="govuk-label govuk-radios__label" for="acceptPermissionsYes">
+                                    Yes, I accept these permissions
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input asp-for="AcceptPermissions" class="govuk-radios__input" id="acceptPermissionsNo" name="AcceptPermissions" type="radio" value="false">
+                                <label class="govuk-label govuk-radios__label" for="acceptPermissionsNo">
+                                    No, I want to keep their current permissions
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </fieldset>
