@@ -1,0 +1,25 @@
+﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+
+﻿@{
+    ViewBag.Title = "You cannot use this email address";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-form-group">
+            <h1 class="govuk-heading-l">
+                You cannot use this email address
+            </h1>
+            <p class="govuk-body">
+                The GOV.UK One Login email address you used to sign in is not the same as the email address your training provider used. 
+            </p>
+            <p class="govuk-body">
+                You need to sign out, then create or sign in to GOV.UK One Login using the same email address that the request was sent to. There are instructions in the email that was sent to you. 
+            </p>
+            <p class="govuk-body">
+                <a href="@Url.RouteUrl(RouteNames.SignOut)">Sign out of GOV.UK One Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+

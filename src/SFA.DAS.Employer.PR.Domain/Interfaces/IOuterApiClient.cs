@@ -30,4 +30,7 @@ public interface IOuterApiClient
 
     [Get("/requests/{requestId}/createaccount/validate")]
     Task<ValidateCreateAccountRequestResponse> ValidateCreateAccountRequest([Path] Guid requestId, CancellationToken cancellationToken);
+
+    [Get("/requests/{requestId}")]
+    Task<GetPermissionRequestResponse> GetPermissionRequest([Path] Guid requestId, CancellationToken cancellationToken);
 }
