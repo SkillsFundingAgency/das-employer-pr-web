@@ -301,6 +301,152 @@ public class YourTrainingProvidersControllerTests
         });
     }
 
+    [Test]
+    [MoqAutoData]
+    public void EmployerRelationship_HasOutstandingRequestWithNoExistingProvider_ReturnsExpectedModel(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<IEncodingService> encodingServiceMock,
+        string employerAccountId,
+        string providerName,
+        long ukprn
+    )
+    {
+        var accountId = 1123;
+        var accountName = "Account Name";
+        var publicHashedId = "12123232";
+
+        var request = new PermissionRequest()
+        {
+            RequestId = Guid.NewGuid(),
+            ProviderName = "ProviderName",
+            Ukprn = ukprn,
+            Operations = [],
+            RequestType = RequestType.Permission
+        };
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+
+        encodingServiceMock.Setup(e => e.Decode(employerAccountId, EncodingType.AccountId)).Returns(accountId);
+
+        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>(), encodingServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = user
+                }
+            }
+        };
+
+        var requests = new List<PermissionRequest> { request };
+
+        SetupControllerAndClasses(
+            outerApiMock,
+            accountId,
+            accountName,
+            publicHashedId,
+            [],
+            sut,
+            false,
+            requests
+        );
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Requests, RequestIdLink);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.UpdatePermissions, RequestIdLink);
+
+        var result = sut.Index(employerAccountId, new CancellationToken());
+
+        var viewResult = result.Result.As<ViewResult>();
+        var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
+
+        var actualLegalEntity = viewModel!.LegalEntities.First();
+
+        var actualPermissionDetails = actualLegalEntity.PermissionDetails.First();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(actualPermissionDetails.PermissionToAddRecords, Is.EqualTo(ManageRequests.No));
+            Assert.That(actualPermissionDetails.PermissionToRecruitApprentices, Is.EqualTo(ManageRequests.No));
+            Assert.That(actualPermissionDetails.HasOutstandingRequest, Is.True);
+            Assert.That(actualPermissionDetails.ActionLink, Is.EqualTo(RequestIdLink));
+            Assert.That(actualPermissionDetails.ActionLinkText, Is.EqualTo(YourTrainingProviders.ViewRequestActionText));
+        });
+    }
+
+    [Test]
+    [MoqAutoData]
+    public void EmployerRelationship_HasOutstandingRequest_ExpectedPermissionsDescriptions(
+        [Frozen] Mock<IOuterApiClient> outerApiMock,
+        [Frozen] Mock<IEncodingService> encodingServiceMock,
+        string employerAccountId,
+        string providerName,
+        long ukprn
+    )
+    {
+        var accountId = 1123;
+        var accountName = "Account Name";
+        var publicHashedId = "12123232";
+
+        var request = new PermissionRequest()
+        {
+            RequestId = Guid.NewGuid(),
+            ProviderName = "ProviderName",
+            Ukprn = ukprn,
+            Operations = [Operation.CreateCohort, Operation.Recruitment],
+            RequestType = RequestType.Permission
+        };
+
+        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
+
+        encodingServiceMock.Setup(e => e.Decode(employerAccountId, EncodingType.AccountId)).Returns(accountId);
+
+        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>(), encodingServiceMock.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = user
+                }
+            }
+        };
+
+        var requests = new List<PermissionRequest> { request };
+
+        SetupControllerAndClasses(
+            outerApiMock,
+            accountId,
+            accountName,
+            publicHashedId,
+            [],
+            sut,
+            false,
+            requests
+        );
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Requests, RequestIdLink);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.UpdatePermissions, RequestIdLink);
+
+        var result = sut.Index(employerAccountId, new CancellationToken());
+
+        var viewResult = result.Result.As<ViewResult>();
+        var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
+
+        var actualLegalEntity = viewModel!.LegalEntities.First();
+
+        var actualPermissionDetails = actualLegalEntity.PermissionDetails.First();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(actualPermissionDetails.PermissionToAddRecords, Is.EqualTo(ManageRequests.YesWithEmployerRecordReview));
+            Assert.That(actualPermissionDetails.PermissionToRecruitApprentices, Is.EqualTo(ManageRequests.Yes));
+            Assert.That(actualPermissionDetails.HasOutstandingRequest, Is.True);
+            Assert.That(actualPermissionDetails.ActionLink, Is.EqualTo(RequestIdLink));
+            Assert.That(actualPermissionDetails.ActionLinkText, Is.EqualTo(YourTrainingProviders.ViewRequestActionText));
+        });
+    }
+
     [Test, MoqAutoData]
     public void ReturnsNoLegalEntities1(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
