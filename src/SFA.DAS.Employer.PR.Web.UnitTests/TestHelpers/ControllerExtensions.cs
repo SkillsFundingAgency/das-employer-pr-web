@@ -1,9 +1,9 @@
-﻿using AutoFixture;
+﻿using System.Text.Json;
+using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Authentication;
-using System.Text.Json;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 public static class ControllerExtensions
@@ -23,7 +23,7 @@ public static class ControllerExtensions
         return urlHelperMock;
     }
 
-    public static Controller AddDefaultContext(this Controller controller)
+    public static Controller AddDefaultContext(this Controller controller, string email = "")
     {
         Fixture fixture = new();
         var employerIdentifier = fixture
@@ -34,7 +34,7 @@ public static class ControllerExtensions
 
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifier } };
         var accountClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
-        var emailClaim = new Claim(ClaimTypes.Email, fixture.Create<string>());
+        var emailClaim = new Claim(EmployerClaims.UserEmailClaimTypeIdentifier, email);
         var nameClaim = new Claim(ClaimTypes.NameIdentifier, fixture.Create<string>());
 
         var httpContext = new DefaultHttpContext();
