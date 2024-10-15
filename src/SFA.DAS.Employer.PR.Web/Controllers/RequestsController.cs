@@ -25,6 +25,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
     [Route("{requestId:guid}")]
     public async Task<IActionResult> ValidateCreateAccountRequest(Guid requestId, CancellationToken cancellationToken)
     {
+        Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
         ValidateCreateAccountRequestResponse response = await _outerApiClient.ValidateCreateAccountRequest(requestId, cancellationToken);
         var result = GetShutterPageIfInvalid(response);
 

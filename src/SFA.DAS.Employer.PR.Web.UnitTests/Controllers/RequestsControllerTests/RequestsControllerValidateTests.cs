@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
+using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models.Requests;
+using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -13,6 +15,22 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.RequestsControllerTests;
 
 public class RequestsControllerValidateTests
 {
+    [Test, MoqAutoData]
+    public async Task Validate_SetsAccountTaskInContextToHideMenus(
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Greedy] RequestsController sut,
+        Guid requestId,
+        CancellationToken cancellationToken)
+    {
+        ValidateCreateAccountRequestResponse response = new() { IsRequestValid = false };
+        outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+        sut.AddDefaultContext();
+
+        await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
+
+        sut.ControllerContext.HttpContext.Items.Should().ContainKey(SessionKeys.AccountTasksKey);
+    }
+
     [Test, MoqAutoData]
     public async Task Validate_InvalidRequest_ReturnsPageNotFound(
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
@@ -22,6 +40,7 @@ public class RequestsControllerValidateTests
     {
         ValidateCreateAccountRequestResponse response = new() { IsRequestValid = false };
         outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+        sut.AddDefaultContext();
 
         var result = await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
 
@@ -43,6 +62,7 @@ public class RequestsControllerValidateTests
             HasValidaPaye = true
         };
         outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+        sut.AddDefaultContext();
 
         var result = await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
 
@@ -65,6 +85,7 @@ public class RequestsControllerValidateTests
             HasValidaPaye = false
         };
         outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+        sut.AddDefaultContext();
 
         var result = await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
 
@@ -88,6 +109,7 @@ public class RequestsControllerValidateTests
             HasEmployerAccount = true
         };
         outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+        sut.AddDefaultContext();
 
         var result = await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
 
@@ -111,6 +133,7 @@ public class RequestsControllerValidateTests
             HasEmployerAccount = false
         };
         outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+        sut.AddDefaultContext();
 
         var result = await sut.ValidateCreateAccountRequest(requestId, cancellationToken);
 
