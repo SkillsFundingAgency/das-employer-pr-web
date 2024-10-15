@@ -1,5 +1,6 @@
 ﻿@using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
+@using SFA.DAS.Employer.PR.Web.Constants
 @using SFA.DAS.Employer.Shared.UI.Models
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -9,7 +10,7 @@
     ViewBag.HideHeaderBorder = true;
     var footerModel = new FooterModel { AccountId = accountId, UsePrivacyV2 = true };
 
-    bool isAccountTasksJourney = Context.Items.ContainsKey("AccountTasksKey");
+    bool isAccountTasksJourney = Context.Items.ContainsKey(SessionKeys.AccountTasksKey);
     ViewBag.ShowNav = !isAccountTasksJourney;
 }
 <!DOCTYPE html>
