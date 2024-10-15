@@ -9,9 +9,7 @@ public class LegalEntityModel
     public string Name { get; set; } = null!;
     public long AccountId { get; set; }
     public bool IsSelected { get; set; }
-
-    public List<PermissionModel> Permissions { get; set; } = [];
-    public List<PermissionRequestModel> Requests { get; set; } = [];
+    public List<PermissionDetailsModel> PermissionDetails { get; set; } = [];
 
     public static implicit operator LegalEntityModel(LegalEntity legalEntity)
     {
@@ -20,9 +18,7 @@ public class LegalEntityModel
             AccountId = legalEntity.AccountId,
             LegalEntityPublicHashedId = legalEntity.PublicHashedId,
             LegalEntityId = legalEntity.Id,
-            Name = legalEntity.Name,
-            Permissions = legalEntity.Permissions.Select(a => (PermissionModel)a).ToList(),
-            Requests = legalEntity.Requests.Select(a => (PermissionRequestModel)a).ToList()
+            Name = legalEntity.Name
         };
 
         return model;

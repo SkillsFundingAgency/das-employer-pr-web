@@ -1,4 +1,5 @@
 ﻿using AutoFixture.NUnit3;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.Employer.PR.Domain.Common;
@@ -165,7 +166,7 @@ public class YourTrainingProvidersControllerTests
         LegalEntityModel actualLegalEntity = viewModel.LegalEntities.First();
         actualLegalEntity.Name.Should().Be(accountNameExpectedFirst);
 
-        var firstPermission = actualLegalEntity.Permissions.First();
+        var firstPermission = actualLegalEntity.PermissionDetails.First();
 
         firstPermission.ProviderName.Should().Be(providerNameExpectedFirst);
     }
@@ -215,7 +216,7 @@ public class YourTrainingProvidersControllerTests
 
         var actualLegalEntity = viewModel!.LegalEntities.First();
 
-        var actualPermissionDetails = actualLegalEntity.Permissions.First();
+        var actualPermissionDetails = actualLegalEntity.PermissionDetails.First();
 
         actualPermissionDetails.Ukprn.Should().Be(ukprn);
         actualPermissionDetails.ProviderName.Should().Be(providerName);
@@ -245,9 +246,10 @@ public class YourTrainingProvidersControllerTests
             Ukprn = ukprn 
         };
 
-        var request = new PermissionRequest
+        var request = new PermissionRequest()
         { 
             RequestId = Guid.NewGuid(), 
+            ProviderName = "ProviderName",
             Ukprn = ukprn, 
             Operations = [],
             RequestType = RequestType.Permission
@@ -290,7 +292,7 @@ public class YourTrainingProvidersControllerTests
 
         var actualLegalEntity = viewModel!.LegalEntities.First();
 
-        var actualPermissionDetails = actualLegalEntity.Permissions.First();
+        var actualPermissionDetails = actualLegalEntity.PermissionDetails.First();
 
         Assert.Multiple(() =>
         {

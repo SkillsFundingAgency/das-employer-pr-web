@@ -13,6 +13,8 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Encoding;
+using System.Configuration.Provider;
+using System.Reflection;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -38,34 +40,60 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
 
     private YourTrainingProvidersViewModel PopulateYourTrainingProvidersViewModel(string employerAccountId, IOrderedEnumerable<LegalEntity> accountLegalEntities)
     {
-        var legalEntityModels = new List<LegalEntityModel>();
+        List<LegalEntityModel> legalEntityModels = new List<LegalEntityModel>();
 
-        foreach (var legalEntityModel in accountLegalEntities.Select(ale => (LegalEntityModel)ale))
+        foreach (LegalEntity legalEntity in accountLegalEntities)
         {
-            var orderedPermissions = new List<PermissionModel>();
+            HashSet<long> addedUkprns = [];
 
-            foreach (var permissionModel in legalEntityModel.Permissions.OrderBy(p => p.ProviderName))
+            LegalEntityModel legalEntityModel = (LegalEntityModel)legalEntity;
+
+            foreach (var permissions in legalEntity.Permissions)
             {
-                var permissionRequestModel = legalEntityModel.Requests.Find(a => a.Ukprn == permissionModel.Ukprn);
+                addedUkprns.Add(permissions.Ukprn);
 
-                if(permissionRequestModel is not null)
+                var outstandingRequest = legalEntity.Requests.FirstOrDefault(a => a.Ukprn == permissions.Ukprn);
+
+                var permissionDetailsModel = CreatePermissionDetailsModel(
+                    permissions.Ukprn, 
+                    permissions.ProviderName, 
+                    legalEntity, 
+                    permissions.Operations.ToArray(), 
+                    employerAccountId,
+                    outstandingRequest is not null
+                );
+
+                if (outstandingRequest is not null)
                 {
-                    permissionModel.ActionLink = MapRequestTypeToRoute(permissionRequestModel.RequestType, permissionRequestModel.RequestId, employerAccountId);
-                    permissionModel.ActionLinkText = YourTrainingProviders.ViewRequestActionText;
+                    SetViewRequestNavigationLink(ref permissionDetailsModel, outstandingRequest, employerAccountId);
                 }
                 else
                 {
-                    permissionModel.ActionLink = Url.RouteUrl(RouteNames.ChangePermissions, new { employerAccountId, legalEntityModel.LegalEntityPublicHashedId, permissionModel.Ukprn })!;
-                    permissionModel.ActionLinkText = YourTrainingProviders.ChangePermissionsActionText;
+                    SetChangePermissionsNavigationLink(ref permissionDetailsModel, employerAccountId, legalEntity.PublicHashedId);
                 }
 
-                orderedPermissions.Add(permissionModel);
+                legalEntityModel.PermissionDetails.Add(permissionDetailsModel);
             }
 
-            legalEntityModel.Permissions = orderedPermissions;
-
-            if(legalEntityModel.Permissions.Count > 0)
+            foreach (var request in legalEntity.Requests.Where(a => !addedUkprns.Contains(a.Ukprn)))
             {
+                PermissionDetailsModel permissionDetailsModel = CreatePermissionDetailsModel(
+                    request.Ukprn,
+                    request.ProviderName,
+                    legalEntity,
+                    request.Operations.ToArray(),
+                    employerAccountId,
+                    true
+                );
+
+                SetViewRequestNavigationLink(ref permissionDetailsModel, request, employerAccountId);
+
+                legalEntityModel.PermissionDetails.Add(permissionDetailsModel);
+            }
+
+            if (legalEntityModel.PermissionDetails.Count > 0)
+            {
+                legalEntityModel.PermissionDetails = legalEntityModel.PermissionDetails.OrderBy(a => a.ProviderName).ToList();
                 legalEntityModels.Add(legalEntityModel);
             }
         }
@@ -79,6 +107,51 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         SetSuccessBanner(yourTrainingProvidersViewModel);
 
         return yourTrainingProvidersViewModel;
+    }
+
+    private PermissionDetailsModel CreatePermissionDetailsModel(long ukprn, string providerName, LegalEntity legalEntity, Operation[] operations, string employerAccountId, bool hasOutstandingRequest = false)
+    {
+        var permissionDetailsModel = new PermissionDetailsModel
+        {
+            Ukprn = ukprn,
+            ProviderName = providerName,
+            HasOutstandingRequest = hasOutstandingRequest
+        };
+
+        SetPermissions(ref permissionDetailsModel, operations);
+
+        return permissionDetailsModel;
+    }
+
+    public void SetViewRequestNavigationLink(ref PermissionDetailsModel permissionDetails, PermissionRequest permissionRequest, string employerAccountId)
+    {
+        permissionDetails.ActionLink = MapRequestTypeToRoute(permissionRequest.RequestType, permissionRequest.RequestId, employerAccountId);
+        permissionDetails.ActionLinkText = YourTrainingProviders.ViewRequestActionText;
+    }
+
+    public void SetChangePermissionsNavigationLink(ref PermissionDetailsModel permissionDetails, string employerAccountId, string LegalEntityPublicHashedId)
+    {
+        permissionDetails.ActionLink = Url.RouteUrl(
+            RouteNames.ChangePermissions, 
+            new { 
+                employerAccountId, 
+                LegalEntityPublicHashedId,
+                permissionDetails.Ukprn
+            }
+        )!;
+        permissionDetails.ActionLinkText = YourTrainingProviders.ChangePermissionsActionText;
+    }
+
+    private void SetPermissions(ref PermissionDetailsModel permissionDetails, Operation[] operations)
+    {
+        permissionDetails.PermissionToAddRecords = operations.Any(x => x == Operation.CreateCohort) ?
+            ManageRequests.YesWithEmployerRecordReview :
+            ManageRequests.No;
+
+        permissionDetails.PermissionToRecruitApprentices = operations.Any(x => x == Operation.Recruitment) ? ManageRequests.Yes :
+            operations.Any(x => x == Operation.RecruitmentRequiresReview) ?
+                ManageRequests.YesWithEmployerAdvertReview :
+                ManageRequests.No;
     }
 
     private string MapRequestTypeToRoute(RequestType requestType, Guid requestId, string employerAccountId)
