@@ -52,14 +52,12 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
             {
                 addedUkprns.Add(permissions.Ukprn);
 
-                var outstandingRequest = legalEntity.Requests.FirstOrDefault(a => a.Ukprn == permissions.Ukprn);
+                var outstandingRequest = legalEntity.Requests.Find(a => a.Ukprn == permissions.Ukprn);
 
                 var permissionDetailsModel = CreatePermissionDetailsModel(
                     permissions.Ukprn, 
                     permissions.ProviderName, 
-                    legalEntity, 
                     permissions.Operations.ToArray(), 
-                    employerAccountId,
                     outstandingRequest is not null
                 );
 
@@ -80,9 +78,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
                 PermissionDetailsModel permissionDetailsModel = CreatePermissionDetailsModel(
                     request.Ukprn,
                     request.ProviderName,
-                    legalEntity,
                     request.Operations.ToArray(),
-                    employerAccountId,
                     true
                 );
 
@@ -109,7 +105,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         return yourTrainingProvidersViewModel;
     }
 
-    private PermissionDetailsModel CreatePermissionDetailsModel(long ukprn, string providerName, LegalEntity legalEntity, Operation[] operations, string employerAccountId, bool hasOutstandingRequest = false)
+    private PermissionDetailsModel CreatePermissionDetailsModel(long ukprn, string providerName, Operation[] operations, bool hasOutstandingRequest = false)
     {
         var permissionDetailsModel = new PermissionDetailsModel
         {
@@ -118,7 +114,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
             HasOutstandingRequest = hasOutstandingRequest
         };
 
-        SetPermissions(ref permissionDetailsModel, operations);
+        SetPermissions(ref permissionDetailsModel, operations.ToList());
 
         return permissionDetailsModel;
     }
@@ -142,14 +138,21 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         permissionDetails.ActionLinkText = YourTrainingProviders.ChangePermissionsActionText;
     }
 
-    private void SetPermissions(ref PermissionDetailsModel permissionDetails, Operation[] operations)
+    private static void SetPermissions(ref PermissionDetailsModel permissionDetails, List<Operation> operations)
     {
-        permissionDetails.PermissionToAddRecords = operations.Any(x => x == Operation.CreateCohort) ?
+        permissionDetails.PermissionToAddRecords = operations.Exists(x => x == Operation.CreateCohort) ?
             ManageRequests.YesWithEmployerRecordReview :
             ManageRequests.No;
 
-        permissionDetails.PermissionToRecruitApprentices = operations.Any(x => x == Operation.Recruitment) ? ManageRequests.Yes :
-            operations.Any(x => x == Operation.RecruitmentRequiresReview) ?
+        permissionDetails.PermissionToRecruitApprentices = 
+            operations.Exists(x => x == Operation.Recruitment) ? 
+                ManageRequests.Yes :
+                SetRecritmentRequiresReviewDisplayMessage(operations);
+    }
+
+    private static string SetRecritmentRequiresReviewDisplayMessage(List<Operation> operations)
+    {
+        return operations.Exists(x => x == Operation.RecruitmentRequiresReview) ?
                 ManageRequests.YesWithEmployerAdvertReview :
                 ManageRequests.No;
     }
