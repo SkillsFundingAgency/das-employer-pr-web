@@ -46,7 +46,7 @@ public class UpdatePermissionsControllerTests
     }
 
     [Test]
-    public async Task GetIndex_WhenInvalidResponse_ReturnsPageNotFoundView()
+    public async Task GetIndex_WhenInvalidResponse_ReturnsCannotViewRequestView()
     {
         var requestId = Guid.NewGuid();
 
@@ -57,13 +57,9 @@ public class UpdatePermissionsControllerTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(result, Is.InstanceOf<RedirectToActionResult>());
-
-            var redirectResult = result as RedirectToActionResult;
-
-            Assert.That(redirectResult!.ActionName, Is.EqualTo("HttpStatusCodeHandler"));
-            Assert.That(redirectResult.ControllerName, Is.EqualTo(RouteNames.Error));
-            Assert.That(redirectResult.RouteValues!["statusCode"], Is.EqualTo((int)HttpStatusCode.NotFound));
+            Assert.That(result, Is.InstanceOf<ViewResult>());
+            var viewResult = result as ViewResult;
+            Assert.That(viewResult!.ViewName, Is.EqualTo(UpdatePermissionsController.CannotViewRequestShutterPageViewPath));
         });
     }
 

@@ -16,7 +16,7 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 public sealed class DeclineAddAccountController(IOuterApiClient _outerApiClient) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, [FromQuery]bool? acceptAddAccountRequest, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         var response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
@@ -27,14 +27,14 @@ public sealed class DeclineAddAccountController(IOuterApiClient _outerApiClient)
 
         var model = new DeclineAddAccountRequestViewModel() { 
             ProviderName = response!.ProviderName,
-            BackLink = Url.RouteUrl(RouteNames.AddAccounts, new { employerAccountId, requestId, acceptAddAccountRequest })!
+            BackLink = Url.RouteUrl(RouteNames.AddAccounts, new { employerAccountId, requestId })!
         };
         
         return View(model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeclineRequest([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         await _outerApiClient.DeclineRequest(
             requestId,

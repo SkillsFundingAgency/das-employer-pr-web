@@ -20,6 +20,8 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 [Route("accounts/{employerAccountId}/addaccount/{requestId}", Name = RouteNames.AddAccounts)]
 public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IValidator<ReviewAddAccountRequestSubmitViewModel> _validator) : Controller
 {
+    public const string CannotViewRequestShutterPageViewPath = "~/Views/Requests/CannotViewRequest.cshtml";
+
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, [FromQuery] bool? acceptAddAccountRequest, CancellationToken cancellationToken)
     {
@@ -27,7 +29,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
 
         if (!ReviewRequestHelper.IsValidRequest(response, RequestType.AddAccount))
         {
-            return RedirectToAction(nameof(ErrorController.HttpStatusCodeHandler), RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
+            return View(CannotViewRequestShutterPageViewPath);
         }
 
         var model = CreateReviewAddAccountRequestViewModel(response!, employerAccountId, acceptAddAccountRequest);
@@ -86,7 +88,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         }
         else
         {
-            return RedirectToRoute(RouteNames.DeclineAddAccount, new { employerAccountId, requestId, acceptAddAccountRequest = acceptRequest });
+            return RedirectToRoute(RouteNames.DeclineAddAccount, new { employerAccountId, requestId });
         }
     }
 

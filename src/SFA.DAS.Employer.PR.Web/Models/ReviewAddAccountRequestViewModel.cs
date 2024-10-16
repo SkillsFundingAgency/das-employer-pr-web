@@ -14,20 +14,4 @@ public sealed class ReviewAddAccountRequestViewModel : ReviewAddAccountRequestSu
 public class ReviewAddAccountRequestSubmitViewModel : PermissionDescriptionsModel
 {
     public bool? AcceptAddAccountRequest { get; set; }
-
-    public string AcceptAddAccountRequestYesRadioCheck
-    {
-        get
-        {
-            return AcceptAddAccountRequest.HasValue && AcceptAddAccountRequest.Value ? "checked" : "";
-        }
-    }
-
-    public string AcceptAddAccountRequestNoRadioCheck
-    {
-        get
-        {
-            return AcceptAddAccountRequest.HasValue && !AcceptAddAccountRequest.Value ? "checked" : "";
-        }
-    }
 }

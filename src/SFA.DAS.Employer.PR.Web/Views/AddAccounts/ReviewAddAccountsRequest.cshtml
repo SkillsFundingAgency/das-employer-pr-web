@@ -55,23 +55,23 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-route="@RouteNames.UpdatePermissions" method="POST">
             <div class="govuk-form-group">
-                <fieldset id="AcceptPermissions" class="govuk-fieldset" aria-describedby="contact-hint">
+                <fieldset id="AcceptAddAccountRequest" class="govuk-fieldset" aria-describedby="contact-hint">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         <h1 class="govuk-fieldset__heading">
-                            Do you accept the permissions requested by @Model.ProviderName.ToUpper()?
+                            Do you want to add @Model.ProviderName.ToUpper() as a training provider with these permissions?
                         </h1>
                     </legend>
                     <div esfa-validation-marker-for="@Model.AcceptAddAccountRequest" class="govuk-form-group">
                         <span asp-validation-for="AcceptAddAccountRequest" class="govuk-error-message"></span>
                         <div class="govuk-radios" data-module="govuk-radios">
                             <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="acceptAddAccountRequestYes" name="AcceptAddAccountRequest" type="radio" value="true" @(Model.AcceptAddAccountRequestYesRadioCheck)>
+                                <input class="govuk-radios__input" id="acceptAddAccountRequestYes" name="AcceptAddAccountRequest" type="radio" value="true">
                                 <label class="govuk-label govuk-radios__label" for="acceptAddAccountRequestYes">
                                     Yes, I want to add @Model.ProviderName.ToUpper()
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="acceptAddAccountRequestNo" name="AcceptAddAccountRequest" type="radio" value="false" @(Model.AcceptAddAccountRequestNoRadioCheck)>
+                                <input class="govuk-radios__input" id="acceptAddAccountRequestNo" name="AcceptAddAccountRequest" type="radio" value="false">
                                 <label class="govuk-label govuk-radios__label" for="acceptAddAccountRequestNo">
                                     No, I do not want to add @Model.ProviderName.ToUpper()
                                 </label>

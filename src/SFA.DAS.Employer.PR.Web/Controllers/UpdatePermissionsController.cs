@@ -20,6 +20,8 @@ namespace SFA.DAS.Employer.PR.Web.Controllers;
 [Route("accounts/{employerAccountId}/updatepermissions/{requestId}", Name = RouteNames.UpdatePermissions)]
 public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient, IValidator<ReviewPermissionsRequestSubmitViewModel> _validator) : Controller
 {
+    public const string CannotViewRequestShutterPageViewPath = "~/Views/Requests/CannotViewRequest.cshtml";
+
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
@@ -27,7 +29,7 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
 
         if (!ReviewRequestHelper.IsValidRequest(response, RequestType.Permission))
         {
-            return RedirectToAction(nameof(ErrorController.HttpStatusCodeHandler), RouteNames.Error, new { statusCode = (int)HttpStatusCode.NotFound });
+            return View(CannotViewRequestShutterPageViewPath);
         }
 
         var model = CreateReviewPermissionsRequestViewModel(response!, employerAccountId);
