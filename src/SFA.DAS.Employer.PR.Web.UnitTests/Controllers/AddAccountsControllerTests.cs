@@ -226,7 +226,6 @@ public class AddAccountsControllerTests
             Assert.That(RouteNames.DeclineAddAccount, Is.EqualTo(redirectResult?.RouteName));
             Assert.That(employerAccountId, Is.EqualTo(redirectResult?.RouteValues?["employerAccountId"]!));
             Assert.That(requestId, Is.EqualTo(redirectResult?.RouteValues?["requestId"]!));
-            Assert.That(model.AcceptAddAccountRequest, Is.EqualTo(redirectResult?.RouteValues?["acceptAddAccountRequest"]!));
         });
     }
 

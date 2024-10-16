@@ -51,7 +51,7 @@ public sealed class DeclineAddAccountControllerTests
         _outerApiClientMock.Setup(x => x.GetRequest(requestId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((GetPermissionRequestResponse?)null);
 
-        var result = await _controller.Index(requestId, employerAccountId, null, CancellationToken.None);
+        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
@@ -82,7 +82,7 @@ public sealed class DeclineAddAccountControllerTests
         _outerApiClientMock.Setup(x => x.GetRequest(requestid, It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
-        var result = await _controller.Index(requestid, employerAccountId, acceptAddAccountRequest: null, CancellationToken.None) as ViewResult;
+        var result = await _controller.Index(requestid, employerAccountId, CancellationToken.None) as ViewResult;
 
         Assert.That(result, Is.Not.Null);
 
@@ -97,11 +97,11 @@ public sealed class DeclineAddAccountControllerTests
     }
 
     [Test]
-    public async Task PostIndex_ShouldRedirectToDeclineAddAccountConfirmationRoute_WithCorrectParameters()
+    public async Task PostDeclineRequest_ShouldRedirectToDeclineAddAccountConfirmationRoute_WithCorrectParameters()
     {
         var requestId = Guid.NewGuid();
 
-        var result = await _controller.Index(requestId, employerAccountId, CancellationToken.None);
+        var result = await _controller.DeclineRequest(requestId, employerAccountId, CancellationToken.None);
         var redirect = result as RedirectToRouteResult;
 
         _outerApiClientMock.Verify(x => x.DeclineRequest(
