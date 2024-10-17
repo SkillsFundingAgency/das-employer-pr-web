@@ -1,0 +1,89 @@
+﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using SFA.DAS.Employer.PR.Web.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ReviewAddAccountRequestViewModel
+
+@{
+    ViewData["Title"] = "Review permission request";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_validationSummary" />
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-6">
+            Add @Model.ProviderName.ToUpper() as a training provider
+        </h1>
+        <p class="govuk-body govuk-!-font-size-19 govuk-!-margin-bottom-8">
+            @Model.ProviderName.ToUpper() has asked to be added as a training provider. 
+            They should have confirmed these permissions with you before sending the request. 
+            If you accept their request you can change their permissions at any time from the Manage training providers 
+            page of your account.
+        </p>
+        <table class="govuk-table">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__cell govuk-!-width-one-half">
+                        <div class="govuk-!-margin-bottom-3">
+                            <b>Add apprentice records</b>
+                        </div>
+                        <p class="govuk-body">
+                            Training provider can add apprentice records. 
+                            If you do not pay the levy (you have an annual pay bill of under £3 million), 
+                            training provider can also reserve funding for your apprentices.
+                        </p>
+                    </th>
+                    <td class="govuk-table__cell govuk-!-width-one-half">
+                        @Model.AddApprenticeRecordsText
+                    </td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__cell govuk-!-width-one-half border-bottom-override">
+                        <div class="govuk-!-margin-bottom-3">
+                            <b>Recruit apprentices</b>
+                        </div>
+                        <p class="govuk-body">
+                            Training provider can advertise apprenticeships and review applications on your behalf.
+                        </p>
+                    </th>
+                    <td class="govuk-table__cell govuk-!-width-one-half border-bottom-override">
+                        @Model.RecruitApprenticesText
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-route="@RouteNames.UpdatePermissions" method="POST">
+            <div class="govuk-form-group">
+                <fieldset id="AcceptAddAccountRequest" class="govuk-fieldset" aria-describedby="contact-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h1 class="govuk-fieldset__heading">
+                            Do you want to add @Model.ProviderName.ToUpper() as a training provider with these permissions?
+                        </h1>
+                    </legend>
+                    <div esfa-validation-marker-for="@Model.AcceptAddAccountRequest" class="govuk-form-group">
+                        <span asp-validation-for="AcceptAddAccountRequest" class="govuk-error-message"></span>
+                        <div class="govuk-radios" data-module="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="acceptAddAccountRequestYes" name="AcceptAddAccountRequest" type="radio" value="true">
+                                <label class="govuk-label govuk-radios__label" for="acceptAddAccountRequestYes">
+                                    Yes, I want to add @Model.ProviderName.ToUpper()
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="acceptAddAccountRequestNo" name="AcceptAddAccountRequest" type="radio" value="false">
+                                <label class="govuk-label govuk-radios__label" for="acceptAddAccountRequestNo">
+                                    No, I do not want to add @Model.ProviderName.ToUpper()
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button type="submit" id="continue" class="govuk-button govuk-!-margin-right-6" data-disable-on-submit="true">Confirm</button>
+                <a class="govuk-link" href="@Model.ViewYourTrainingProvidersLink">Manage training providers</a>
+            </div>
+        </form>
+    </div>
+</div>

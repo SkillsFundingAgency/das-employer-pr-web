@@ -10,6 +10,7 @@ using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
+using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
@@ -93,16 +94,16 @@ public class ChangePermissionsControllerGetTests
             Assert.That(viewModel.LegalName, Is.EqualTo(getPermissionsResponse.AccountLegalEntityName));
             Assert.That(viewModel.Ukprn, Is.EqualTo(ukprn));
             Assert.That(viewModel.LegalEntityId, Is.EqualTo(legalEntityId));
-            Assert.That(viewModel.PermissionToAddCohorts, Is.EqualTo(SetPermissions.AddRecords.No));
-            Assert.That(viewModel.PermissionToAddCohortsOriginal, Is.EqualTo(SetPermissions.AddRecords.No));
-            Assert.That(viewModel.PermissionToRecruit, Is.EqualTo(SetPermissions.RecruitApprentices.No));
-            Assert.That(viewModel.PermissionToRecruitOriginal, Is.EqualTo(SetPermissions.RecruitApprentices.No));
+            Assert.That(viewModel.PermissionToAddCohorts, Is.EqualTo(OperationsMappingService.No));
+            Assert.That(viewModel.PermissionToAddCohortsOriginal, Is.EqualTo(OperationsMappingService.No));
+            Assert.That(viewModel.PermissionToRecruit, Is.EqualTo(OperationsMappingService.No));
+            Assert.That(viewModel.PermissionToRecruitOriginal, Is.EqualTo(OperationsMappingService.No));
         });
     }
 
     [Test]
-    [InlineAutoData(Operation.CreateCohort, SetPermissions.AddRecords.Yes)]
-    [InlineAutoData(null, SetPermissions.AddRecords.No)]
+    [InlineAutoData(Operation.CreateCohort, OperationsMappingService.Yes)]
+    [InlineAutoData(null, OperationsMappingService.No)]
     public async Task Index_ReturnsExpectedAddRecordOperation_MatchesExpected(
         Operation? operation,
         string expectedAddRecord,
@@ -146,9 +147,9 @@ public class ChangePermissionsControllerGetTests
     }
 
     [Test]
-    [InlineAutoData(Operation.Recruitment, SetPermissions.RecruitApprentices.Yes)]
-    [InlineAutoData(Operation.RecruitmentRequiresReview, SetPermissions.RecruitApprentices.YesWithReview)]
-    [InlineAutoData(null, SetPermissions.RecruitApprentices.No)]
+    [InlineAutoData(Operation.Recruitment, OperationsMappingService.Yes)]
+    [InlineAutoData(Operation.RecruitmentRequiresReview, OperationsMappingService.YesWithReview)]
+    [InlineAutoData(null, OperationsMappingService.No)]
     public async Task Index_ReturnsExpectedAddRecruitment_MatchesExpected(
         Operation? operation,
         string expectedRecruitApprentices,
@@ -192,15 +193,15 @@ public class ChangePermissionsControllerGetTests
     }
 
     [Test]
-    [InlineAutoData(null, SetPermissions.AddRecords.No, Operation.Recruitment, SetPermissions.RecruitApprentices.Yes)]
-    [InlineAutoData(null, SetPermissions.AddRecords.No, Operation.RecruitmentRequiresReview,
-        SetPermissions.RecruitApprentices.YesWithReview)]
-    [InlineAutoData(null, SetPermissions.AddRecords.No, null, SetPermissions.RecruitApprentices.No)]
-    [InlineAutoData(Operation.CreateCohort, SetPermissions.AddRecords.Yes, Operation.Recruitment,
-        SetPermissions.RecruitApprentices.Yes)]
-    [InlineAutoData(Operation.CreateCohort, SetPermissions.AddRecords.Yes, Operation.RecruitmentRequiresReview,
-        SetPermissions.RecruitApprentices.YesWithReview)]
-    [InlineAutoData(Operation.CreateCohort, SetPermissions.AddRecords.Yes, null, SetPermissions.RecruitApprentices.No)]
+    [InlineAutoData(null, OperationsMappingService.No, Operation.Recruitment, OperationsMappingService.Yes)]
+    [InlineAutoData(null, OperationsMappingService.No, Operation.RecruitmentRequiresReview,
+        OperationsMappingService.YesWithReview)]
+    [InlineAutoData(null, OperationsMappingService.No, null, OperationsMappingService.No)]
+    [InlineAutoData(Operation.CreateCohort, OperationsMappingService.Yes, Operation.Recruitment,
+        OperationsMappingService.Yes)]
+    [InlineAutoData(Operation.CreateCohort, OperationsMappingService.Yes, Operation.RecruitmentRequiresReview,
+        OperationsMappingService.YesWithReview)]
+    [InlineAutoData(Operation.CreateCohort, OperationsMappingService.Yes, null, OperationsMappingService.No)]
     public async Task Index_ReturnsExpectedOperations_MatchesExpected(
         Operation? addRecordsOperation,
         string expectedAddRecord,

@@ -6,12 +6,10 @@ public class LegalEntityModel
 {
     public long LegalEntityId { get; set; }
     public string LegalEntityPublicHashedId { get; set; } = null!;
-
     public string Name { get; set; } = null!;
     public long AccountId { get; set; }
     public bool IsSelected { get; set; }
-
-    public List<PermissionModel> Permissions { get; set; } = new();
+    public List<PermissionDetailsModel> PermissionDetails { get; set; } = [];
 
     public static implicit operator LegalEntityModel(LegalEntity legalEntity)
     {
@@ -22,11 +20,6 @@ public class LegalEntityModel
             LegalEntityId = legalEntity.Id,
             Name = legalEntity.Name
         };
-
-        foreach (var permission in legalEntity.Permissions)
-        {
-            model.Permissions.Add(permission);
-        }
 
         return model;
     }

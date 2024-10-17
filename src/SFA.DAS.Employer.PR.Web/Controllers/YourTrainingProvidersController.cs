@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Common;
+using SFA.DAS.Employer.PR.Domain.Constants;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
@@ -10,6 +13,8 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Encoding;
+using System.Configuration.Provider;
+using System.Reflection;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -21,19 +26,148 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
         _sessionService.Delete<AddTrainingProvidersSessionModel>();
-        var accountId = _encodingService.Decode(employerAccountId, EncodingType.AccountId);
-        var response = await _outerApiClient.GetEmployerRelationships(accountId, cancellationToken);
-        var accountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name);
 
-        var legalEntityModels = OrderPermissionsAndAddLinks(employerAccountId, accountLegalEntities);
+        long accountId = _encodingService.Decode(employerAccountId, EncodingType.AccountId);
 
-        YourTrainingProvidersViewModel model = InitialiseViewModel(legalEntityModels);
-        model.IsOwner = User.IsOwner(employerAccountId);
-        SetSuccessBanner(model);
+        GetEmployerRelationshipsQueryResponse response = await _outerApiClient.GetEmployerRelationships(accountId, cancellationToken);
 
-        model.AddTrainingProviderUrl = Url.RouteUrl(RouteNames.SelectLegalEntity, new { employerAccountId })!;
+        IOrderedEnumerable<LegalEntity> accountLegalEntities = response.AccountLegalEntities.OrderBy(a => a.Name);
+
+        YourTrainingProvidersViewModel model = PopulateYourTrainingProvidersViewModel(employerAccountId, accountLegalEntities);
 
         return View(model);
+    }
+
+    private YourTrainingProvidersViewModel PopulateYourTrainingProvidersViewModel(string employerAccountId, IOrderedEnumerable<LegalEntity> accountLegalEntities)
+    {
+        List<LegalEntityModel> legalEntityModels = new List<LegalEntityModel>();
+
+        foreach (LegalEntity legalEntity in accountLegalEntities)
+        {
+            HashSet<long> addedUkprns = [];
+
+            LegalEntityModel legalEntityModel = (LegalEntityModel)legalEntity;
+
+            foreach (var permissions in legalEntity.Permissions)
+            {
+                addedUkprns.Add(permissions.Ukprn);
+
+                var outstandingRequest = legalEntity.Requests.Find(a => a.Ukprn == permissions.Ukprn);
+
+                var permissionDetailsModel = CreatePermissionDetailsModel(
+                    permissions.Ukprn, 
+                    permissions.ProviderName, 
+                    permissions.Operations.ToArray(), 
+                    outstandingRequest is not null
+                );
+
+                if (outstandingRequest is not null)
+                {
+                    SetViewRequestNavigationLink(ref permissionDetailsModel, outstandingRequest, employerAccountId);
+                }
+                else
+                {
+                    SetChangePermissionsNavigationLink(ref permissionDetailsModel, employerAccountId, legalEntity.PublicHashedId);
+                }
+
+                legalEntityModel.PermissionDetails.Add(permissionDetailsModel);
+            }
+
+            foreach (var request in legalEntity.Requests.Where(a => !addedUkprns.Contains(a.Ukprn)))
+            {
+                PermissionDetailsModel permissionDetailsModel = CreatePermissionDetailsModel(
+                    request.Ukprn,
+                    request.ProviderName,
+                    request.Operations.ToArray(),
+                    true
+                );
+
+                SetViewRequestNavigationLink(ref permissionDetailsModel, request, employerAccountId);
+
+                legalEntityModel.PermissionDetails.Add(permissionDetailsModel);
+            }
+
+            if (legalEntityModel.PermissionDetails.Count > 0)
+            {
+                legalEntityModel.PermissionDetails = legalEntityModel.PermissionDetails.OrderBy(a => a.ProviderName).ToList();
+                legalEntityModels.Add(legalEntityModel);
+            }
+        }
+
+        YourTrainingProvidersViewModel yourTrainingProvidersViewModel = new(legalEntityModels)
+        {
+            IsOwner = User.IsOwner(employerAccountId),
+            AddTrainingProviderUrl = Url.RouteUrl(RouteNames.SelectLegalEntity, new { employerAccountId })!
+        };
+
+        SetSuccessBanner(yourTrainingProvidersViewModel);
+
+        return yourTrainingProvidersViewModel;
+    }
+
+    private PermissionDetailsModel CreatePermissionDetailsModel(long ukprn, string providerName, Operation[] operations, bool hasOutstandingRequest = false)
+    {
+        var permissionDetailsModel = new PermissionDetailsModel
+        {
+            Ukprn = ukprn,
+            ProviderName = providerName,
+            HasOutstandingRequest = hasOutstandingRequest
+        };
+
+        SetPermissions(ref permissionDetailsModel, operations.ToList());
+
+        return permissionDetailsModel;
+    }
+
+    public void SetViewRequestNavigationLink(ref PermissionDetailsModel permissionDetails, PermissionRequest permissionRequest, string employerAccountId)
+    {
+        permissionDetails.ActionLink = MapRequestTypeToRoute(permissionRequest.RequestType, permissionRequest.RequestId, employerAccountId);
+        permissionDetails.ActionLinkText = YourTrainingProviders.ViewRequestActionText;
+    }
+
+    public void SetChangePermissionsNavigationLink(ref PermissionDetailsModel permissionDetails, string employerAccountId, string LegalEntityPublicHashedId)
+    {
+        permissionDetails.ActionLink = Url.RouteUrl(
+            RouteNames.ChangePermissions, 
+            new { 
+                employerAccountId, 
+                LegalEntityPublicHashedId,
+                permissionDetails.Ukprn
+            }
+        )!;
+        permissionDetails.ActionLinkText = YourTrainingProviders.ChangePermissionsActionText;
+    }
+
+    private static void SetPermissions(ref PermissionDetailsModel permissionDetails, List<Operation> operations)
+    {
+        permissionDetails.PermissionToAddRecords = operations.Exists(x => x == Operation.CreateCohort) ?
+            ManageRequests.YesWithEmployerRecordReview :
+            ManageRequests.No;
+
+        permissionDetails.PermissionToRecruitApprentices = 
+            operations.Exists(x => x == Operation.Recruitment) ? 
+                ManageRequests.Yes :
+                SetRecritmentRequiresReviewDisplayMessage(operations);
+    }
+
+    private static string SetRecritmentRequiresReviewDisplayMessage(List<Operation> operations)
+    {
+        return operations.Exists(x => x == Operation.RecruitmentRequiresReview) ?
+                ManageRequests.YesWithEmployerAdvertReview :
+                ManageRequests.No;
+    }
+
+    private string MapRequestTypeToRoute(RequestType requestType, Guid requestId, string employerAccountId)
+    {
+        string? routeName = requestType switch
+        {
+            RequestType.Permission => RouteNames.UpdatePermissions,
+            RequestType.CreateAccount => RouteNames.CreateAccounts,
+            RequestType.AddAccount => RouteNames.AddAccounts,
+            _ => null
+        };
+
+        return Url.RouteUrl(routeName, new { requestId, employerAccountId })!;
     }
 
     private void SetSuccessBanner(YourTrainingProvidersViewModel model)
@@ -42,54 +176,54 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         if (nameOfProviderAdded != null)
         {
             model.PermissionsUpdatedForProvider = nameOfProviderAdded;
-            model.PermissionsUpdatedForProviderText =
-                $"You've added {model.PermissionsUpdatedForProvider} and set their permissions.";
+            model.PermissionsUpdatedForProviderText = $"You've added {model.PermissionsUpdatedForProvider} and set their permissions.";
             return;
         }
 
-        var nameOfProviderUpdated = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
+        var requestTypeActioned = TempData[TempDataKeys.RequestTypeActioned]?.ToString();
+        if (requestTypeActioned != null)
+        {
+            var requestActionTempValue = TempData[TempDataKeys.RequestAction];
+            if(requestActionTempValue != null)
+            {
+                SetPermissionActionedBannerDetails(model, requestTypeActioned, requestActionTempValue.ToString()!);
+            }
+                
+            return;
+        }
 
+        var nameOfProviderUpdated = TempData[TempDataKeys.NameOfProviderUpdated];
         if (nameOfProviderUpdated != null)
         {
-            model.PermissionsUpdatedForProvider = nameOfProviderUpdated;
-            model.PermissionsUpdatedForProviderText =
-                $"You've set permissions for {model.PermissionsUpdatedForProvider}";
+            model.PermissionsUpdatedForProvider = nameOfProviderUpdated.ToString()!.ToUpper();
+            model.PermissionsUpdatedForProviderText = $"You've set permissions for {model.PermissionsUpdatedForProvider}";
         }
     }
 
-    private List<LegalEntityModel> OrderPermissionsAndAddLinks(string employerAccountId, IOrderedEnumerable<LegalEntity> accountLegalEntities)
+    private void SetPermissionActionedBannerDetails(YourTrainingProvidersViewModel model, string requestTypeActioned, string requestAction)
     {
-        var legalEntityModels = new List<LegalEntityModel>();
+        string? providerName = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
+  
+        RequestAction requestActionEnum = Enum.Parse<RequestAction>(requestAction);
+        RequestType requestType = Enum.Parse<RequestType>(requestTypeActioned);
 
-        foreach (var ale in accountLegalEntities)
+        switch (requestType)
         {
-            var legalEntity = (LegalEntityModel)ale;
-
-            var permissions = new List<PermissionModel>();
-
-            foreach (var p in ale.Permissions.OrderBy(p => p.ProviderName))
-            {
-                var pm = (PermissionModel)p;
-                pm.ChangePermissionsLink = Url.RouteUrl(RouteNames.ChangePermissions,
-                    new { employerAccountId, legalEntity.LegalEntityPublicHashedId, pm.Ukprn })!;
-                permissions.Add(pm);
-            }
-
-            legalEntity.Permissions = permissions;
-            legalEntityModels.Add(legalEntity);
+            case RequestType.Permission:
+                {
+                    model.PermissionsUpdatedForProvider = string.IsNullOrWhiteSpace(providerName) ? null : providerName;
+                    model.PermissionsUpdatedForProviderText =
+                        requestActionEnum == RequestAction.Accepted ?
+                            $"You've set {model.PermissionsUpdatedForProvider}’s permissions." :
+                            $"You've declined {model.PermissionsUpdatedForProvider}’s permission request.";
+                }
+                break;
+            case RequestType.AddAccount:
+                {
+                    model.PermissionsUpdatedForProvider = string.IsNullOrWhiteSpace(providerName) ? null : providerName;
+                    model.PermissionsUpdatedForProviderText = $"You've added {model.PermissionsUpdatedForProvider} and set their permissions.";
+                }
+            break;
         }
-
-        return legalEntityModels;
-    }
-
-    private static YourTrainingProvidersViewModel InitialiseViewModel(List<LegalEntityModel> accountLegalEntities)
-    {
-        var model = new YourTrainingProvidersViewModel();
-        foreach (var legalEntity in accountLegalEntities.Where(x => x.Permissions.Count > 0))
-        {
-            model.LegalEntities.Add(legalEntity);
-        }
-
-        return model;
     }
 }

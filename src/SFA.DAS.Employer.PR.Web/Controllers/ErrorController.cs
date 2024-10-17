@@ -12,17 +12,17 @@ public class ErrorController(ILogger<ErrorController> _logger) : Controller
 {
     [AllowAnonymous]
     [Route("{statusCode}")]
-    public IActionResult HttpStatusCodeHandler(int statusCode)
+    public IActionResult HttpStatusCodeHandler([FromRoute]int statusCode)
     {
         switch (statusCode)
         {
             case 403:
             case 404:
-                return View("PageNotFound");
+                return View(ViewNames.PageNotFound);
             default:
                 var feature = HttpContext!.Features!.Get<IExceptionHandlerPathFeature>();
                 ErrorViewModel errorViewModel = new(Url.RouteUrl(RouteNames.Home, new { employerAccountId = feature!.RouteValues!["employerAccountId"]!.ToString()! })!);
-                return View("ErrorInService", errorViewModel);
+                return View(ViewNames.ErrorInService, errorViewModel);
         }
     }
 

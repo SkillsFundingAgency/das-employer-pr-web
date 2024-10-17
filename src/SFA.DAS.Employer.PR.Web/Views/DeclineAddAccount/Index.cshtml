@@ -1,0 +1,33 @@
+﻿@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using SFA.DAS.Employer.PR.Web.Models;
+@model DeclineAddAccountRequestViewModel
+
+@{
+    ViewData["Title"] = "Decline add account request";
+}
+@section breadcrumb {
+    <a href="@Model.BackLink" class="govuk-back-link">Back</a>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-form-group">
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-6">
+                Are you sure you do not want to add @Model.ProviderName.ToUpper()?
+            </h1>
+            <p class="govuk-body">
+                @Model.ProviderName.ToUpper() should have confirmed these permissions with you before sending the request.
+            </p>
+            <p class="govuk-body">
+                If you do not want to add this training provider, select <b>Do not add training provider</b>. We’ll email @Model.ProviderName.ToUpper() to let them know.
+                If the permissions are not correct, they can correct them and send you another request.
+            </p>
+        </div>
+        <div class="govuk-button-group">
+            <form asp-route ="@RouteNames.DeclineAddAccount" method="POST">
+                <button type="submit" id="confirm" class="govuk-button govuk-button--warning" data-disable-on-submit="true">Do not add training provider</button>
+            </form>
+        </div>
+    </div>
+</div>
+        

@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Employer.PR.Domain.Models;
+﻿using SFA.DAS.Employer.PR.Domain.Common;
 
 namespace SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 

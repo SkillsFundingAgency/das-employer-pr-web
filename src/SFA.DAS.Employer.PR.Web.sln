@@ -5,17 +5,17 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.PR.Web", "SFA.DAS.Employer.PR.Web\SFA.DAS.Employer.PR.Web.csproj", "{6510D5DB-60A9-4029-8EDA-D451F6B24CBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.PR.Application", "SFA.DAS.Employer.PR.Application\SFA.DAS.Employer.PR.Application.csproj", "{BB23FE22-11B0-4453-ADCC-CDB7F25415AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.PR.Application", "SFA.DAS.Employer.PR.Application\SFA.DAS.Employer.PR.Application.csproj", "{BB23FE22-11B0-4453-ADCC-CDB7F25415AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.PR.Domain", "SFA.DAS.Employer.PR.Domain\SFA.DAS.Employer.PR.Domain.csproj", "{176E43C9-181C-4116-A38D-16BB383AB9FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.PR.Domain", "SFA.DAS.Employer.PR.Domain\SFA.DAS.Employer.PR.Domain.csproj", "{176E43C9-181C-4116-A38D-16BB383AB9FB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FD4386BE-3502-4F63-BFF3-99380EA48F07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.PR.Application.UnitTests", "SFA.DAS.Employer.PR.Application.UnitTests\SFA.DAS.Employer.PR.Application.UnitTests.csproj", "{B008E0AC-111B-4C1B-8B43-CB195FFAE8AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.PR.Application.UnitTests", "SFA.DAS.Employer.PR.Application.UnitTests\SFA.DAS.Employer.PR.Application.UnitTests.csproj", "{B008E0AC-111B-4C1B-8B43-CB195FFAE8AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.PR.Domain.UnitTests", "SFA.DAS.Employer.PR.Domain.UnitTests\SFA.DAS.Employer.PR.Domain.UnitTests.csproj", "{55810EC0-E94A-483C-A947-92691B6B8CEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.PR.Domain.UnitTests", "SFA.DAS.Employer.PR.Domain.UnitTests\SFA.DAS.Employer.PR.Domain.UnitTests.csproj", "{55810EC0-E94A-483C-A947-92691B6B8CEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Employer.PR.Web.UnitTests", "SFA.DAS.Employer.PR.Web.UnitTests\SFA.DAS.Employer.PR.Web.UnitTests.csproj", "{CC01297B-F0B7-40BE-8A5A-61DE0CF08EFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Employer.PR.Web.UnitTests", "SFA.DAS.Employer.PR.Web.UnitTests\SFA.DAS.Employer.PR.Web.UnitTests.csproj", "{CC01297B-F0B7-40BE-8A5A-61DE0CF08EFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -22,30 +22,38 @@
         }
 
         <form action="@Model!.AddTrainingProviderUrl" method="GET">
-            <h1 class="govuk-heading-l">
-                Your training providers
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+                Manage training providers
             </h1>
-            <p class="govuk-body">
-                You can add a training provider, then give them permission to add apprentice records and recruit apprentices on your behalf.
+            <p class="govuk-body govuk-!-font-size-19">
+                View your training providers and the permissions you currently have with them. Accept or decline permissions requests from training providers, or change their permissions yourself. You can also add a new training provider.
             </p>
             @if (@Model!.IsOwner)
             {
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
-                            How permissions work
+                            View details about permissions and how they work
                         </span>
                     </summary>
                     <div class="govuk-details__text" id="details-content-0" aria-hidden="false">
                         <p class="govuk-body">
-                            You can:
+                            Permissions refer to what a training provider can do on your behalf.
                         </p>
-                        <ol class="govuk-list govuk-list--bullet">
-                            <li>change permissions for a provider at any time</li>
-                            <li>review and edit anything a provider does on your behalf</li>
-                        </ol>
                         <p class="govuk-body">
-                            Your provider will not be able to access your account.
+                            There are 2 training provider permissions in the Apprenticeship service:
+                        </p>
+                        <p class="govuk-body">
+                            Add apprentice records means the training provider can add details of new apprentices and reserve funding for them if needed. Apprentice records will not be added to your account until you approve them.
+                        </p>
+                        <p class="govuk-body">
+                            Recruit apprentices means the training provider can advertise apprenticeships and review applications. You can choose to approve adverts before they’re published.
+                        </p>
+                        <p class="govuk-body">
+                            You’ll be emailed when you need to approve any records or adverts.
+                        </p>
+                        <p class="govuk-body">
+                            You can change training provider permissions at any time from your account.
                         </p>
                     </div>
                 </details>
@@ -59,33 +67,46 @@
 <div class="govuk-grid-column">
     @foreach (var ale in Model.LegalEntities)
     {
-        <table class="govuk-table">
-            <caption class="govuk-table__caption govuk-table__caption--m">@ale.Name</caption>
-            <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">Training provider</th>
-                <th scope="col" class="govuk-table__header">Permission to add apprentice records</th>
-                <th scope="col" class="govuk-table__header">Permission to recruit apprentices</th>
-                @if (@Model.IsOwner)
-                {
-                    <th scope="col" class="govuk-table__header">Change permissions</th>
-                }
-            </tr>
-            </thead>
+        <div class="govuk-grid-column govuk-!-margin-bottom-5">
+            <h2 class="govuk-heading-l govuk-!-margin-bottom-1 govuk-!-margin-top-2">@ale.Name.ToUpper()</h2>
+            <p class="govuk-!-font-size-16">Agreement ID: @ale.LegalEntityPublicHashedId</p>
+        </div>
 
-            <tbody class="govuk-table__body">
-            @foreach (var permissionDetails in ale.Permissions)
-            {
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@permissionDetails.ProviderName</td>
-                    <td class="govuk-table__cell">@permissionDetails.PermissionToAddRecords</td>
-                    <td class="govuk-table__cell">@permissionDetails.PermissionToRecruitApprentices</td>
+                    <th scope="col" class="govuk-table__header">Training provider</th>
+                    <th scope="col" class="govuk-table__header">Permission to add apprentice records</th>
+                    <th scope="col" class="govuk-table__header">Permission to recruit apprentices</th>
                     @if (@Model.IsOwner)
                     {
-                        <td class="govuk-table__cell"><a class="govuk-link" href="@permissionDetails.ChangePermissionsLink">Change permissions</a></td>
+                        <th scope="col" class="govuk-table__header">Permissions</th>
                     }
                 </tr>
-            }
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var permissionDetails in ale.PermissionDetails)
+                {
+                    @if (@Model.IsOwner && permissionDetails.HasOutstandingRequest)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell govuk-!-padding-bottom-0 govuk-!-padding-top-3 border-bottom-override" colspan="4">
+                                <strong class="govuk-!-font-size-14 govuk-tag govuk-tag--red govuk-body-s">
+                                    Request pending
+                                </strong>
+                            </td>
+                        </tr>
+                    }
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.ProviderName.ToUpper()</td>
+                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToAddRecords</td>
+                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToRecruitApprentices</td>
+                        @if (@Model.IsOwner)
+                        {
+                            <td class="govuk-table__cell"><a class="govuk-link" href="@permissionDetails.ActionLink">@permissionDetails.ActionLinkText</a></td>
+                        }
+                    </tr>
+                }
             </tbody>
         </table>
     }
