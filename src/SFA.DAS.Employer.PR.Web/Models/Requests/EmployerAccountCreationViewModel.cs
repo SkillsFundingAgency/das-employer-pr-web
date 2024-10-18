@@ -45,9 +45,21 @@ public class EmployerAccountCreationViewModel : EmployerAccountCreationSubmitMod
     public string? DeclineCreateAccountLink { get; set; }
 }
 
-public class EmployerAccountCreationSubmitModel
+public class EmployerAccountCreationSubmitModel : EmployerUserNamesBase
 {
     public required bool HasAcceptedTerms { get; set; }
+}
+
+public class EmployerUserNamesViewModel : EmployerUserNamesBase
+{
+}
+
+public class EmployerAccountNamesSubmitModel : EmployerUserNamesBase
+{
+}
+
+public class EmployerUserNamesBase
+{
     public string? EmployerContactFirstName { get; set; }
     public string? EmployerContactLastName { get; set; }
 }
