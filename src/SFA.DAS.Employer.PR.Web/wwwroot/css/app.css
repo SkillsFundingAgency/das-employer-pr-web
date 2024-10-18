@@ -2,6 +2,7 @@
   border-bottom: 1px solid white;
 }
 
-.govuk-checkboxes__label:before {
-  background: #fff;
+.govuk-checkboxes__label:before,
+.govuk-checkboxes__label::before {
+  background: #fff !important;
 }
