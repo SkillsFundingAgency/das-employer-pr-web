@@ -65,8 +65,9 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
         SetNamesInSessionModel(sessionModel, permissionRequest);
 
         var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
+        var declineCreateAccountLink = Url.RouteUrl(RouteNames.DeclineCreateAccount, new { requestId });
 
-        EmployerAccountCreationViewModel vm = GetViewModel(permissionRequest, changeNameLink!);
+        EmployerAccountCreationViewModel vm = GetViewModel(permissionRequest, changeNameLink!, declineCreateAccountLink!);
         return View(RequestsCheckDetailsViewPath, vm);
     }
 
@@ -80,13 +81,14 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
         if (!result.IsValid)
         {
             GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
-
-            var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
-
             var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
             SetNamesInSessionModel(sessionModel, permissionRequest);
 
-            EmployerAccountCreationViewModel viewModel = GetViewModel(permissionRequest, changeNameLink!);
+
+            var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
+            var declineCreateAccountLink = Url.RouteUrl(RouteNames.DeclineCreateAccount, new { requestId });
+
+            EmployerAccountCreationViewModel viewModel = GetViewModel(permissionRequest, changeNameLink!, declineCreateAccountLink!);
             result.AddToModelState(ModelState);
             return View(RequestsCheckDetailsViewPath, viewModel);
         }
@@ -95,8 +97,6 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
 
         return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId, submitModel.HasAcceptedTerms });
     }
-
-
 
     private static void SetNamesInSessionModel(AccountCreationSessionModel? sessionModel, GetPermissionRequestResponse? permissionRequest)
     {
@@ -125,7 +125,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
         return null;
     }
 
-    private static EmployerAccountCreationViewModel GetViewModel(GetPermissionRequestResponse permissionRequest, string changeNameLink)
+    private static EmployerAccountCreationViewModel GetViewModel(GetPermissionRequestResponse permissionRequest, string changeNameLink, string declineCreateAccountLink)
     {
         return new EmployerAccountCreationViewModel
         {
@@ -139,7 +139,8 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
             HasAcceptedTerms = false,
             EmployerAORN = permissionRequest.EmployerAORN,
             Operations = permissionRequest.Operations,
-            ChangeNameLink = changeNameLink
+            ChangeNameLink = changeNameLink,
+            DeclineCreateAccountLink = declineCreateAccountLink
         };
     }
 }

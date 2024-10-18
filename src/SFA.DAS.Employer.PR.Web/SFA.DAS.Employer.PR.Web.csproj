@@ -35,5 +35,4 @@
     <ProjectReference Include="..\SFA.DAS.Employer.PR.Application\SFA.DAS.Employer.PR.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.Employer.PR.Domain\SFA.DAS.Employer.PR.Domain.csproj" />
   </ItemGroup>
-
 </Project>

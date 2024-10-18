@@ -42,6 +42,7 @@ public class EmployerAccountCreationViewModel : EmployerAccountCreationSubmitMod
     }
 
     public string? ChangeNameLink { get; set; }
+    public string? DeclineCreateAccountLink { get; set; }
 }
 
 public class EmployerAccountCreationSubmitModel
