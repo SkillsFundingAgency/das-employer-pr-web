@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
@@ -13,13 +14,13 @@ using SFA.DAS.Employer.Shared.UI;
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Route("[controller]")]
-public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _urlBuilder) : Controller
+public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _urlBuilder, IValidator<EmployerAccountCreationSubmitModel> _validator) : Controller
 {
     public const string PageNotFoundViewPath = "~/Views/Error/PageNotFound.cshtml";
     public const string InvalidRequestStatusShutterPageViewPath = "~/Views/Requests/InvalidRequestStatusShutterPage.cshtml";
     public const string AccountAlreadyExistsShutterPageViewPath = "~/Views/Requests/AccountAlreadyExistsShutterPage.cshtml";
     public const string UserEmailDoesNotMatchRequestShutterPageViewPath = "~/Views/Requests/UserEmailDoesNotMatchRequestShutterPage.cshtml";
-    public const string RequestsCheckDetailsViewPath = "~/Views/Requests/CheckDetails.cshtml";
+    public const string RequestsCheckDetailsViewPath = "~/Views/Requests/CreateServiceAccountCheckDetails.cshtml";
 
     [AllowAnonymous]
     [HttpGet]
@@ -36,7 +37,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
     [Authorize]
     [HttpGet]
     [Route("{requestId:guid}/createaccount", Name = RouteNames.CreateAccountCheckDetails)]
-    public async Task<IActionResult> GetRequestDetails(Guid requestId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetRequestDetails(Guid requestId, bool hasAcceptedTerms, CancellationToken cancellationToken)
     {
         Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
         ValidateCreateAccountRequestResponse response = await _outerApiClient.ValidateCreateAccountRequest(requestId, cancellationToken);
@@ -48,8 +49,28 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
 
         if (User.GetEmail() != permissionRequest.EmployerContactEmail) return View(UserEmailDoesNotMatchRequestShutterPageViewPath);
 
-        return View(RequestsCheckDetailsViewPath);
+        EmployerAccountCreationModel vm = GetViewModel(permissionRequest, hasAcceptedTerms);
+        return View(RequestsCheckDetailsViewPath, vm);
     }
+
+    [Authorize]
+    [HttpPost]
+    [Route("{requestId:guid}/createaccount", Name = RouteNames.CreateAccountCheckDetails)]
+    public async Task<IActionResult> PostRequestDetails([FromRoute] Guid requestId, EmployerAccountCreationSubmitModel submitModel, CancellationToken cancellationToken)
+    {
+        var result = _validator.Validate(submitModel);
+        if (!result.IsValid)
+        {
+            GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
+
+            EmployerAccountCreationModel viewModel = GetViewModel(permissionRequest, submitModel.HasAcceptedTerms);
+            result.AddToModelState(ModelState);
+            return View(RequestsCheckDetailsViewPath, viewModel);
+        }
+
+        return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId, submitModel.HasAcceptedTerms });
+    }
+
 
     private ViewResult? GetShutterPageIfInvalid(ValidateCreateAccountRequestResponse response)
     {
@@ -67,5 +88,23 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
             return View(AccountAlreadyExistsShutterPageViewPath, vm);
         }
         return null;
+    }
+
+
+    private static EmployerAccountCreationModel GetViewModel(GetPermissionRequestResponse permissionRequest, bool hasAcceptedTerms)
+    {
+        return new EmployerAccountCreationModel
+        {
+            RequestId = permissionRequest.RequestId,
+            Ukprn = permissionRequest.Ukprn,
+            ProviderName = permissionRequest.ProviderName!.ToUpper(),
+            EmployerOrganisationName = permissionRequest.EmployerOrganisationName!.ToUpper(),
+            EmployerContactFirstName = permissionRequest.EmployerContactFirstName,
+            EmployerContactLastName = permissionRequest.EmployerContactLastName,
+            HasAcceptedTerms = hasAcceptedTerms,
+            EmployerPAYE = permissionRequest.EmployerPAYE,
+            EmployerAORN = permissionRequest.EmployerAORN,
+            Operations = permissionRequest.Operations
+        };
     }
 }
