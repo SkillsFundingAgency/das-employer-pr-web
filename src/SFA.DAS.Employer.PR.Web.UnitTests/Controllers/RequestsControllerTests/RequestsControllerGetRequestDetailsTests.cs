@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers;
@@ -27,7 +26,7 @@ public class RequestsControllerGetRequestDetailsTests
 
         sut.AddDefaultContext();
 
-        var result = await sut.GetRequestDetails(requestId, cancellationToken);
+        var result = await sut.GetRequestDetails(requestId, false, cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RequestsController.PageNotFoundViewPath);
     }
@@ -50,7 +49,7 @@ public class RequestsControllerGetRequestDetailsTests
 
         sut.AddDefaultContext();
 
-        var result = await sut.GetRequestDetails(requestId, cancellationToken);
+        var result = await sut.GetRequestDetails(requestId, false, cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RequestsController.InvalidRequestStatusShutterPageViewPath);
         result.As<ViewResult>().Model.As<InvalidCreateAccountRequestShutterPageViewModel>().AccountsUrl.Should().Be(builder.AccountsLink());
@@ -74,7 +73,7 @@ public class RequestsControllerGetRequestDetailsTests
 
         sut.AddDefaultContext();
 
-        var result = await sut.GetRequestDetails(requestId, cancellationToken);
+        var result = await sut.GetRequestDetails(requestId, false, cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RequestsController.InvalidRequestStatusShutterPageViewPath);
         result.As<ViewResult>().Model.As<InvalidCreateAccountRequestShutterPageViewModel>().AccountsUrl.Should().Be(builder.AccountsLink());
@@ -99,7 +98,7 @@ public class RequestsControllerGetRequestDetailsTests
 
         sut.AddDefaultContext();
 
-        var result = await sut.GetRequestDetails(requestId, cancellationToken);
+        var result = await sut.GetRequestDetails(requestId, false, cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RequestsController.AccountAlreadyExistsShutterPageViewPath);
         result.As<ViewResult>().Model.As<InvalidCreateAccountRequestShutterPageViewModel>().AccountsUrl.Should().Be(builder.AccountsLink());
@@ -127,7 +126,7 @@ public class RequestsControllerGetRequestDetailsTests
 
         sut.AddDefaultContext(email);
 
-        var result = await sut.GetRequestDetails(requestId, cancellationToken);
+        var result = await sut.GetRequestDetails(requestId, false, cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RequestsController.UserEmailDoesNotMatchRequestShutterPageViewPath);
     }
@@ -153,7 +152,7 @@ public class RequestsControllerGetRequestDetailsTests
 
         sut.AddDefaultContext(permissionRequest.EmployerContactEmail!);
 
-        var result = await sut.GetRequestDetails(requestId, cancellationToken);
+        var result = await sut.GetRequestDetails(requestId, false, cancellationToken);
 
         result.As<ViewResult>().ViewName.Should().Be(RequestsController.RequestsCheckDetailsViewPath);
     }
@@ -179,7 +178,7 @@ public class RequestsControllerGetRequestDetailsTests
 
         sut.AddDefaultContext(permissionRequest.EmployerContactEmail!);
 
-        await sut.GetRequestDetails(requestId, cancellationToken);
+        await sut.GetRequestDetails(requestId, false, cancellationToken);
 
         sut.ControllerContext.HttpContext.Items.Should().ContainKey(SessionKeys.AccountTasksKey);
     }
