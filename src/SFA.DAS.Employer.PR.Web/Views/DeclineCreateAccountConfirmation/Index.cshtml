@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model DeclineCreateAccountConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Apprenticeship service account not created";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">
+                Apprenticeship service account not created
+            </h1>
+        </div>
+        <div class="govuk-form-group">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-6 govuk-!-margin-top-6">
+                What happens next?
+            </h2>
+            <p class="govuk-body">
+                We’ve emailed @Model.ProviderName.ToUpper() to let them know you’ve declined their request to create an account.
+            </p>
+            <p class="govuk-body">
+                If the details were not correct, you can ask them to send you a new request. 
+            </p>
+            <p class="govuk-body">
+                If this training provider has used your details without your consent, <a class="govuk-link" href="https://assessors.apprenticeships.education.gov.uk/Home/ContactUs" rel="noopener" target="_blank">contact the Apprenticeship service helpdesk</a> .
+            </p>
+        </div>
+    </div>
+</div>

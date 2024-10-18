@@ -4,4 +4,5 @@ public class AccountCreationSessionModel
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
+    public string? ProviderName { get; set; }
 }
