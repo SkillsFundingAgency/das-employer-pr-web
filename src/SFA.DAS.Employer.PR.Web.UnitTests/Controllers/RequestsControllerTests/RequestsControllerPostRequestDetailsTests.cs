@@ -4,9 +4,11 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
-using SFA.DAS.Employer.PR.Web.Controllers;
+using SFA.DAS.Employer.PR.Web.Controllers.Requests;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models.Requests;
+using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -19,6 +21,7 @@ public class RequestsControllerPostRequestDetailsTests
     public async Task Post_Validated_ReturnsExpectedModel(
         [Frozen] Mock<IValidator<EmployerAccountCreationSubmitModel>> validatorMock,
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] RequestsController sut,
          Guid requestId,
          CancellationToken cancellationToken)
@@ -36,6 +39,7 @@ public class RequestsControllerPostRequestDetailsTests
         RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
         redirectToRouteResult.RouteName.Should().Be(RouteNames.CreateAccountCheckDetails);
         outerApiClientMock.Verify(x => x.GetPermissionRequest(requestId, cancellationToken), Times.Never);
+        sessionServiceMock.Verify(s => s.Delete<AccountCreationSessionModel>(), Times.Once);
     }
 
     [Test, MoqAutoData]
@@ -65,7 +69,7 @@ public class RequestsControllerPostRequestDetailsTests
         var result = await sut.PostRequestDetails(requestId, submitModel, cancellationToken);
 
         ViewResult? viewResult = result.As<ViewResult>();
-        EmployerAccountCreationModel? viewModel = viewResult.Model as EmployerAccountCreationModel;
+        EmployerAccountCreationViewModel? viewModel = viewResult.Model as EmployerAccountCreationViewModel;
 
         viewModel.Should().BeEquivalentTo(permissionRequest, options =>
             options.ExcludingMissingMembers()
