@@ -23,6 +23,7 @@ public static class RouteNames
     public const string CreateAccounts = nameof(CreateAccounts);
     public const string Error = nameof(Error);
     public const string CreateAccountCheckDetails = nameof(CreateAccountCheckDetails);
+    public const string CreateAccountChangeName = nameof(CreateAccountChangeName);
 
     public static class StubAccount
     {
