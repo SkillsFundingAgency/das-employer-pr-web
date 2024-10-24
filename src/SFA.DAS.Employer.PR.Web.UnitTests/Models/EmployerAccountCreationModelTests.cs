@@ -10,7 +10,7 @@ public class EmployerAccountCreationModelTests
     [TestCase(Operation.RecruitmentRequiresReview, PermissionDescriptions.RecruitApprenticesWithReview)]
     public void OperationValues_ExpectedOperationDescriptions(Operation operation, string operationDescription)
     {
-        EmployerAccountCreationModel sut = new EmployerAccountCreationModel { ProviderName = "prov", HasAcceptedTerms = false, Operations = new[] { operation } };
+        EmployerAccountCreationViewModel sut = new EmployerAccountCreationViewModel { ProviderName = "prov", HasAcceptedTerms = false, Operations = new[] { operation } };
         sut.OperationDescriptions[0].Should().Be(operationDescription);
     }
 }

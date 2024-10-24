@@ -8,19 +8,22 @@ using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models.Requests;
+using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Employer.Shared.UI;
 
-namespace SFA.DAS.Employer.PR.Web.Controllers;
+namespace SFA.DAS.Employer.PR.Web.Controllers.Requests;
 
 [Route("[controller]")]
-public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _urlBuilder, IValidator<EmployerAccountCreationSubmitModel> _validator) : Controller
+public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _urlBuilder, ISessionService _sessionService, IValidator<EmployerAccountCreationSubmitModel> _validator) : Controller
 {
     public const string PageNotFoundViewPath = "~/Views/Error/PageNotFound.cshtml";
     public const string InvalidRequestStatusShutterPageViewPath = "~/Views/Requests/InvalidRequestStatusShutterPage.cshtml";
     public const string AccountAlreadyExistsShutterPageViewPath = "~/Views/Requests/AccountAlreadyExistsShutterPage.cshtml";
     public const string UserEmailDoesNotMatchRequestShutterPageViewPath = "~/Views/Requests/UserEmailDoesNotMatchRequestShutterPage.cshtml";
     public const string RequestsCheckDetailsViewPath = "~/Views/Requests/CreateServiceAccountCheckDetails.cshtml";
+    public const string RequestsChangeNameViewPath = "~/Views/Requests/CreateServiceAccountChangeName.cshtml";
 
     [AllowAnonymous]
     [HttpGet]
@@ -49,7 +52,23 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
 
         if (User.GetEmail() != permissionRequest.EmployerContactEmail) return View(UserEmailDoesNotMatchRequestShutterPageViewPath);
 
-        EmployerAccountCreationModel vm = GetViewModel(permissionRequest, hasAcceptedTerms);
+        var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
+        if (sessionModel == null)
+        {
+            sessionModel = new AccountCreationSessionModel
+            {
+                FirstName = permissionRequest.EmployerContactFirstName,
+                LastName = permissionRequest.EmployerContactLastName
+            };
+            _sessionService.Set(sessionModel);
+        }
+        else
+        {
+            SetNamesInSessionModel(sessionModel, permissionRequest);
+        }
+        var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
+
+        EmployerAccountCreationViewModel vm = GetViewModel(permissionRequest, hasAcceptedTerms, changeNameLink!);
         return View(RequestsCheckDetailsViewPath, vm);
     }
 
@@ -63,14 +82,29 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
         {
             GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
 
-            EmployerAccountCreationModel viewModel = GetViewModel(permissionRequest, submitModel.HasAcceptedTerms);
+            var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
+
+            var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
+            SetNamesInSessionModel(sessionModel, permissionRequest);
+
+            EmployerAccountCreationViewModel viewViewModel = GetViewModel(permissionRequest, submitModel.HasAcceptedTerms, changeNameLink!);
             result.AddToModelState(ModelState);
-            return View(RequestsCheckDetailsViewPath, viewModel);
+            return View(RequestsCheckDetailsViewPath, viewViewModel);
         }
 
         return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId, submitModel.HasAcceptedTerms });
     }
 
+
+
+    private static void SetNamesInSessionModel(AccountCreationSessionModel? sessionModel, GetPermissionRequestResponse? permissionRequest)
+    {
+        if (sessionModel != null && permissionRequest != null)
+        {
+            permissionRequest.EmployerContactFirstName = sessionModel.FirstName;
+            permissionRequest.EmployerContactLastName = sessionModel.LastName;
+        }
+    }
 
     private ViewResult? GetShutterPageIfInvalid(ValidateCreateAccountRequestResponse response)
     {
@@ -90,10 +124,9 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
         return null;
     }
 
-
-    private static EmployerAccountCreationModel GetViewModel(GetPermissionRequestResponse permissionRequest, bool hasAcceptedTerms)
+    private static EmployerAccountCreationViewModel GetViewModel(GetPermissionRequestResponse permissionRequest, bool hasAcceptedTerms, string changeNameLink)
     {
-        return new EmployerAccountCreationModel
+        return new EmployerAccountCreationViewModel
         {
             RequestId = permissionRequest.RequestId,
             Ukprn = permissionRequest.Ukprn,
@@ -104,7 +137,8 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
             HasAcceptedTerms = hasAcceptedTerms,
             EmployerPAYE = permissionRequest.EmployerPAYE,
             EmployerAORN = permissionRequest.EmployerAORN,
-            Operations = permissionRequest.Operations
+            Operations = permissionRequest.Operations,
+            ChangeNameLink = changeNameLink
         };
     }
 }

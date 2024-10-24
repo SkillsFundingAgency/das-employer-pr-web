@@ -4,7 +4,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
-using SFA.DAS.Employer.PR.Web.Controllers;
+using SFA.DAS.Employer.PR.Web.Controllers.Requests;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models.Requests;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
@@ -65,7 +65,7 @@ public class RequestsControllerPostRequestDetailsTests
         var result = await sut.PostRequestDetails(requestId, submitModel, cancellationToken);
 
         ViewResult? viewResult = result.As<ViewResult>();
-        EmployerAccountCreationModel? viewModel = viewResult.Model as EmployerAccountCreationModel;
+        EmployerAccountCreationViewModel? viewModel = viewResult.Model as EmployerAccountCreationViewModel;
 
         viewModel.Should().BeEquivalentTo(permissionRequest, options =>
             options.ExcludingMissingMembers()
