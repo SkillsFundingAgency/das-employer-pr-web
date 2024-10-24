@@ -142,6 +142,7 @@ public sealed class DeclineAddAccountConfirmationControllerTests
             var redirectResult = result as RedirectToRouteResult;
             Assert.That(redirectResult, Is.Not.Null);
             Assert.That(RouteNames.YourTrainingProviders, Is.EqualTo(redirectResult?.RouteName)!);
+            Assert.That(_controller.TempData.Count, Is.EqualTo(0));
         });
     }
 }
