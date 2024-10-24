@@ -27,6 +27,7 @@ public sealed class DeclineAddAccountConfirmationController(IOuterApiClient _out
 
         if(requestDeclinedConfirmation is null || requestDeclinedConfirmation.Value != requestId)
         {
+            TempData.Clear();
             return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });
         }
 
