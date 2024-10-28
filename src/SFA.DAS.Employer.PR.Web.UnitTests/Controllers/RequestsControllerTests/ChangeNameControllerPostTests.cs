@@ -19,7 +19,7 @@ public class ChangeNameControllerPostTests
 
     [Test, MoqAutoData]
     public void Post_Validated_ReturnsExpectedModel(
-       [Frozen] Mock<IValidator<EmployerUserNamesViewModel>> validatorMock,
+       [Frozen] Mock<IValidator<ChangeNamesViewModel>> validatorMock,
        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
        [Frozen] Mock<ISessionService> sessionServiceMock,
        [Greedy] ChangeNameController sut,
@@ -28,13 +28,13 @@ public class ChangeNameControllerPostTests
         string lastName,
         CancellationToken cancellationToken)
     {
-        validatorMock.Setup(v => v.Validate(It.IsAny<EmployerUserNamesViewModel>())).Returns(new ValidationResult());
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangeNamesViewModel>())).Returns(new ValidationResult());
 
         sut.AddDefaultContext();
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.CreateAccountCheckDetails, CreateAccountCheckDetailsLink);
 
-        EmployerUserNamesViewModel submitModel = new() { EmployerContactFirstName = firstName, EmployerContactLastName = lastName };
+        ChangeNamesViewModel submitModel = new() { EmployerContactFirstName = firstName, EmployerContactLastName = lastName };
 
         var result = sut.Index(requestId, submitModel, cancellationToken);
 
@@ -45,7 +45,7 @@ public class ChangeNameControllerPostTests
 
     [Test, MoqAutoData]
     public void Post_ValidationFailed_ReturnsExpectedModel(
-        [Frozen] Mock<IValidator<EmployerUserNamesViewModel>> validatorMock,
+        [Frozen] Mock<IValidator<ChangeNamesViewModel>> validatorMock,
         [Greedy] ChangeNameController sut,
         GetPermissionRequestResponse permissionRequest,
         string firstName,
@@ -54,7 +54,7 @@ public class ChangeNameControllerPostTests
     {
         var requestId = permissionRequest.RequestId;
 
-        validatorMock.Setup(v => v.Validate(It.IsAny<EmployerUserNamesViewModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangeNamesViewModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
              {
                  new("TestField","Test Message") { ErrorCode = "1001"}
              }));
@@ -63,12 +63,12 @@ public class ChangeNameControllerPostTests
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.CreateAccountCheckDetails, CreateAccountCheckDetailsLink);
 
-        EmployerUserNamesViewModel submitViewModel = new EmployerUserNamesViewModel { EmployerContactFirstName = firstName, EmployerContactLastName = lastName };
+        ChangeNamesViewModel submitViewModel = new ChangeNamesViewModel { EmployerContactFirstName = firstName, EmployerContactLastName = lastName };
 
         var result = sut.Index(requestId, submitViewModel, cancellationToken);
 
         ViewResult? viewResult = result.As<ViewResult>();
-        var viewModel = viewResult.Model as EmployerUserNamesViewModel;
+        var viewModel = viewResult.Model as ChangeNamesViewModel;
         viewModel!.EmployerContactFirstName.Should().Be(firstName);
         viewModel.EmployerContactLastName.Should().Be(lastName);
     }

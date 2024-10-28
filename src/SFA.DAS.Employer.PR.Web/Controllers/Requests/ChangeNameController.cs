@@ -13,7 +13,7 @@ using SFA.DAS.Employer.PR.Web.Models.Session;
 namespace SFA.DAS.Employer.PR.Web.Controllers.Requests;
 
 [Route("requests")]
-public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<EmployerUserNamesViewModel> _validator) : Controller
+public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<ChangeNamesViewModel> _validator) : Controller
 {
     public const string UserEmailDoesNotMatchRequestShutterPageViewPath = "~/Views/Requests/UserEmailDoesNotMatchRequestShutterPage.cshtml";
     public const string RequestsChangeNameViewPath = "~/Views/Requests/CreateServiceAccountChangeName.cshtml";
@@ -30,7 +30,7 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
         var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
         GetNamesFromSessionModel(sessionModel, permissionRequest);
 
-        EmployerUserNamesViewModel vm = GetChangeNameViewModel(permissionRequest.EmployerContactFirstName!, permissionRequest.EmployerContactLastName!);
+        ChangeNamesViewModel vm = GetChangeNamesViewModel(permissionRequest.EmployerContactFirstName!, permissionRequest.EmployerContactLastName!);
 
         return View(RequestsChangeNameViewPath, vm);
     }
@@ -38,12 +38,12 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
     [Authorize]
     [HttpPost]
     [Route("{requestId:guid}/createaccount/changename", Name = RouteNames.CreateAccountChangeName)]
-    public IActionResult Index(Guid requestId, EmployerUserNamesViewModel submitModel, CancellationToken cancellationToken)
+    public IActionResult Index(Guid requestId, ChangeNamesViewModel submitModel, CancellationToken cancellationToken)
     {
         var result = _validator.Validate(submitModel);
         if (!result.IsValid)
         {
-            EmployerUserNamesViewModel viewModel = GetChangeNameViewModel(submitModel.EmployerContactFirstName!,
+            ChangeNamesViewModel viewModel = GetChangeNamesViewModel(submitModel.EmployerContactFirstName!,
                 submitModel.EmployerContactLastName!);
             result.AddToModelState(ModelState);
             return View(RequestsChangeNameViewPath, viewModel);
@@ -69,9 +69,9 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
     }
 
 
-    private static EmployerUserNamesViewModel GetChangeNameViewModel(string firstName, string lastName)
+    private static ChangeNamesViewModel GetChangeNamesViewModel(string firstName, string lastName)
     {
-        return new EmployerUserNamesViewModel
+        return new ChangeNamesViewModel
         {
             EmployerContactFirstName = firstName,
             EmployerContactLastName = lastName

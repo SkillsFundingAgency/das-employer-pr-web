@@ -4,7 +4,7 @@ using SFA.DAS.Employer.PR.Web.Validators;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Validators;
 
-public class EmployerAccountNamesSubmitViewModelValidatorTests
+public class ChangeNamesViewModelValidatorTests
 {
     private const string ValidFirstName = "Joe";
     private const string ValidLastName = "Cool";
@@ -12,13 +12,13 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [Test]
     public void ContactDetailsModel_IsValid()
     {
-        var model = new EmployerUserNamesViewModel
+        var model = new ChangeNamesViewModel
         {
             EmployerContactFirstName = ValidFirstName,
             EmployerContactLastName = ValidLastName
         };
 
-        var sut = new EmployerAccountNamesSubmitViewModelValidator();
+        var sut = new ChangeNamesViewModelValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldNotHaveAnyValidationErrors();
@@ -27,17 +27,17 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [Test]
     public void NoFirstNameInModel()
     {
-        var model = new EmployerUserNamesViewModel
+        var model = new ChangeNamesViewModel
         {
             EmployerContactFirstName = string.Empty,
             EmployerContactLastName = ValidLastName
         };
 
-        var sut = new EmployerAccountNamesSubmitViewModelValidator();
+        var sut = new ChangeNamesViewModelValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.EmployerContactFirstName)
-            .WithErrorMessage(EmployerAccountNamesSubmitViewModelValidator.FirstNameEmptyErrorMessage);
+            .WithErrorMessage(ChangeNamesViewModelValidator.FirstNameEmptyErrorMessage);
     }
 
     [TestCase("a#")]
@@ -51,33 +51,33 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [TestCase("a>")]
     public void FirstNameInvalidInModel(string firstName)
     {
-        var model = new EmployerUserNamesViewModel
+        var model = new ChangeNamesViewModel
         {
             EmployerContactFirstName = firstName,
             EmployerContactLastName = ValidLastName
         };
 
-        var sut = new EmployerAccountNamesSubmitViewModelValidator();
+        var sut = new ChangeNamesViewModelValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.EmployerContactFirstName)
-            .WithErrorMessage(EmployerAccountNamesSubmitViewModelValidator.FirstNameMustExcludeSpecialCharacters);
+            .WithErrorMessage(ChangeNamesViewModelValidator.FirstNameMustExcludeSpecialCharacters);
     }
 
     [Test]
     public void NoLastNameInModel()
     {
-        var model = new EmployerUserNamesViewModel
+        var model = new ChangeNamesViewModel
         {
             EmployerContactFirstName = ValidFirstName,
             EmployerContactLastName = string.Empty
         };
 
-        var sut = new EmployerAccountNamesSubmitViewModelValidator();
+        var sut = new ChangeNamesViewModelValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.EmployerContactLastName)
-            .WithErrorMessage(EmployerAccountNamesSubmitViewModelValidator.LastNameEmptyErrorMessage);
+            .WithErrorMessage(ChangeNamesViewModelValidator.LastNameEmptyErrorMessage);
     }
 
     [TestCase("a#")]
@@ -91,16 +91,16 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [TestCase("a>")]
     public void LastNameInvalidInModel(string lastName)
     {
-        var model = new EmployerUserNamesViewModel
+        var model = new ChangeNamesViewModel
         {
             EmployerContactFirstName = ValidFirstName,
             EmployerContactLastName = lastName
         };
 
-        var sut = new EmployerAccountNamesSubmitViewModelValidator();
+        var sut = new ChangeNamesViewModelValidator();
         var result = sut.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(c => c.EmployerContactLastName)
-            .WithErrorMessage(EmployerAccountNamesSubmitViewModelValidator.LastNameMustExcludeSpecialCharacters);
+            .WithErrorMessage(ChangeNamesViewModelValidator.LastNameMustExcludeSpecialCharacters);
     }
 }
