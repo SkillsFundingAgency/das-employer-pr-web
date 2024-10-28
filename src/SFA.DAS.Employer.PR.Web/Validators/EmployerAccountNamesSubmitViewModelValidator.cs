@@ -4,7 +4,7 @@ using SFA.DAS.Employer.PR.Web.Models.Requests;
 
 namespace SFA.DAS.Employer.PR.Web.Validators;
 
-public class EmployerAccountNamesSubmitViewModelValidator : AbstractValidator<EmployerAccountNamesSubmitModel>
+public class EmployerAccountNamesSubmitViewModelValidator : AbstractValidator<EmployerUserNamesViewModel>
 {
     public const string FirstNameEmptyErrorMessage = "You must enter a first name";
     public const string FirstNameMustExcludeSpecialCharacters = "First name must include valid characters";

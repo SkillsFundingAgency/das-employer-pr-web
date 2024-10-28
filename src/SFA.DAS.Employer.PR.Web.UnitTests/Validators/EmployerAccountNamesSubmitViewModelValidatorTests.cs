@@ -12,7 +12,7 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [Test]
     public void ContactDetailsModel_IsValid()
     {
-        var model = new EmployerAccountNamesSubmitModel
+        var model = new EmployerUserNamesViewModel
         {
             EmployerContactFirstName = ValidFirstName,
             EmployerContactLastName = ValidLastName
@@ -27,7 +27,7 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [Test]
     public void NoFirstNameInModel()
     {
-        var model = new EmployerAccountNamesSubmitModel
+        var model = new EmployerUserNamesViewModel
         {
             EmployerContactFirstName = string.Empty,
             EmployerContactLastName = ValidLastName
@@ -51,7 +51,7 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [TestCase("a>")]
     public void FirstNameInvalidInModel(string firstName)
     {
-        var model = new EmployerAccountNamesSubmitModel()
+        var model = new EmployerUserNamesViewModel
         {
             EmployerContactFirstName = firstName,
             EmployerContactLastName = ValidLastName
@@ -67,7 +67,7 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [Test]
     public void NoLastNameInModel()
     {
-        var model = new EmployerAccountNamesSubmitModel()
+        var model = new EmployerUserNamesViewModel
         {
             EmployerContactFirstName = ValidFirstName,
             EmployerContactLastName = string.Empty
@@ -91,7 +91,7 @@ public class EmployerAccountNamesSubmitViewModelValidatorTests
     [TestCase("a>")]
     public void LastNameInvalidInModel(string lastName)
     {
-        var model = new EmployerAccountNamesSubmitModel()
+        var model = new EmployerUserNamesViewModel
         {
             EmployerContactFirstName = ValidFirstName,
             EmployerContactLastName = lastName

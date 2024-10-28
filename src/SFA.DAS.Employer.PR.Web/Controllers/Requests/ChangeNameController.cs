@@ -13,7 +13,7 @@ using SFA.DAS.Employer.PR.Web.Models.Session;
 namespace SFA.DAS.Employer.PR.Web.Controllers.Requests;
 
 [Route("requests")]
-public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<EmployerAccountNamesSubmitModel> _validator) : Controller
+public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<EmployerUserNamesViewModel> _validator) : Controller
 {
     public const string UserEmailDoesNotMatchRequestShutterPageViewPath = "~/Views/Requests/UserEmailDoesNotMatchRequestShutterPage.cshtml";
     public const string RequestsChangeNameViewPath = "~/Views/Requests/CreateServiceAccountChangeName.cshtml";
@@ -28,7 +28,7 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
         if (User.GetEmail() != permissionRequest.EmployerContactEmail) return View(UserEmailDoesNotMatchRequestShutterPageViewPath);
 
         var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
-        SetNamesInSessionModel(sessionModel, permissionRequest);
+        GetNamesFromSessionModel(sessionModel, permissionRequest);
 
         EmployerUserNamesViewModel vm = GetChangeNameViewModel(permissionRequest.EmployerContactFirstName!, permissionRequest.EmployerContactLastName!);
 
@@ -38,7 +38,7 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
     [Authorize]
     [HttpPost]
     [Route("{requestId:guid}/createaccount/changename", Name = RouteNames.CreateAccountChangeName)]
-    public IActionResult Index(Guid requestId, EmployerAccountNamesSubmitModel submitModel, CancellationToken cancellationToken)
+    public IActionResult Index(Guid requestId, EmployerUserNamesViewModel submitModel, CancellationToken cancellationToken)
     {
         var result = _validator.Validate(submitModel);
         if (!result.IsValid)
@@ -59,9 +59,9 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
         return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
     }
 
-    private static void SetNamesInSessionModel(AccountCreationSessionModel? sessionModel, GetPermissionRequestResponse? permissionRequest)
+    private static void GetNamesFromSessionModel(AccountCreationSessionModel? sessionModel, GetPermissionRequestResponse permissionRequest)
     {
-        if (sessionModel != null && permissionRequest != null)
+        if (sessionModel != null)
         {
             permissionRequest.EmployerContactFirstName = sessionModel.FirstName;
             permissionRequest.EmployerContactLastName = sessionModel.LastName;
