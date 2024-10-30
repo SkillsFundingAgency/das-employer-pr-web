@@ -3,7 +3,7 @@ using SFA.DAS.Employer.PR.Web.Constants;
 
 namespace SFA.DAS.Employer.PR.Web.Models.Requests;
 
-public class EmployerAccountCreationModel : EmployerAccountCreationSubmitModel
+public class EmployerAccountCreationViewModel : EmployerAccountCreationSubmitModel
 {
     public Guid RequestId { get; set; }
 
@@ -40,6 +40,8 @@ public class EmployerAccountCreationModel : EmployerAccountCreationSubmitModel
             return operationDescriptions;
         }
     }
+
+    public string? ChangeNameLink { get; set; }
 }
 
 public class EmployerAccountCreationSubmitModel
