@@ -23,7 +23,6 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
     public const string AccountAlreadyExistsShutterPageViewPath = "~/Views/Requests/AccountAlreadyExistsShutterPage.cshtml";
     public const string UserEmailDoesNotMatchRequestShutterPageViewPath = "~/Views/Requests/UserEmailDoesNotMatchRequestShutterPage.cshtml";
     public const string RequestsCheckDetailsViewPath = "~/Views/Requests/CreateServiceAccountCheckDetails.cshtml";
-    public const string RequestsChangeNameViewPath = "~/Views/Requests/CreateServiceAccountChangeName.cshtml";
 
     [AllowAnonymous]
     [HttpGet]
@@ -76,6 +75,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
     [Route("{requestId:guid}/createaccount", Name = RouteNames.CreateAccountCheckDetails)]
     public async Task<IActionResult> PostRequestDetails([FromRoute] Guid requestId, EmployerAccountCreationSubmitModel submitModel, CancellationToken cancellationToken)
     {
+        Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
         var result = _validator.Validate(submitModel);
         if (!result.IsValid)
         {

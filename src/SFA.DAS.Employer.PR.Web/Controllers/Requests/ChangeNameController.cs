@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
+using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
@@ -23,6 +24,7 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
     [Route("{requestId:guid}/createaccount/changename", Name = RouteNames.CreateAccountChangeName)]
     public async Task<IActionResult> Index(Guid requestId, CancellationToken cancellationToken)
     {
+        Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
         GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
 
         if (User.GetEmail() != permissionRequest.EmployerContactEmail) return View(UserEmailDoesNotMatchRequestShutterPageViewPath);
@@ -40,6 +42,7 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
     [Route("{requestId:guid}/createaccount/changename", Name = RouteNames.CreateAccountChangeName)]
     public IActionResult Index(Guid requestId, ChangeNamesViewModel submitModel, CancellationToken cancellationToken)
     {
+        Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
         var result = _validator.Validate(submitModel);
         if (!result.IsValid)
         {

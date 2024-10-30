@@ -37,7 +37,7 @@ public class ChangeNameControllerChangeNameGetTests
 
         var viewResult = result as ViewResult;
 
-        viewResult!.ViewName.Should().Be(RequestsController.RequestsChangeNameViewPath);
+        viewResult!.ViewName.Should().Be(ChangeNameController.RequestsChangeNameViewPath);
         var viewModel = viewResult.Model as ChangeNamesViewModel;
         viewModel.EmployerContactFirstName.Should().Be(accountCreationSessionModel.FirstName);
         viewModel.EmployerContactLastName.Should().Be(accountCreationSessionModel.LastName);
