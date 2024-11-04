@@ -31,10 +31,9 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
     public async Task<IActionResult> ValidateCreateAccountRequest(Guid requestId, CancellationToken cancellationToken)
     {
         Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
-        ValidateCreateAccountRequestResponse response = await _outerApiClient.ValidateCreateAccountRequest(requestId, cancellationToken);
-        var result = GetShutterPageIfInvalid(response);
-
-        return result != null ? result : RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
+        ValidateCreateAccountRequestResponse validationResponse = await _outerApiClient.ValidateCreateAccountRequest(requestId, cancellationToken);
+        var shutterPage = GetShutterPageIfInvalid(validationResponse);
+        return shutterPage != null ? shutterPage : RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
     }
 
     [Authorize]
@@ -46,7 +45,9 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
         ValidateCreateAccountRequestResponse response = await _outerApiClient.ValidateCreateAccountRequest(requestId, cancellationToken);
         var result = GetShutterPageIfInvalid(response);
 
-        if (result != null) return result;
+        ValidateCreateAccountRequestResponse validationResponse = await _outerApiClient.ValidateCreateAccountRequest(requestId, cancellationToken);
+        var shutterPage = GetShutterPageIfInvalid(validationResponse);
+        if (shutterPage != null) return shutterPage;
 
         GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
 
