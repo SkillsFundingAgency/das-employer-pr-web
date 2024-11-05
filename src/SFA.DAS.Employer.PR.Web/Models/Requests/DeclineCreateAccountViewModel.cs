@@ -2,6 +2,6 @@
 
 public class DeclineCreateAccountViewModel
 {
-    public Guid RequestId { get; set; }
     public required string ProviderName { get; set; }
+    public required string BackLink { get; set; }
 }

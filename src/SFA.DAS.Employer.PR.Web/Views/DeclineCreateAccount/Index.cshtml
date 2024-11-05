@@ -6,7 +6,7 @@
     ViewBag.Title = "Decline Create account";
 }
 @section breadcrumb {
-    <a class="das-js-back-link">Back</a>
+    <a href="@Model.BackLink" class="govuk-back-link">Back</a>
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -23,7 +23,6 @@
             </p>
             <p class="govuk-body">
             <form method="GET">
-                <input asp-for="RequestId" id="requestId" type="hidden" />
                 <div class="govuk-button-group">
                     <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button">
                         Do not create account

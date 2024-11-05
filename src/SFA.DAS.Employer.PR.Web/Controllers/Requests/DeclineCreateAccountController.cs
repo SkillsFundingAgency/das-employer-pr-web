@@ -20,10 +20,12 @@ public class DeclineCreateAccountController(IOuterApiClient _outerApiClient) : C
         Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
         GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
 
+        var backLink = Url.RouteUrl(RouteNames.CreateAccountCheckDetails, new { requestId });
+
         var vm = new DeclineCreateAccountViewModel
         {
             ProviderName = permissionRequest.ProviderName.ToUpper(),
-            RequestId = requestId
+            BackLink = backLink!
         };
 
         return View(vm);
