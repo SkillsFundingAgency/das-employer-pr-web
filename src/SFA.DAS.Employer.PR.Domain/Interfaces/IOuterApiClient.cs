@@ -1,5 +1,6 @@
 ﻿using RestEase;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 
 namespace SFA.DAS.Employer.PR.Domain.Interfaces;
@@ -32,7 +33,7 @@ public interface IOuterApiClient
     Task<ValidateCreateAccountRequestResponse> ValidateCreateAccountRequest([Path] Guid requestId, CancellationToken cancellationToken);
 
     [Post("/requests/{requestId}/createaccount/accepted")]
-    Task<ValidateCreateAccountRequestResponse> AcceptCreateAccountRequest([Path] Guid requestId, CancellationToken cancellationToken);
+    Task<AcceptCreateAccountResponse> AcceptCreateAccountRequest([Path] Guid requestId, [Body] AcceptCreateAccountRequest body, CancellationToken cancellationToken);
 
     [Get("/requests/{requestId}")]
     Task<GetPermissionRequestResponse?> GetRequest([Path] Guid requestId, CancellationToken cancellationToken);
