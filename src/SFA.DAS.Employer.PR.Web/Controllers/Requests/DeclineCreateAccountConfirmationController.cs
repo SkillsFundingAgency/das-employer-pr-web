@@ -19,6 +19,10 @@ public class DeclineCreateAccountConfirmationController(ISessionService _session
     {
         Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
         var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
+        if (string.IsNullOrEmpty(sessionModel?.ProviderName))
+        {
+            return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
+        }
 
         DeclineCreateAccountConfirmationViewModel model = new()
         {
