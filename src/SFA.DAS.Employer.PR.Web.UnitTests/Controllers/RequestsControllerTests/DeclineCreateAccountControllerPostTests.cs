@@ -31,7 +31,7 @@ public sealed class DeclineCreateAccountControllerPostTests
 
         var redirectResult = result as RedirectToRouteResult;
 
-        outerApiClientMock.Verify(x => x.DeclineRequest(
+        outerApiClientMock.Verify(x => x.DeclineCreateAccountRequest(
                  requestId,
                  It.IsAny<DeclineRequestModel>(),
                  CancellationToken.None

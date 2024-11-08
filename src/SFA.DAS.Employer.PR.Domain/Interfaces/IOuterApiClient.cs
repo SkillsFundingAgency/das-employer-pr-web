@@ -43,6 +43,9 @@ public interface IOuterApiClient
     [Post("/requests/{requestId}/permission/declined")]
     Task DeclineRequest([Path] Guid requestId, [Body] DeclineRequestModel model, CancellationToken cancellationToken);
 
+    [Post("/requests/{requestId}/createaccount/declined")]
+    Task DeclineCreateAccountRequest([Path] Guid requestId, [Body] DeclineRequestModel model, CancellationToken cancellationToken);
+
     [Get("/requests/{requestId}")]
     Task<GetPermissionRequestResponse> GetPermissionRequest([Path] Guid requestId, CancellationToken cancellationToken);
 }

@@ -47,7 +47,7 @@ public class DeclineCreateAccountController(IOuterApiClient _outerApiClient, ISe
             return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
         }
 
-        await _outerApiClient.DeclineRequest(
+        await _outerApiClient.DeclineCreateAccountRequest(
             requestId,
             new Domain.OuterApi.Permissions.DeclineRequestModel(User.GetUserId().ToString()),
             cancellationToken
