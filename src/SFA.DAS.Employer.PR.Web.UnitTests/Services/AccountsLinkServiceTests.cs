@@ -9,7 +9,9 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Services;
 
 public class AccountsLinkServiceTests
 {
-    [Test, AutoData]
+    [Test]
+    [InlineAutoData("https://www.google.com")]
+    [InlineAutoData("https://www.google.com/")]
     public void GetAccountsLink_LOCALEnv_ReturnsCombinedLinkFromConfiguration(string url, string accountId)
     {
         const string environment = "LOCAL";
@@ -20,6 +22,7 @@ public class AccountsLinkServiceTests
 
         var actual = sut.GetAccountsLink(EmployerAccountRoutes.CreateAccountAddProviderPermissionSuccess, accountId);
 
+        Uri.TryCreate(actual, UriKind.Absolute, out var actualUri).Should().BeTrue();
         actual.Should().StartWith(url);
         actual.Should().Contain(accountId);
         actual.Should().Contain(string.Format(MaRoutes.Accounts[EmployerAccountRoutes.CreateAccountAddProviderPermissionSuccess.ToString()], accountId));
