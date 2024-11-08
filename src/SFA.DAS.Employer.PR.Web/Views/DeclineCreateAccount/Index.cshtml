@@ -1,9 +1,10 @@
 ﻿@using SFA.DAS.Employer.PR.Web.Models.Requests
-@using SFA.DAS.Employer.PR.Domain.Models
+@using SFA.DAS.Employer.PR.Web.Infrastructure
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model DeclineCreateAccountViewModel
-﻿@{
-    ViewBag.Title = "Decline Create account";
+@{
+    ViewBag.Title = "Are you sure you do not want to create an account?";
 }
 @section breadcrumb {
     <a href="@Model.BackLink" class="govuk-back-link">Back</a>
@@ -22,7 +23,7 @@
                 If the details were not correct, they can correct them and send you a new request.
             </p>
             <p class="govuk-body">
-            <form method="GET">
+            <form  asp-route ="@RouteNames.DeclineCreateAccount" method="POST">
                 <div class="govuk-button-group">
                     <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button">
                         Do not create account

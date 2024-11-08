@@ -52,11 +52,15 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
             return View(RequestsChangeNameViewPath, viewModel);
         }
 
-        var sessionModel = new AccountCreationSessionModel
+        var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
+        if (sessionModel == null)
         {
-            FirstName = submitModel.EmployerContactFirstName,
-            LastName = submitModel.EmployerContactLastName
-        };
+            return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
+        }
+
+        sessionModel.FirstName = submitModel.EmployerContactFirstName;
+        sessionModel.LastName = submitModel.EmployerContactLastName;
+
         _sessionService.Set(sessionModel);
 
         return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });

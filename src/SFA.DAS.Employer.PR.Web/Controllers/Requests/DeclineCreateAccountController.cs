@@ -1,33 +1,58 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Constants;
+using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models.Requests;
+using SFA.DAS.Employer.PR.Web.Models.Session;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers.Requests;
 
-
-[Route("requests")]
-public class DeclineCreateAccountController(IOuterApiClient _outerApiClient) : Controller
+[Authorize]
+[Route("request/{requestId:guid}/createaccount/decline", Name = RouteNames.DeclineCreateAccount)]
+public class DeclineCreateAccountController(IOuterApiClient _outerApiClient, ISessionService _sessionService) : Controller
 {
-    [Authorize]
     [HttpGet]
-    [Route("{requestId:guid}/createaccount/decline", Name = RouteNames.DeclineCreateAccount)]
-    public async Task<IActionResult> Index(Guid requestId, CancellationToken cancellationToken)
+    public IActionResult Index(Guid requestId, CancellationToken cancellationToken)
     {
         Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
-        GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
+
+        var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
+        if (string.IsNullOrEmpty(sessionModel?.ProviderName))
+        {
+            return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
+        }
 
         var backLink = Url.RouteUrl(RouteNames.CreateAccountCheckDetails, new { requestId });
 
         var vm = new DeclineCreateAccountViewModel
         {
-            ProviderName = permissionRequest.ProviderName.ToUpper(),
+            ProviderName = sessionModel.ProviderName.ToUpper(),
             BackLink = backLink!
         };
 
         return View(vm);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromRoute] Guid requestId, CancellationToken cancellationToken)
+    {
+        // we need to check if session is timed out here, as the redirect will break if the
+        // session has expired, and the check needs to happen before the decline request is updated
+        var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
+        if (string.IsNullOrEmpty(sessionModel?.ProviderName))
+        {
+            return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
+        }
+
+        await _outerApiClient.DeclineCreateAccountRequest(
+            requestId,
+            new Domain.OuterApi.Permissions.DeclineRequestModel(User.GetUserId().ToString()),
+            cancellationToken
+        );
+
+        return RedirectToRoute(RouteNames.DeclineCreateAccountConfirmation, new { requestId });
     }
 }

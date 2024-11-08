@@ -57,12 +57,13 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
             sessionModel = new AccountCreationSessionModel
             {
                 FirstName = permissionRequest.EmployerContactFirstName,
-                LastName = permissionRequest.EmployerContactLastName
+                LastName = permissionRequest.EmployerContactLastName,
+                ProviderName = permissionRequest.ProviderName
             };
             _sessionService.Set(sessionModel);
         }
 
-        SetNamesInSessionModel(sessionModel, permissionRequest);
+        GetNamesFromSessionModel(sessionModel, permissionRequest);
 
         var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
         var declineCreateAccountLink = Url.RouteUrl(RouteNames.DeclineCreateAccount, new { requestId });
@@ -82,7 +83,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
         {
             GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
             var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
-            SetNamesInSessionModel(sessionModel, permissionRequest);
+            GetNamesFromSessionModel(sessionModel, permissionRequest);
 
 
             var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
@@ -98,9 +99,9 @@ public class RequestsController(IOuterApiClient _outerApiClient, UrlBuilder _url
         return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId, submitModel.HasAcceptedTerms });
     }
 
-    private static void SetNamesInSessionModel(AccountCreationSessionModel? sessionModel, GetPermissionRequestResponse? permissionRequest)
+    private static void GetNamesFromSessionModel(AccountCreationSessionModel? sessionModel, GetPermissionRequestResponse permissionRequest)
     {
-        if (sessionModel != null && permissionRequest != null)
+        if (sessionModel != null)
         {
             permissionRequest.EmployerContactFirstName = sessionModel.FirstName;
             permissionRequest.EmployerContactLastName = sessionModel.LastName;

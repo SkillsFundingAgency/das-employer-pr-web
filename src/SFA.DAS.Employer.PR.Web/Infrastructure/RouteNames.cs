@@ -25,6 +25,7 @@ public static class RouteNames
     public const string CreateAccountCheckDetails = nameof(CreateAccountCheckDetails);
     public const string CreateAccountChangeName = nameof(CreateAccountChangeName);
     public const string DeclineCreateAccount = nameof(DeclineCreateAccount);
+    public const string DeclineCreateAccountConfirmation = nameof(DeclineCreateAccountConfirmation);
 
     public static class StubAccount
     {

@@ -43,6 +43,36 @@ public class ChangeNameControllerPostTests
         sessionServiceMock.Verify(s => s.Set(It.Is<AccountCreationSessionModel>(x => x.FirstName == firstName && x.LastName == lastName)), Times.Once);
     }
 
+
+    [Test, MoqAutoData]
+    public void Post_Validated_IfSessionIsNull_RedirectsToCreateAccountCheckDetails(
+        [Frozen] Mock<IValidator<ChangeNamesViewModel>> validatorMock,
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] ChangeNameController sut,
+        Guid requestId,
+        string firstName,
+        string lastName,
+        CancellationToken cancellationToken)
+    {
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangeNamesViewModel>())).Returns(new ValidationResult());
+
+        sessionServiceMock.Setup(x => x.Get<AccountCreationSessionModel>())
+            .Returns((AccountCreationSessionModel)null!);
+
+        sut.AddDefaultContext();
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.CreateAccountCheckDetails, CreateAccountCheckDetailsLink);
+
+        ChangeNamesViewModel submitModel = new() { EmployerContactFirstName = firstName, EmployerContactLastName = lastName };
+
+        var result = sut.Index(requestId, submitModel, cancellationToken);
+
+        RedirectToRouteResult? redirectToRouteResult = result.As<RedirectToRouteResult>();
+        redirectToRouteResult.RouteName.Should().Be(RouteNames.CreateAccountCheckDetails);
+        sessionServiceMock.Verify(s => s.Get<AccountCreationSessionModel>(), Times.Once);
+    }
+
     [Test, MoqAutoData]
     public void Post_ValidationFailed_ReturnsExpectedModel(
         [Frozen] Mock<IValidator<ChangeNamesViewModel>> validatorMock,
