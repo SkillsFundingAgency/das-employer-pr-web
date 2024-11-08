@@ -8,6 +8,9 @@ using SFA.DAS.Employer.PR.Web.Authentication;
 namespace SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 public static class ControllerExtensions
 {
+    public readonly static Guid UserId = Guid.NewGuid();
+    public readonly static string UserEmail = Guid.NewGuid().ToString();
+
     public static Mock<IUrlHelper> AddUrlHelperMock(this Controller controller)
     {
         var urlHelperMock = new Mock<IUrlHelper>();
@@ -23,7 +26,7 @@ public static class ControllerExtensions
         return urlHelperMock;
     }
 
-    public static Controller AddDefaultContext(this Controller controller, string email = "")
+    public static Controller AddDefaultContext(this Controller controller)
     {
         Fixture fixture = new();
         var employerIdentifier = fixture
@@ -34,15 +37,17 @@ public static class ControllerExtensions
 
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifier } };
         var accountClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, JsonSerializer.Serialize(employerAccounts));
-        var emailClaim = new Claim(EmployerClaims.UserEmailClaimTypeIdentifier, email);
+        var emailClaim = new Claim(EmployerClaims.UserEmailClaimTypeIdentifier, UserEmail);
         var nameClaim = new Claim(ClaimTypes.NameIdentifier, fixture.Create<string>());
+        var userIdClaim = new Claim(EmployerClaims.UserIdClaimTypeIdentifier, UserId.ToString());
 
         var httpContext = new DefaultHttpContext();
         var claimsPrinciple = new ClaimsPrincipal(new[] {new ClaimsIdentity(new[]
         {
             accountClaim,
             emailClaim,
-            nameClaim
+            nameClaim,
+            userIdClaim
         })});
         httpContext.User = claimsPrinciple;
         controller.ControllerContext = new ControllerContext

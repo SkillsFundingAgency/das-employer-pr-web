@@ -14,8 +14,6 @@ using SFA.DAS.Testing.AutoFixture;
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.RequestsControllerTests;
 public class ChangeNameControllerChangeNameGetTests
 {
-    public static readonly string Email = "test@account.com";
-
     [Test, MoqAutoData]
     public async Task GetChangeName_ReturnsExpectedDetails(
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
@@ -26,19 +24,17 @@ public class ChangeNameControllerChangeNameGetTests
         AccountCreationSessionModel accountCreationSessionModel,
         CancellationToken cancellationToken)
     {
-        permissionRequestResponse.EmployerContactEmail = Email;
+        permissionRequestResponse.EmployerContactEmail = ControllerExtensions.UserEmail;
         outerApiClientMock.Setup(x => x.GetPermissionRequest(requestId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(permissionRequestResponse);
         sessionServiceMock.Setup(x => x.Get<AccountCreationSessionModel>()).Returns(accountCreationSessionModel);
-
-        sut.AddDefaultContext(Email);
+        sut.AddDefaultContext();
 
         var result = await sut.Index(requestId, cancellationToken);
 
         var viewResult = result as ViewResult;
-
         viewResult!.ViewName.Should().Be(ChangeNameController.RequestsChangeNameViewPath);
-        var viewModel = viewResult.Model as ChangeNamesViewModel;
+        var viewModel = viewResult.Model.As<ChangeNamesViewModel>();
         viewModel.EmployerContactFirstName.Should().Be(accountCreationSessionModel.FirstName);
         viewModel.EmployerContactLastName.Should().Be(accountCreationSessionModel.LastName);
     }
@@ -50,20 +46,19 @@ public class ChangeNameControllerChangeNameGetTests
         [Greedy] ChangeNameController sut,
         Guid requestId,
         GetPermissionRequestResponse permissionRequest,
-        string email,
         CancellationToken cancellationToken)
     {
         ValidateCreateAccountRequestResponse response = new()
         {
             IsRequestValid = true,
             Status = RequestStatus.Sent,
-            HasValidaPaye = true,
+            HasValidPaye = true,
             HasEmployerAccount = false
         };
         outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
         outerApiClientMock.Setup(o => o.GetPermissionRequest(requestId, cancellationToken)).ReturnsAsync(permissionRequest);
 
-        sut.AddDefaultContext(email);
+        sut.AddDefaultContext();
 
         var result = await sut.Index(requestId, cancellationToken);
 
