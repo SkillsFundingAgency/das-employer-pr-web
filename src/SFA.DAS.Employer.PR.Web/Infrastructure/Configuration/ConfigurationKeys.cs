@@ -1,5 +1,8 @@
-﻿namespace SFA.DAS.Employer.PR.Web.Infrastructure.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace SFA.DAS.Employer.PR.Web.Infrastructure.Configuration;
+
+[ExcludeFromCodeCoverage]
 public static class ConfigurationKeys
 {
     public const string EnvironmentName = nameof(EnvironmentName);

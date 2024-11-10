@@ -78,11 +78,12 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
     public async Task<IActionResult> PostRequestDetails([FromRoute] Guid requestId, EmployerAccountCreationSubmitModel submitModel, CancellationToken cancellationToken)
     {
         Request.HttpContext.Items.Add(SessionKeys.AccountTasksKey, true);
-        var shutterPage = await GetShutterPageIfRequestIsInvalid(requestId, cancellationToken);
-        if (shutterPage != null) return shutterPage;
 
         var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
         if (sessionModel == null) return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
+
+        var shutterPage = await GetShutterPageIfRequestIsInvalid(requestId, cancellationToken);
+        if (shutterPage != null) return shutterPage;
 
         var result = _validator.Validate(submitModel);
         if (!result.IsValid)
@@ -109,14 +110,18 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
     [Authorize]
     [HttpGet]
     [Route("/createAccount/confirmation", Name = RouteNames.CreateAccountConfirmation)]
-    public IActionResult AccountCreatedConfirmation()
+    public IActionResult CreateAccountConfirmation()
     {
         var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
-        if (sessionModel == null) throw new InvalidOperationException();
+        if (sessionModel == null) return View(PageNotFoundViewPath);
 
-        var employerAccountId = _encodingService.Encode(sessionModel.AccountId, EncodingType.AccountId);
+        var employerAccountId = _encodingService.Encode(sessionModel!.AccountId, EncodingType.AccountId);
 
-        var model = new AccountCreatedConfirmationViewModel(_accountsLinkService.GetAccountsHomeLink(), sessionModel.ProviderName!, _accountsLinkService.GetAccountsLink(EmployerAccountRoutes.AccountsAgreements, employerAccountId), Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!);
+        AccountCreatedConfirmationViewModel model = new(
+            _accountsLinkService.GetAccountsHomeLink(),
+            sessionModel.ProviderName!,
+            _accountsLinkService.GetAccountsLink(EmployerAccountRoutes.AccountsAgreements, employerAccountId),
+            Url.RouteUrl(RouteNames.YourTrainingProviders, new { employerAccountId })!);
 
         Request.HttpContext.Items.Remove(SessionKeys.AccountTasksKey);
 

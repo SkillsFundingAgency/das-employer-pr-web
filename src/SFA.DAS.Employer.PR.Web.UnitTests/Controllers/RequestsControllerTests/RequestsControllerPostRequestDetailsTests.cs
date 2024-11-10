@@ -191,6 +191,22 @@ public class RequestsControllerPostRequestDetailsTests
         }
     }
 
+    [Test, MoqAutoData]
+    public async Task PostRequestDetails_SessionTimedOut_RedirectToGetRequest(
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] RequestsController sut,
+        Guid requestId,
+        EmployerAccountCreationSubmitModel model,
+        CancellationToken cancellationToken)
+    {
+        sut.AddDefaultContext();
+        sessionServiceMock.Setup(s => s.Get<AccountCreationSessionModel>()).Returns(() => null);
+
+        var result = await sut.PostRequestDetails(requestId, model, cancellationToken);
+
+        result.As<RedirectToRouteResult>().RouteName.Should().Be(RouteNames.CreateAccountCheckDetails);
+    }
+
     private static ValidateCreateAccountRequestResponse GetValidRequestResponse() => new() { IsRequestValid = true, HasValidPaye = true, Status = RequestStatus.Sent, HasEmployerAccount = false };
 
 }
