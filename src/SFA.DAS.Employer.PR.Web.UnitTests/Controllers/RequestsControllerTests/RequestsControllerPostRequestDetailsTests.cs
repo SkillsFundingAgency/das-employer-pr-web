@@ -184,13 +184,13 @@ public class RequestsControllerPostRequestDetailsTests
         using (new AssertionScope())
         {
             RedirectToRouteResult redirectToRouteResult = result.As<RedirectToRouteResult>();
-            redirectToRouteResult.RouteName.Should().Be(RouteNames.AccountCreatedConfirmation);
+            redirectToRouteResult.RouteName.Should().Be(RouteNames.CreateAccountConfirmation);
             outerApiClientMock.Verify(o => o.AcceptCreateAccountRequest(requestId, It.Is<AcceptCreateAccountRequest>(b => b.FirstName == sessionModel.FirstName && b.LastName == sessionModel.LastName && b.Email == ControllerExtensions.UserEmail), cancellationToken), Times.Once);
             outerApiClientMock.Verify(x => x.GetPermissionRequest(requestId, cancellationToken), Times.Never);
             sessionServiceMock.Verify(s => s.Set(It.Is<AccountCreationSessionModel>(s => s.AccountId == acceptCreateAccountResponse.AccountId)), Times.Once);
         }
     }
 
-    private ValidateCreateAccountRequestResponse GetValidRequestResponse() => new() { IsRequestValid = true, HasValidPaye = true, Status = RequestStatus.Sent, HasEmployerAccount = false };
+    private static ValidateCreateAccountRequestResponse GetValidRequestResponse() => new() { IsRequestValid = true, HasValidPaye = true, Status = RequestStatus.Sent, HasEmployerAccount = false };
 
 }

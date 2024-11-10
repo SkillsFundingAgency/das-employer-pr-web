@@ -17,7 +17,7 @@ using SFA.DAS.Employer.PR.Web.Models;
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
 [Authorize(Policy = nameof(PolicyNames.HasEmployerOwnerAccount))]
-[Route("accounts/{employerAccountId}/addaccount/{requestId}", Name = RouteNames.AddAccounts)]
+[Route("accounts/{employerAccountId}/addaccount/{requestId}", Name = RouteNames.AddAccount)]
 public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IValidator<ReviewAddAccountRequestSubmitViewModel> _validator) : Controller
 {
     public const string CannotViewRequestShutterPageViewPath = "~/Views/Requests/CannotViewRequest.cshtml";

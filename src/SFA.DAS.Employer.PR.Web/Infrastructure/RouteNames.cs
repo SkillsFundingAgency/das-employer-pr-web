@@ -17,14 +17,13 @@ public static class RouteNames
     public const string ChangePermissions = nameof(ChangePermissions);
     public const string Requests = nameof(Requests);
     public const string UpdatePermissions = nameof(UpdatePermissions);
-    public const string AddAccounts = nameof(AddAccounts);
+    public const string AddAccount = nameof(AddAccount);
     public const string DeclineAddAccount = nameof(DeclineAddAccount);
     public const string DeclineAddAccountConfirmation = nameof(DeclineAddAccountConfirmation);
-    public const string CreateAccounts = nameof(CreateAccounts);
     public const string Error = nameof(Error);
     public const string CreateAccountCheckDetails = nameof(CreateAccountCheckDetails);
     public const string CreateAccountChangeName = nameof(CreateAccountChangeName);
-    public const string AccountCreatedConfirmation = nameof(AccountCreatedConfirmation);
+    public const string CreateAccountConfirmation = nameof(CreateAccountConfirmation);
     public const string DeclineCreateAccount = nameof(DeclineCreateAccount);
     public const string DeclineCreateAccountConfirmation = nameof(DeclineCreateAccountConfirmation);
 

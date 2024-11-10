@@ -37,7 +37,7 @@ public sealed class DeclineAddAccountControllerTests
         };
 
         _controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Requests, RequestsUrl);
-        _controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.AddAccounts, AddAccountsUrl);
+        _controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.AddAccount, AddAccountsUrl);
 
         var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
         _controller.TempData = tempData;

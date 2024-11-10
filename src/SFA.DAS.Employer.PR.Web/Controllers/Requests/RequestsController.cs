@@ -82,7 +82,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
         if (shutterPage != null) return shutterPage;
 
         var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
-        if (sessionModel == null) throw new InvalidOperationException();
+        if (sessionModel == null) return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
 
         var result = _validator.Validate(submitModel);
         if (!result.IsValid)
@@ -103,12 +103,12 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
         sessionModel.AccountId = response.AccountId;
         _sessionService.Set(sessionModel);
 
-        return RedirectToRoute(RouteNames.AccountCreatedConfirmation, new { requestId });
+        return RedirectToRoute(RouteNames.CreateAccountConfirmation);
     }
 
     [Authorize]
     [HttpGet]
-    [Route("{requestId:guid}/createAccount/confirmation", Name = RouteNames.AccountCreatedConfirmation)]
+    [Route("/createAccount/confirmation", Name = RouteNames.CreateAccountConfirmation)]
     public IActionResult AccountCreatedConfirmation()
     {
         var sessionModel = _sessionService.Get<AccountCreationSessionModel>();
