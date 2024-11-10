@@ -1,5 +1,4 @@
 ﻿using AutoFixture.NUnit3;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.Employer.PR.Domain.Common;
@@ -23,7 +22,6 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 public class YourTrainingProvidersControllerTests
 {
     static readonly string SelectLegalEntityUrl = Guid.NewGuid().ToString();
-    static readonly string YourTrainingProviderUrl = Guid.NewGuid().ToString();
     static readonly string ChangePermissionsLink = Guid.NewGuid().ToString();
     static readonly string RequestIdLink = Guid.NewGuid().ToString();
 
@@ -240,17 +238,18 @@ public class YourTrainingProvidersControllerTests
         var accountName = "Account Name";
         var publicHashedId = "12123232";
 
-        var permission = new ProviderPermission { 
-            Operations = [], 
-            ProviderName = providerName, 
-            Ukprn = ukprn 
+        var permission = new ProviderPermission
+        {
+            Operations = [],
+            ProviderName = providerName,
+            Ukprn = ukprn
         };
 
         var request = new PermissionRequest()
-        { 
-            RequestId = Guid.NewGuid(), 
+        {
+            RequestId = Guid.NewGuid(),
             ProviderName = "ProviderName",
-            Ukprn = ukprn, 
+            Ukprn = ukprn,
             Operations = [],
             RequestType = RequestType.Permission
         };
@@ -261,10 +260,12 @@ public class YourTrainingProvidersControllerTests
 
         YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>(), encodingServiceMock.Object)
         {
-            ControllerContext = new ControllerContext { 
-                HttpContext = new DefaultHttpContext { 
-                    User = user 
-                } 
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = user
+                }
             }
         };
 
@@ -272,13 +273,13 @@ public class YourTrainingProvidersControllerTests
         var requests = new List<PermissionRequest> { request };
 
         SetupControllerAndClasses(
-            outerApiMock, 
+            outerApiMock,
             accountId,
-            accountName, 
-            publicHashedId, 
-            permissions, 
-            sut, 
-            false, 
+            accountName,
+            publicHashedId,
+            permissions,
+            sut,
+            false,
             requests
         );
 
@@ -448,7 +449,7 @@ public class YourTrainingProvidersControllerTests
     }
 
     [Test, MoqAutoData]
-    public void ReturnsNoLegalEntities1(
+    public void ReturnsNoLegalEntities(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Frozen] Mock<IEncodingService> encodingServiceMock,
         [Greedy] YourTrainingProvidersController sut,
@@ -629,38 +630,41 @@ public class YourTrainingProvidersControllerTests
         string providerName,
         long ukprn
     )
-    { 
-        var permission = new ProviderPermission { 
-            Operations = [Operation.CreateCohort, Operation.Recruitment], 
-            ProviderName = providerName, 
-            Ukprn = ukprn 
+    {
+        var permission = new ProviderPermission
+        {
+            Operations = [Operation.CreateCohort, Operation.Recruitment],
+            ProviderName = providerName,
+            Ukprn = ukprn
         };
 
-        sessionServiceMock.Setup(x => 
+        sessionServiceMock.Setup(x =>
             x.Get<AddTrainingProvidersSessionModel>()).Returns(
                 new AddTrainingProvidersSessionModel
-                { 
-                    SuccessfulAddition = true, 
-                    ProviderName = providerName 
+                {
+                    SuccessfulAddition = true,
+                    ProviderName = providerName
                 }
         );
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
 
-        sut.ControllerContext = new ControllerContext { 
-            HttpContext = new DefaultHttpContext { 
-                User = user 
-            } 
+        sut.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = user
+            }
         };
 
         var permissions = new List<ProviderPermission> { permission };
 
         SetupControllerAndClasses(
-            outerApiMock, 
-            accountId: 1123, 
-            accountName: "Skills Training", 
-            publicHashedId: "12123232", 
-            permissions, 
+            outerApiMock,
+            accountId: 1123,
+            accountName: "Skills Training",
+            publicHashedId: "12123232",
+            permissions,
             sut,
             multipleAccounts: false
         );
@@ -683,7 +687,7 @@ public class YourTrainingProvidersControllerTests
             Assert.That(viewModel!.ShowPermissionsUpdatedBanner(), Is.True);
             Assert.That(viewModel.PermissionsUpdatedForProvider, Is.EqualTo(providerName.ToUpper()));
             Assert.That(viewModel.PermissionsUpdatedForProviderText, Is.EqualTo($"You've set {providerName.ToUpper()}’s permissions."));
-        });        
+        });
     }
 
     [Test]
@@ -826,13 +830,51 @@ public class YourTrainingProvidersControllerTests
         });
     }
 
+    [Test, MoqAutoData]
+    public async Task IgnoresAnyCreateAccountRequests(
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<IEncodingService> encodingServiceMock,
+        [Greedy] YourTrainingProvidersController sut,
+        string hashedEmployerAccountId,
+        long employerAccountId,
+        LegalEntity legalEntityWithCreateAccountRequest,
+        PermissionRequest createAccountPermissionRequest,
+        LegalEntity legalEntityWithAddAccountRequest,
+        PermissionRequest addAccountPermissionRequest,
+        CancellationToken cancellationToken)
+    {
+        encodingServiceMock.Setup(e => e.Decode(hashedEmployerAccountId, EncodingType.AccountId)).Returns(employerAccountId);
+
+        sut.AddDefaultContext().AddUrlHelperMock().AddUrlForRoute(RouteNames.ChangePermissions, ChangePermissionsLink);
+        Mock<ITempDataDictionary> tempDataMock = new();
+        sut.TempData = tempDataMock.Object;
+
+        createAccountPermissionRequest.RequestType = RequestType.CreateAccount;
+        legalEntityWithCreateAccountRequest.Requests.Clear();
+        legalEntityWithCreateAccountRequest.Permissions.Clear();
+        legalEntityWithCreateAccountRequest.Requests.Add(createAccountPermissionRequest);
+        addAccountPermissionRequest.RequestType = RequestType.AddAccount;
+        legalEntityWithAddAccountRequest.Requests.Clear();
+        legalEntityWithAddAccountRequest.Permissions.Clear();
+        legalEntityWithAddAccountRequest.Requests.Add(addAccountPermissionRequest);
+        GetEmployerRelationshipsQueryResponse relationshipsResponse = new([legalEntityWithCreateAccountRequest, legalEntityWithAddAccountRequest]);
+        relationshipsResponse.AccountLegalEntities.Add(legalEntityWithCreateAccountRequest);
+        outerApiClientMock.Setup(o => o.GetEmployerRelationships(employerAccountId, cancellationToken)).ReturnsAsync(relationshipsResponse);
+
+        /// Act
+        var response = await sut.Index(hashedEmployerAccountId, cancellationToken);
+
+        response.As<ViewResult>().Model.As<YourTrainingProvidersViewModel>().LegalEntities.Should().NotContain(l => l.LegalEntityId == legalEntityWithCreateAccountRequest.Id);
+        response.As<ViewResult>().Model.As<YourTrainingProvidersViewModel>().LegalEntities.Should().Contain(l => l.LegalEntityId == legalEntityWithAddAccountRequest.Id);
+    }
+
     private static void SetupControllerAndClasses(
-        Mock<IOuterApiClient> outerApiMock, 
-        int accountId, 
+        Mock<IOuterApiClient> outerApiMock,
+        int accountId,
         string accountName,
-        string publicHashedId, 
+        string publicHashedId,
         List<ProviderPermission> permissions,
-        YourTrainingProvidersController sut, 
+        YourTrainingProvidersController sut,
         bool multipleAccounts,
         List<PermissionRequest>? requests = null
     )

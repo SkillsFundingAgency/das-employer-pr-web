@@ -13,8 +13,6 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
 using SFA.DAS.Encoding;
-using System.Configuration.Provider;
-using System.Reflection;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -52,12 +50,12 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
             {
                 addedUkprns.Add(permissions.Ukprn);
 
-                var outstandingRequest = legalEntity.Requests.Find(a => a.Ukprn == permissions.Ukprn);
+                var outstandingRequest = legalEntity.Requests.Find(a => a.Ukprn == permissions.Ukprn && a.RequestType != RequestType.CreateAccount);
 
                 var permissionDetailsModel = CreatePermissionDetailsModel(
-                    permissions.Ukprn, 
-                    permissions.ProviderName, 
-                    permissions.Operations.ToArray(), 
+                    permissions.Ukprn,
+                    permissions.ProviderName,
+                    permissions.Operations.ToArray(),
                     outstandingRequest is not null
                 );
 
@@ -73,7 +71,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
                 legalEntityModel.PermissionDetails.Add(permissionDetailsModel);
             }
 
-            foreach (var request in legalEntity.Requests.Where(a => !addedUkprns.Contains(a.Ukprn)))
+            foreach (var request in legalEntity.Requests.Where(a => !addedUkprns.Contains(a.Ukprn) && a.RequestType != RequestType.CreateAccount))
             {
                 PermissionDetailsModel permissionDetailsModel = CreatePermissionDetailsModel(
                     request.Ukprn,
@@ -128,9 +126,10 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
     public void SetChangePermissionsNavigationLink(ref PermissionDetailsModel permissionDetails, string employerAccountId, string LegalEntityPublicHashedId)
     {
         permissionDetails.ActionLink = Url.RouteUrl(
-            RouteNames.ChangePermissions, 
-            new { 
-                employerAccountId, 
+            RouteNames.ChangePermissions,
+            new
+            {
+                employerAccountId,
                 LegalEntityPublicHashedId,
                 permissionDetails.Ukprn
             }
@@ -144,13 +143,13 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
             ManageRequests.YesWithEmployerRecordReview :
             ManageRequests.No;
 
-        permissionDetails.PermissionToRecruitApprentices = 
-            operations.Exists(x => x == Operation.Recruitment) ? 
+        permissionDetails.PermissionToRecruitApprentices =
+            operations.Exists(x => x == Operation.Recruitment) ?
                 ManageRequests.Yes :
-                SetRecritmentRequiresReviewDisplayMessage(operations);
+                SetRecruitmentRequiresReviewDisplayMessage(operations);
     }
 
-    private static string SetRecritmentRequiresReviewDisplayMessage(List<Operation> operations)
+    private static string SetRecruitmentRequiresReviewDisplayMessage(List<Operation> operations)
     {
         return operations.Exists(x => x == Operation.RecruitmentRequiresReview) ?
                 ManageRequests.YesWithEmployerAdvertReview :
@@ -162,8 +161,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         string? routeName = requestType switch
         {
             RequestType.Permission => RouteNames.UpdatePermissions,
-            RequestType.CreateAccount => RouteNames.CreateAccounts,
-            RequestType.AddAccount => RouteNames.AddAccounts,
+            RequestType.AddAccount => RouteNames.AddAccount,
             _ => null
         };
 
@@ -184,11 +182,11 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
         if (requestTypeActioned != null)
         {
             var requestActionTempValue = TempData[TempDataKeys.RequestAction];
-            if(requestActionTempValue != null)
+            if (requestActionTempValue != null)
             {
                 SetPermissionActionedBannerDetails(model, requestTypeActioned, requestActionTempValue.ToString()!);
             }
-                
+
             return;
         }
 
@@ -203,7 +201,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
     private void SetPermissionActionedBannerDetails(YourTrainingProvidersViewModel model, string requestTypeActioned, string requestAction)
     {
         string? providerName = TempData[TempDataKeys.NameOfProviderUpdated]?.ToString()!.ToUpper();
-  
+
         RequestAction requestActionEnum = Enum.Parse<RequestAction>(requestAction);
         RequestType requestType = Enum.Parse<RequestType>(requestTypeActioned);
 
@@ -223,7 +221,7 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
                     model.PermissionsUpdatedForProvider = string.IsNullOrWhiteSpace(providerName) ? null : providerName;
                     model.PermissionsUpdatedForProviderText = $"You've added {model.PermissionsUpdatedForProvider} and set their permissions.";
                 }
-            break;
+                break;
         }
     }
 }
