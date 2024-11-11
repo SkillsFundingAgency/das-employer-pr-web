@@ -1,4 +1,6 @@
-﻿using AutoFixture.NUnit3;
+﻿using System.Web;
+using AutoFixture.NUnit3;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
@@ -168,15 +170,65 @@ public class RequestsControllerGetRequestDetailsTests
         /// Act
         var result = await sut.GetRequestDetails(requestId, cancellationToken);
 
-        var viewResult = result as ViewResult;
-        viewResult.As<ViewResult>().ViewName.Should().Be(RequestsController.RequestsCheckDetailsViewPath);
-        var viewModel = result.As<ViewResult>().Model.As<EmployerAccountCreationViewModel>();
-        viewModel.ChangeNameLink.Should().Be(ChangeNameLink);
-        viewModel.DeclineCreateAccountLink.Should().Be(DeclineCreateAccountLink);
-        viewModel.Should().BeEquivalentTo(permissionRequest, options =>
-            options.ExcludingMissingMembers()
-                .Excluding(x => x.ProviderName)
-                .Excluding(x => x.EmployerOrganisationName));
+        using (new AssertionScope())
+        {
+            var viewResult = result as ViewResult;
+            viewResult.As<ViewResult>().ViewName.Should().Be(RequestsController.RequestsCheckDetailsViewPath);
+            var viewModel = result.As<ViewResult>().Model.As<EmployerAccountCreationViewModel>();
+            viewModel.ChangeNameLink.Should().Be(ChangeNameLink);
+            viewModel.DeclineCreateAccountLink.Should().Be(DeclineCreateAccountLink);
+            viewModel.Should().BeEquivalentTo(permissionRequest, options =>
+                options.ExcludingMissingMembers()
+                    .Excluding(x => x.ProviderName)
+                    .Excluding(x => x.EmployerOrganisationName));
+        }
+    }
+
+    [Test, MoqAutoData]
+    public async Task GetRequestDetails_ValidRequests_ReturnsCorrectAgreementLink(
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<IAccountsLinkService> accountsLinkServiceMock,
+        [Frozen] UrlBuilder builder,
+        [Greedy] RequestsController sut,
+        Guid requestId,
+        GetPermissionRequestResponse permissionRequest,
+        CancellationToken cancellationToken)
+    {
+        ValidateCreateAccountRequestResponse response = new()
+        {
+            IsRequestValid = true,
+            Status = RequestStatus.Sent,
+            HasValidPaye = true,
+            HasEmployerAccount = false,
+        };
+        outerApiClientMock.Setup(o => o.ValidateCreateAccountRequest(requestId, cancellationToken)).ReturnsAsync(response);
+        outerApiClientMock.Setup(o => o.GetPermissionRequest(requestId, cancellationToken)).ReturnsAsync(permissionRequest);
+        permissionRequest.EmployerContactEmail = ControllerExtensions.UserEmail;
+
+        var accountName = "Account Name";
+        permissionRequest.EmployerOrganisationName = accountName;
+        var accountsHomeLink = "https://accounts/agreements/preview";
+        accountsLinkServiceMock.Setup(o => o.GetAccountsHomeLink()).Returns(accountsHomeLink);
+        var createAccountCheckDetailsLink = "https://relationships/requests";
+
+        sut
+            .AddDefaultContext()
+            .AddUrlHelperMock()
+            .AddUrlForRoute(RouteNames.CreateAccountChangeName, ChangeNameLink)
+            .AddUrlForRoute(RouteNames.DeclineCreateAccount, DeclineCreateAccountLink)
+            .AddUrlForRoute(RouteNames.CreateAccountCheckDetails, createAccountCheckDetailsLink);
+
+        /// Act
+        var result = await sut.GetRequestDetails(requestId, cancellationToken);
+
+        using (new AssertionScope())
+        {
+            var viewModel = result.As<ViewResult>().Model.As<EmployerAccountCreationViewModel>();
+            viewModel.EmployerAgreementLink.Should().StartWith(accountsHomeLink);
+            viewModel.EmployerAgreementLink.Should().Contain("agreements/preview");
+            viewModel.EmployerAgreementLink.Should().Contain($"returnUrl={HttpUtility.UrlEncode(createAccountCheckDetailsLink)}");
+            viewModel.EmployerAgreementLink.Should().Contain($"legalEntityName={HttpUtility.UrlEncode(accountName)}");
+        }
     }
 
     [Test, MoqAutoData]

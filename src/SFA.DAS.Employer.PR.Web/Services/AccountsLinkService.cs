@@ -14,10 +14,11 @@ public class AccountsLinkService(UrlBuilder _urlBuilder, IConfiguration _configu
 
         if (IsLocalEnvironment(environmentName) && !string.IsNullOrWhiteSpace(employerWebUrl))
         {
+            var uri = new Uri(employerWebUrl);
             UriBuilder uriBuilder = new(employerWebUrl)
             {
                 Path = $"{string.Format(MaRoutes.Accounts[path], hashedAccountId)}",
-                Port = -1
+                Port = uri.Port == 443 ? -1 : uri.Port
             };
             return uriBuilder.ToString();
         }

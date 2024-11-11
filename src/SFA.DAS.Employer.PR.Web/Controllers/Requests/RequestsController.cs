@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Web;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,10 +66,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
 
         GetNamesFromSessionModel(sessionModel, permissionRequest);
 
-        var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
-        var declineCreateAccountLink = Url.RouteUrl(RouteNames.DeclineCreateAccount, new { requestId });
-
-        EmployerAccountCreationViewModel vm = GetViewModel(permissionRequest, changeNameLink!, declineCreateAccountLink!);
+        EmployerAccountCreationViewModel vm = GetViewModel(permissionRequest);
         return View(RequestsCheckDetailsViewPath, vm);
     }
 
@@ -91,10 +89,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
             GetPermissionRequestResponse permissionRequest = await _outerApiClient.GetPermissionRequest(requestId, cancellationToken);
             GetNamesFromSessionModel(sessionModel, permissionRequest);
 
-            var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { requestId });
-            var declineCreateAccountLink = Url.RouteUrl(RouteNames.DeclineCreateAccount, new { requestId });
-
-            EmployerAccountCreationViewModel viewModel = GetViewModel(permissionRequest, changeNameLink!, declineCreateAccountLink!);
+            EmployerAccountCreationViewModel viewModel = GetViewModel(permissionRequest);
             result.AddToModelState(ModelState);
             return View(RequestsCheckDetailsViewPath, viewModel);
         }
@@ -158,8 +153,17 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
         return null;
     }
 
-    private static EmployerAccountCreationViewModel GetViewModel(GetPermissionRequestResponse permissionRequest, string changeNameLink, string declineCreateAccountLink)
+    private EmployerAccountCreationViewModel GetViewModel(GetPermissionRequestResponse permissionRequest)
     {
+        var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { permissionRequest.RequestId });
+        var declineCreateAccountLink = Url.RouteUrl(RouteNames.DeclineCreateAccount, new { permissionRequest.RequestId });
+        var requestLink = Url.RouteUrl(
+            routeName: RouteNames.CreateAccountCheckDetails,
+            values: new { permissionRequest.RequestId },
+            protocol: Request.Scheme,
+            host: Request.Host.ToString());
+        var agreementLink = $"{_accountsLinkService.GetAccountsHomeLink()}agreements/preview?legalEntityName={HttpUtility.UrlEncode(permissionRequest.EmployerOrganisationName)}&returnUrl={HttpUtility.UrlEncode(requestLink)}";
+
         return new EmployerAccountCreationViewModel
         {
             RequestId = permissionRequest.RequestId,
@@ -173,7 +177,8 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
             EmployerAORN = permissionRequest.EmployerAORN,
             Operations = permissionRequest.Operations,
             ChangeNameLink = changeNameLink,
-            DeclineCreateAccountLink = declineCreateAccountLink
+            DeclineCreateAccountLink = declineCreateAccountLink,
+            EmployerAgreementLink = agreementLink,
         };
     }
 }
