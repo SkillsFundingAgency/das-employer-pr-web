@@ -2,6 +2,6 @@
 
 public static class YourTrainingProviders
 {
-    public const string ViewRequestActionText = "View Request";
-    public const string ChangePermissionsActionText = "Change Permissions";
+    public const string ViewRequestActionText = "View request";
+    public const string ChangePermissionsActionText = "Change permissions";
 }
