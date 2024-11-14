@@ -27,7 +27,7 @@ public sealed class DeclineAddAccountController(IOuterApiClient _outerApiClient)
 
         var model = new DeclineAddAccountRequestViewModel() { 
             ProviderName = response!.ProviderName,
-            BackLink = Url.RouteUrl(RouteNames.AddAccounts, new { employerAccountId, requestId })!
+            BackLink = Url.RouteUrl(RouteNames.AddAccount, new { employerAccountId, requestId })!
         };
         
         return View(model);

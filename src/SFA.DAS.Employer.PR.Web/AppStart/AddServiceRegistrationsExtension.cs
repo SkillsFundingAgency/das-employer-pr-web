@@ -1,4 +1,6 @@
-﻿using RestEase.HttpClientFactory;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using RestEase.HttpClientFactory;
 using SFA.DAS.Employer.PR.Application.Services;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Configuration;
@@ -6,8 +8,6 @@ using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Encoding;
 using SFA.DAS.Http.Configuration;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
 
 namespace SFA.DAS.Employer.PR.Web.AppStart;
 
@@ -30,6 +30,7 @@ public static class AddServiceRegistrationsExtension
         services.AddTransient<ISessionService, SessionService>();
         services.AddTransient<IEncodingService, EncodingService>();
         services.AddTransient<ICacheStorageService, CacheStorageService>();
+        services.AddTransient<IAccountsLinkService, AccountsLinkService>();
 
         return services;
     }
