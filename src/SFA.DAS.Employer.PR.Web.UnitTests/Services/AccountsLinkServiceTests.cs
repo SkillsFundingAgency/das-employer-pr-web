@@ -51,7 +51,7 @@ public class AccountsLinkServiceTests
 
         var actual = sut.GetAccountsLink(EmployerAccountRoutes.Help, null);
 
-        actual.Should().Be(urlBuilder.AccountsLink("Help"));
+        actual.Should().Be(urlBuilder.AccountsLink(EmployerAccountRoutes.Help.ToString()));
     }
 
     [Test, AutoData]
@@ -97,7 +97,7 @@ public class AccountsLinkServiceTests
 
         Uri.TryCreate(actual, UriKind.Absolute, out var actualUri).Should().BeTrue();
         actual.Should().StartWith(url);
-        actual.Should().Contain(MaRoutes.Accounts["Help"]);
+        actual.Should().Contain(MaRoutes.Accounts[EmployerAccountRoutes.Help.ToString()]);
     }
 
     [Test]
