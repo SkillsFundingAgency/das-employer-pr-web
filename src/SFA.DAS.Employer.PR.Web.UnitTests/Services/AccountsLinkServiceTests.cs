@@ -42,6 +42,19 @@ public class AccountsLinkServiceTests
     }
 
     [Test, AutoData]
+    public void GetHelpLink_EnvironmentNameIsNotLocal_ReturnsLinkGeneratedByUrlBuilder(string accountId)
+    {
+        const string environment = "AT";
+        UrlBuilder urlBuilder = new(environment);
+
+        AccountsLinkService sut = new(urlBuilder, Mock.Of<IConfiguration>());
+
+        var actual = sut.GetAccountsLink(EmployerAccountRoutes.Help, null);
+
+        actual.Should().Be(urlBuilder.AccountsLink("Help"));
+    }
+
+    [Test, AutoData]
     public void GetAccountsLink_LOCALEnvMissingLocalUrlConfig_ReturnsLinkGeneratedByUrlBuilder(string accountId)
     {
         const string environment = "LOCAL";
@@ -68,6 +81,23 @@ public class AccountsLinkServiceTests
         var actual = sut.GetAccountsHomeLink();
 
         actual.Should().Be(expected);
+    }
+
+    [Test]
+    [InlineAutoData("https://www.google.com/")]
+    public void GetHelpLink_LOCALEnv_ReturnsCombinedLinkFromConfiguration(string url)
+    {
+        const string environment = "LOCAL";
+        Mock<IConfiguration> configurationMock = new();
+        configurationMock.Setup(c => c[ConfigurationKeys.EnvironmentName]).Returns(environment);
+        configurationMock.Setup(c => c[ConfigurationKeys.EmployerAccountWebLocalUrl]).Returns(url);
+        AccountsLinkService sut = new(new UrlBuilder(environment), configurationMock.Object);
+
+        var actual = sut.GetAccountsLink(EmployerAccountRoutes.Help, null);
+
+        Uri.TryCreate(actual, UriKind.Absolute, out var actualUri).Should().BeTrue();
+        actual.Should().StartWith(url);
+        actual.Should().Contain(MaRoutes.Accounts["Help"]);
     }
 
     [Test]

@@ -5,6 +5,7 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -15,7 +16,9 @@ public sealed class DeclineCreateAccountConfirmationControllerGetTests
     [Test, MoqAutoData]
     public void Get_WhenValidResponse_ReturnsConfirmationPage(
         [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Frozen] Mock<IAccountsLinkService> accountsLinkServiceMock,
         [Greedy] DeclineCreateAccountConfirmationController sut,
+        string helpLink,
         string providerName
         )
     {
@@ -24,6 +27,7 @@ public sealed class DeclineCreateAccountConfirmationControllerGetTests
         var sessionModel = new AccountCreationSessionModel { ProviderName = providerName };
 
         sessionServiceMock.Setup(x => x.Get<AccountCreationSessionModel>()).Returns(sessionModel);
+        accountsLinkServiceMock.Setup(x => x.GetAccountsLink(EmployerAccountRoutes.Help, null)).Returns(helpLink);
 
         sut.AddDefaultContext();
 
@@ -37,6 +41,7 @@ public sealed class DeclineCreateAccountConfirmationControllerGetTests
         {
             Assert.That(model, Is.Not.Null);
             Assert.That(providerName.ToUpper, Is.EqualTo(model!.ProviderName));
+            Assert.That(model.HelpLink, Is.EqualTo(helpLink));
         });
     }
 

@@ -2,6 +2,6 @@
 
 public interface IAccountsLinkService
 {
-    string GetAccountsLink(EmployerAccountRoutes route, string hashedAccountId);
+    string GetAccountsLink(EmployerAccountRoutes route, string? hashedAccountId = null);
     string GetAccountsHomeLink();
 }
