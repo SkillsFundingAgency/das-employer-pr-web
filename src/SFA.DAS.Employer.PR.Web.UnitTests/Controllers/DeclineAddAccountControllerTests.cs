@@ -104,7 +104,7 @@ public sealed class DeclineAddAccountControllerTests
         var result = await _controller.DeclineRequest(requestId, employerAccountId, CancellationToken.None);
         var redirect = result as RedirectToRouteResult;
 
-        _outerApiClientMock.Verify(x => x.DeclineRequest(
+        _outerApiClientMock.Verify(x => x.DeclineAddAccountRequest(
                 requestId,
                 It.IsAny<DeclineRequestModel>(),
                 CancellationToken.None
