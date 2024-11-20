@@ -3,5 +3,6 @@
 public enum EmployerAccountRoutes
 {
     CreateAccountAddProviderPermissionSuccess,
-    AccountsAgreements
+    AccountsAgreements,
+    Help
 }

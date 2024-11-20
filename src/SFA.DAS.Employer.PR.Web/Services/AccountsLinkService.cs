@@ -6,7 +6,7 @@ namespace SFA.DAS.Employer.PR.Web.Services;
 
 public class AccountsLinkService(UrlBuilder _urlBuilder, IConfiguration _configuration) : IAccountsLinkService
 {
-    public string GetAccountsLink(EmployerAccountRoutes route, string hashedAccountId)
+    public string GetAccountsLink(EmployerAccountRoutes route, string? hashedAccountId = null)
     {
         var path = route.ToString();
         string environmentName = GetEnvironmentName(_configuration);
@@ -14,16 +14,23 @@ public class AccountsLinkService(UrlBuilder _urlBuilder, IConfiguration _configu
 
         if (IsLocalEnvironment(environmentName) && !string.IsNullOrWhiteSpace(employerWebUrl))
         {
+
             var uri = new Uri(employerWebUrl);
+
+            var uriPath = string.IsNullOrEmpty(hashedAccountId)
+                ? MaRoutes.Accounts[path]
+                : $"{string.Format(MaRoutes.Accounts[path], hashedAccountId)}";
             UriBuilder uriBuilder = new(employerWebUrl)
             {
-                Path = $"{string.Format(MaRoutes.Accounts[path], hashedAccountId)}",
+                Path = uriPath,
                 Port = uri.Port == 443 ? -1 : uri.Port
             };
             return uriBuilder.ToString();
         }
 
-        return _urlBuilder.AccountsLink(path, hashedAccountId);
+        return string.IsNullOrEmpty(hashedAccountId)
+            ? _urlBuilder.AccountsLink(path)
+            : _urlBuilder.AccountsLink(path, hashedAccountId);
     }
 
     public string GetAccountsHomeLink()
