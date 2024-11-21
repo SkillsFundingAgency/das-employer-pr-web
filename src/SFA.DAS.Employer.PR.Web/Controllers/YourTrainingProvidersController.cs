@@ -71,12 +71,12 @@ public class YourTrainingProvidersController(IOuterApiClient _outerApiClient, IS
                 legalEntityModel.PermissionDetails.Add(permissionDetailsModel);
             }
 
-            foreach (var request in legalEntity.Requests.Where(a => !addedUkprns.Contains(a.Ukprn) && a.RequestType != RequestType.CreateAccount))
+            foreach (var request in legalEntity.Requests.Where(a => !addedUkprns.Contains(a.Ukprn) && a.RequestType == RequestType.AddAccount))
             {
                 PermissionDetailsModel permissionDetailsModel = CreatePermissionDetailsModel(
                     request.Ukprn,
                     request.ProviderName,
-                    request.Operations.ToArray(),
+                    [],
                     true
                 );
 
