@@ -46,8 +46,8 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
         var result = _validator.Validate(submitModel);
         if (!result.IsValid)
         {
-            ChangeNamesViewModel viewModel = GetChangeNamesViewModel(submitModel.EmployerContactFirstName!,
-                submitModel.EmployerContactLastName!);
+            ChangeNamesViewModel viewModel = GetChangeNamesViewModel(submitModel.EmployerContactFirstName!.Trim(),
+                submitModel.EmployerContactLastName!.Trim());
             result.AddToModelState(ModelState);
             return View(RequestsChangeNameViewPath, viewModel);
         }
@@ -58,8 +58,8 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
             return RedirectToRoute(RouteNames.CreateAccountCheckDetails, new { requestId });
         }
 
-        sessionModel.FirstName = submitModel.EmployerContactFirstName;
-        sessionModel.LastName = submitModel.EmployerContactLastName;
+        sessionModel.FirstName = submitModel.EmployerContactFirstName!.Trim();
+        sessionModel.LastName = submitModel.EmployerContactLastName!.Trim();
 
         _sessionService.Set(sessionModel);
 
