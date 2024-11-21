@@ -128,7 +128,7 @@ public class ChangeNameControllerPostTests
     }
 
     [Test, MoqAutoData]
-    public void Post_ValidationFailed_TrimsNames(
+    public void Post_ValidationFailed_FirstAndLastNamesAreTrimmedInSessionModel(
         [Frozen] Mock<IValidator<ChangeNamesViewModel>> validatorMock,
         [Greedy] ChangeNameController sut,
         GetPermissionRequestResponse permissionRequest,
