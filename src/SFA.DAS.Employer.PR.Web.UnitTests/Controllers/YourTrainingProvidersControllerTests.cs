@@ -44,7 +44,8 @@ public class YourTrainingProvidersControllerTests
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } }
         };
 
-        var result = sut.Index(employerAccountId, new CancellationToken());
+        sut.Index(employerAccountId, new CancellationToken());
+
         outerApiMock.Verify(o => o.GetEmployerRelationships(accountId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -84,7 +85,7 @@ public class YourTrainingProvidersControllerTests
 
         viewModel!.IsOwner.Should().Be(isOwner);
         viewModel.LegalEntities.Count.Should().Be(1);
-        LegalEntityModel actualLegalEntity = viewModel.LegalEntities.First();
+        LegalEntityModel actualLegalEntity = viewModel.LegalEntities[0];
         actualLegalEntity.AccountId.Should().Be(accountId);
         actualLegalEntity.Name.Should().Be(accountName);
         actualLegalEntity.LegalEntityPublicHashedId.Should().Be(publicHashedId);
@@ -161,10 +162,10 @@ public class YourTrainingProvidersControllerTests
         ViewResult? viewResult = result.Result.As<ViewResult>();
         YourTrainingProvidersViewModel? viewModel = viewResult.Model as YourTrainingProvidersViewModel;
         viewModel!.LegalEntities.Count.Should().Be(3);
-        LegalEntityModel actualLegalEntity = viewModel.LegalEntities.First();
+        LegalEntityModel actualLegalEntity = viewModel.LegalEntities[0];
         actualLegalEntity.Name.Should().Be(accountNameExpectedFirst);
 
-        var firstPermission = actualLegalEntity.PermissionDetails.First();
+        var firstPermission = actualLegalEntity.PermissionDetails[0];
 
         firstPermission.ProviderName.Should().Be(providerNameExpectedFirst);
     }
@@ -212,9 +213,9 @@ public class YourTrainingProvidersControllerTests
         var viewResult = result.Result.As<ViewResult>();
         var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
 
-        var actualLegalEntity = viewModel!.LegalEntities.First();
+        var actualLegalEntity = viewModel!.LegalEntities[0];
 
-        var actualPermissionDetails = actualLegalEntity.PermissionDetails.First();
+        var actualPermissionDetails = actualLegalEntity.PermissionDetails[0];
 
         actualPermissionDetails.Ukprn.Should().Be(ukprn);
         actualPermissionDetails.ProviderName.Should().Be(providerName);
@@ -291,9 +292,9 @@ public class YourTrainingProvidersControllerTests
         var viewResult = result.Result.As<ViewResult>();
         var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
 
-        var actualLegalEntity = viewModel!.LegalEntities.First();
+        var actualLegalEntity = viewModel!.LegalEntities[0];
 
-        var actualPermissionDetails = actualLegalEntity.PermissionDetails.First();
+        var actualPermissionDetails = actualLegalEntity.PermissionDetails[0];
 
         Assert.Multiple(() =>
         {
@@ -304,80 +305,7 @@ public class YourTrainingProvidersControllerTests
 
     [Test]
     [MoqAutoData]
-    public void EmployerRelationship_HasOutstandingRequestWithNoExistingProvider_ReturnsExpectedModel(
-        [Frozen] Mock<IOuterApiClient> outerApiMock,
-        [Frozen] Mock<IEncodingService> encodingServiceMock,
-        string employerAccountId,
-        string providerName,
-        long ukprn
-    )
-    {
-        var accountId = 1123;
-        var accountName = "Account Name";
-        var publicHashedId = "12123232";
-
-        var request = new PermissionRequest()
-        {
-            RequestId = Guid.NewGuid(),
-            ProviderName = "ProviderName",
-            Ukprn = ukprn,
-            Operations = [],
-            RequestType = RequestType.Permission
-        };
-
-        ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-
-        encodingServiceMock.Setup(e => e.Decode(employerAccountId, EncodingType.AccountId)).Returns(accountId);
-
-        YourTrainingProvidersController sut = new(outerApiMock.Object, Mock.Of<ISessionService>(), encodingServiceMock.Object)
-        {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = user
-                }
-            }
-        };
-
-        var requests = new List<PermissionRequest> { request };
-
-        SetupControllerAndClasses(
-            outerApiMock,
-            accountId,
-            accountName,
-            publicHashedId,
-            [],
-            sut,
-            false,
-            requests
-        );
-
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Requests, RequestIdLink);
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.UpdatePermissions, RequestIdLink);
-
-        var result = sut.Index(employerAccountId, new CancellationToken());
-
-        var viewResult = result.Result.As<ViewResult>();
-        var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
-
-        var actualLegalEntity = viewModel!.LegalEntities.First();
-
-        var actualPermissionDetails = actualLegalEntity.PermissionDetails.First();
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(actualPermissionDetails.PermissionToAddRecords, Is.EqualTo(ManageRequests.No));
-            Assert.That(actualPermissionDetails.PermissionToRecruitApprentices, Is.EqualTo(ManageRequests.No));
-            Assert.That(actualPermissionDetails.HasOutstandingRequest, Is.True);
-            Assert.That(actualPermissionDetails.ActionLink, Is.EqualTo(RequestIdLink));
-            Assert.That(actualPermissionDetails.ActionLinkText, Is.EqualTo(YourTrainingProviders.ViewRequestActionText));
-        });
-    }
-
-    [Test]
-    [MoqAutoData]
-    public void EmployerRelationship_HasOutstandingRequest_ExpectedPermissionsDescriptions(
+    public void EmployerRelationship_HasOutstandingAddAccountRequest_ShowNoPermissionsAssigned(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Frozen] Mock<IEncodingService> encodingServiceMock,
         string employerAccountId,
@@ -395,7 +323,7 @@ public class YourTrainingProvidersControllerTests
             ProviderName = "ProviderName",
             Ukprn = ukprn,
             Operations = [Operation.CreateCohort, Operation.Recruitment],
-            RequestType = RequestType.Permission
+            RequestType = RequestType.AddAccount
         };
 
         ClaimsPrincipal user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
@@ -427,21 +355,21 @@ public class YourTrainingProvidersControllerTests
         );
 
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.Requests, RequestIdLink);
-        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.UpdatePermissions, RequestIdLink);
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.AddAccount, RequestIdLink);
 
         var result = sut.Index(employerAccountId, new CancellationToken());
 
         var viewResult = result.Result.As<ViewResult>();
         var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
 
-        var actualLegalEntity = viewModel!.LegalEntities.First();
+        var actualLegalEntity = viewModel!.LegalEntities[0];
 
-        var actualPermissionDetails = actualLegalEntity.PermissionDetails.First();
+        var actualPermissionDetails = actualLegalEntity.PermissionDetails[0];
 
         Assert.Multiple(() =>
         {
-            Assert.That(actualPermissionDetails.PermissionToAddRecords, Is.EqualTo(ManageRequests.YesWithEmployerRecordReview));
-            Assert.That(actualPermissionDetails.PermissionToRecruitApprentices, Is.EqualTo(ManageRequests.Yes));
+            Assert.That(actualPermissionDetails.PermissionToAddRecords, Is.EqualTo(ManageRequests.No));
+            Assert.That(actualPermissionDetails.PermissionToRecruitApprentices, Is.EqualTo(ManageRequests.No));
             Assert.That(actualPermissionDetails.HasOutstandingRequest, Is.True);
             Assert.That(actualPermissionDetails.ActionLink, Is.EqualTo(RequestIdLink));
             Assert.That(actualPermissionDetails.ActionLinkText, Is.EqualTo(YourTrainingProviders.ViewRequestActionText));
@@ -478,7 +406,7 @@ public class YourTrainingProvidersControllerTests
     }
 
     [Test, MoqInlineAutoData]
-    public void CallsSessionServiceDelete(
+    public async Task CallsSessionServiceDelete(
         [Frozen] Mock<IOuterApiClient> outerApiMock,
         [Frozen] Mock<ISessionService> sessionServiceMock,
         [Greedy] YourTrainingProvidersController sut,
@@ -500,7 +428,7 @@ public class YourTrainingProvidersControllerTests
         var permissions = new List<ProviderPermission> { permission };
         SetupControllerAndClasses(outerApiMock, accountId, accountName, publicHashedId, permissions, sut, false);
 
-        var result = sut.Index(employerAccountId, new CancellationToken());
+        await sut.Index(employerAccountId, new CancellationToken());
         sessionServiceMock.Verify(s => s.Delete<AddTrainingProvidersSessionModel>(), Times.Once);
     }
 
@@ -616,7 +544,7 @@ public class YourTrainingProvidersControllerTests
         var viewModel = viewResult.Model as YourTrainingProvidersViewModel;
         viewModel!.ShowPermissionsUpdatedBanner().Should().BeTrue();
         viewModel.PermissionsUpdatedForProvider.Should().Be(providerName.ToUpper());
-        var expectedText = $"You've set permissions for {providerName.ToUpper()}"; ;
+        var expectedText = $"You've set permissions for {providerName.ToUpper()}";
         viewModel.PermissionsUpdatedForProviderText.Should().Be(expectedText);
     }
 
