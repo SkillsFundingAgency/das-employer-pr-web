@@ -31,6 +31,9 @@ public interface IOuterApiClient
     [Get("/requests/{requestId}/createaccount/validate")]
     Task<ValidateCreateAccountRequestResponse> ValidateCreateAccountRequest([Path] Guid requestId, CancellationToken cancellationToken);
 
+    [Post("/requests/{requestId}/createaccount/accepted")]
+    Task<AcceptCreateAccountResponse> AcceptCreateAccountRequest([Path] Guid requestId, [Body] AcceptCreateAccountRequest body, CancellationToken cancellationToken);
+
     [Get("/requests/{requestId}")]
     Task<GetPermissionRequestResponse?> GetRequest([Path] Guid requestId, CancellationToken cancellationToken);
 
@@ -39,6 +42,9 @@ public interface IOuterApiClient
 
     [Post("/requests/{requestId}/addaccount/accepted")]
     Task AcceptAddAccountRequest([Path] Guid requestId, [Body] AcceptAddAccountRequest request, CancellationToken cancellationToken);
+
+    [Post("/requests/{requestId}/addaccount/declined")]
+    Task DeclineAddAccountRequest([Path] Guid requestId, [Body] DeclineRequestModel model, CancellationToken cancellationToken);
 
     [Post("/requests/{requestId}/permission/declined")]
     Task DeclineRequest([Path] Guid requestId, [Body] DeclinePermissionsRequest request, CancellationToken cancellationToken);

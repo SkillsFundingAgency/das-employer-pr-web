@@ -37,7 +37,7 @@ public sealed class DeclineAddAccountControllerTests
         };
 
         _controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.Requests, RequestsUrl);
-        _controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.AddAccounts, AddAccountsUrl);
+        _controller.AddUrlHelperMock().AddUrlForRoute(RouteNames.AddAccount, AddAccountsUrl);
 
         var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
         _controller.TempData = tempData;
@@ -104,7 +104,7 @@ public sealed class DeclineAddAccountControllerTests
         var result = await _controller.DeclineRequest(requestId, employerAccountId, CancellationToken.None);
         var redirect = result as RedirectToRouteResult;
 
-        _outerApiClientMock.Verify(x => x.DeclineRequest(
+        _outerApiClientMock.Verify(x => x.DeclineAddAccountRequest(
                 requestId,
                 It.IsAny<DeclinePermissionsRequest>(),
                 CancellationToken.None

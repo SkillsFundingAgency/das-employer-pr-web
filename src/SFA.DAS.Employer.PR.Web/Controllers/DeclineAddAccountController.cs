@@ -26,18 +26,19 @@ public sealed class DeclineAddAccountController(IOuterApiClient _outerApiClient)
             return RedirectToAction(RouteNames.Requests, new { requestId });
         }
 
-        var model = new DeclineAddAccountRequestViewModel() { 
+        var model = new DeclineAddAccountRequestViewModel()
+        {
             ProviderName = response!.ProviderName,
-            BackLink = Url.RouteUrl(RouteNames.AddAccounts, new { employerAccountId, requestId })!
+            BackLink = Url.RouteUrl(RouteNames.AddAccount, new { employerAccountId, requestId })!
         };
-        
+
         return View(model);
     }
 
     [HttpPost]
     public async Task<IActionResult> DeclineRequest([FromRoute] Guid requestId, [FromRoute] string employerAccountId, CancellationToken cancellationToken)
     {
-        await _outerApiClient.DeclineRequest(
+        await _outerApiClient.DeclineAddAccountRequest(
             requestId,
             new DeclinePermissionsRequest(User.GetUserId().ToString()),
             cancellationToken

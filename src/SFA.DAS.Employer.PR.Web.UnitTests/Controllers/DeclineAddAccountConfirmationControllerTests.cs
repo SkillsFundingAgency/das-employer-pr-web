@@ -9,6 +9,7 @@ using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
+using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
@@ -16,18 +17,23 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 public sealed class DeclineAddAccountConfirmationControllerTests
 {
     private Mock<IOuterApiClient> _outerApiClientMock;
+    private readonly Mock<IAccountsLinkService> _accountsLinkServiceMock = new();
     private DeclineAddAccountConfirmationController _controller;
     private const string employerAccountId = "V9PRXG";
     private const string YourTrainingProvidersUrl = "your-training-providers-url";
     private ClaimsPrincipal user;
+    private readonly string _helpLink = Guid.NewGuid().ToString();
 
     [SetUp]
     public void Setup()
     {
         _outerApiClientMock = new Mock<IOuterApiClient>();
 
+        _accountsLinkServiceMock.Setup(o => o.GetAccountsLink(EmployerAccountRoutes.Help, null)).Returns(_helpLink);
+
+
         user = UsersForTesting.GetUserWithClaims(employerAccountId, EmployerUserRole.Owner);
-        _controller = new DeclineAddAccountConfirmationController(_outerApiClientMock.Object)
+        _controller = new DeclineAddAccountConfirmationController(_outerApiClientMock.Object, _accountsLinkServiceMock.Object)
         {
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },
         };
@@ -67,7 +73,7 @@ public sealed class DeclineAddAccountConfirmationControllerTests
     }
 
     [Test]
-    public async Task GetIndex_DeclinedRequestWithPopuatedTempData_ReturnsView()
+    public async Task GetIndex_DeclinedRequestWithPopulatedTempData_ReturnsView()
     {
         var requestId = Guid.NewGuid();
 
@@ -80,9 +86,9 @@ public sealed class DeclineAddAccountConfirmationControllerTests
             RequestedBy = Guid.NewGuid().ToString()
         };
 
-        _outerApiClientMock.Setup(x => 
+        _outerApiClientMock.Setup(x =>
             x.GetRequest(
-                requestId, 
+                requestId,
                 It.IsAny<CancellationToken>()
             )
         ).ReturnsAsync(response);
@@ -100,6 +106,7 @@ public sealed class DeclineAddAccountConfirmationControllerTests
         {
             Assert.That("Test Provider", Is.EqualTo(model!.ProviderName));
             Assert.That(YourTrainingProvidersUrl, Is.EqualTo(model.ManageTrainingProvidersUrl));
+            Assert.That(_helpLink, Is.EqualTo(model.HelpLink));
         });
     }
 

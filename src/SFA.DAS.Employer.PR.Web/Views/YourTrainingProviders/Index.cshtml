@@ -42,12 +42,11 @@
                         </p>
                         <p class="govuk-body">
                             There are 2 training provider permissions in the Apprenticeship service:
-                        </p>
-                        <p class="govuk-body">
-                            Add apprentice records means the training provider can add details of new apprentices and reserve funding for them if needed. Apprentice records will not be added to your account until you approve them.
-                        </p>
-                        <p class="govuk-body">
-                            Recruit apprentices means the training provider can advertise apprenticeships and review applications. You can choose to approve adverts before they’re published.
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li><strong>Add apprentice records</strong> means the training provider can add details of new apprentices and reserve funding for them if needed. Apprentice records will not be added to your account until you approve them.</li>
+
+                                <li><strong>Recruit apprentices</strong> means the training provider can advertise apprenticeships and review applications. You can choose to approve adverts before they’re published.</li>
+                            </ul>
                         </p>
                         <p class="govuk-body">
                             You’ll be emailed when you need to approve any records or adverts.
@@ -75,9 +74,9 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Training provider</th>
-                    <th scope="col" class="govuk-table__header">Permission to add apprentice records</th>
-                    <th scope="col" class="govuk-table__header">Permission to recruit apprentices</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-third">Training provider</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to add apprentice records</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to recruit apprentices</th>
                     @if (@Model.IsOwner)
                     {
                         <th scope="col" class="govuk-table__header">Permissions</th>

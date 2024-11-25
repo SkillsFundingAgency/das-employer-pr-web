@@ -5,12 +5,13 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Models.Session;
+using SFA.DAS.Employer.PR.Web.Services;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers.Requests;
 
 
 [Route("requests")]
-public class DeclineCreateAccountConfirmationController(ISessionService _sessionService) : Controller
+public class DeclineCreateAccountConfirmationController(ISessionService _sessionService, IAccountsLinkService accountsLinkService) : Controller
 {
     [Authorize]
     [HttpGet]
@@ -26,7 +27,8 @@ public class DeclineCreateAccountConfirmationController(ISessionService _session
 
         DeclineCreateAccountConfirmationViewModel model = new()
         {
-            ProviderName = sessionModel!.ProviderName!.ToUpper()
+            ProviderName = sessionModel!.ProviderName!.ToUpper(),
+            HelpLink = accountsLinkService.GetAccountsLink(EmployerAccountRoutes.Help)
         };
 
         _sessionService.Delete<AccountCreationSessionModel>();
