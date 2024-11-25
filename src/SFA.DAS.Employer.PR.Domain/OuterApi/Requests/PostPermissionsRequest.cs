@@ -1,7 +1,7 @@
 ﻿using SFA.DAS.Employer.PR.Domain.Models;
 
-namespace SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
-public class PostPermissionsCommand
+namespace SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
+public class PostPermissionsRequest
 {
     public Guid UserRef { get; }
 
@@ -11,7 +11,7 @@ public class PostPermissionsCommand
 
     public List<Operation> Operations { get; }
 
-    public PostPermissionsCommand(Guid userRef, long ukprn, long accountLegalEntityId, List<Operation> operations)
+    public PostPermissionsRequest(Guid userRef, long ukprn, long accountLegalEntityId, List<Operation> operations)
     {
         UserRef = userRef;
         Ukprn = ukprn;

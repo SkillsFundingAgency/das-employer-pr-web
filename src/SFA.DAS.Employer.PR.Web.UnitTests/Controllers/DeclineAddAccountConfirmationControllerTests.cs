@@ -1,20 +1,15 @@
-﻿using FluentValidation;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
+using SFA.DAS.Employer.PR.Domain.Models;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
+using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
-using Moq;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
-using SFA.DAS.Employer.PR.Domain.Common;
-using SFA.DAS.Employer.PR.Domain.Models;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
-using System.Threading;
-using SFA.DAS.Employer.PR.Web.Constants;
-using System.Configuration.Provider;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 

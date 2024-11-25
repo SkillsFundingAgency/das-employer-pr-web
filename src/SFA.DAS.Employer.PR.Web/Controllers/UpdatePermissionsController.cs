@@ -1,11 +1,10 @@
-﻿using System.Net;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
@@ -81,12 +80,12 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
     {
         if (acceptRequest)
         {
-            await _outerApiClient.AcceptPermissionsRequest(requestId, new AcceptPermissionsRequestModel(userId), cancellationToken);
+            await _outerApiClient.AcceptPermissionsRequest(requestId, new AcceptPermissionsRequest(userId), cancellationToken);
             TempData[TempDataKeys.RequestAction] = RequestAction.Accepted.ToString();
         }
         else
         {
-            await _outerApiClient.DeclineRequest(requestId, new DeclineRequestModel(userId), cancellationToken);
+            await _outerApiClient.DeclineRequest(requestId, new DeclinePermissionsRequest(userId), cancellationToken);
             TempData[TempDataKeys.RequestAction] = RequestAction.Declined.ToString();
         }
     }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Controllers;
@@ -106,7 +106,7 @@ public sealed class DeclineAddAccountControllerTests
 
         _outerApiClientMock.Verify(x => x.DeclineRequest(
                 requestId,
-                It.IsAny<DeclineRequestModel>(),
+                It.IsAny<DeclinePermissionsRequest>(),
                 CancellationToken.None
             ),
             Times.Once

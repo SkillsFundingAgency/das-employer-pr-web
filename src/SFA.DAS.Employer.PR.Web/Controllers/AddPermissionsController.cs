@@ -3,7 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
@@ -57,7 +57,7 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
 
         var userRef = User.GetUserId();
 
-        var command = new PostPermissionsCommand(userRef, sessionModel.Ukprn.Value, sessionModel.SelectedLegalEntityId.Value, operationsToSet);
+        var command = new PostPermissionsRequest(userRef, sessionModel.Ukprn.Value, sessionModel.SelectedLegalEntityId.Value, operationsToSet);
 
         await _outerApiClient.PostPermissions(command, cancellationToken);
 

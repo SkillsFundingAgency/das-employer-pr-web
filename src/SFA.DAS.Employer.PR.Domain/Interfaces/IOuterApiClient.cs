@@ -1,5 +1,5 @@
 ﻿using RestEase;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 
 namespace SFA.DAS.Employer.PR.Domain.Interfaces;
@@ -26,7 +26,7 @@ public interface IOuterApiClient
     Task<Response<GetPermissionsResponse>> GetPermissions([Query] long ukprn, [Query] long AccountLegalEntityId, CancellationToken cancellationToken);
 
     [Post("/permissions")]
-    Task PostPermissions([Body] PostPermissionsCommand command, CancellationToken cancellationToken);
+    Task PostPermissions([Body] PostPermissionsRequest command, CancellationToken cancellationToken);
 
     [Get("/requests/{requestId}/createaccount/validate")]
     Task<ValidateCreateAccountRequestResponse> ValidateCreateAccountRequest([Path] Guid requestId, CancellationToken cancellationToken);
@@ -35,16 +35,16 @@ public interface IOuterApiClient
     Task<GetPermissionRequestResponse?> GetRequest([Path] Guid requestId, CancellationToken cancellationToken);
 
     [Post("/requests/{requestId}/permission/accepted")]
-    Task AcceptPermissionsRequest([Path] Guid requestId, [Body] AcceptPermissionsRequestModel model, CancellationToken cancellationToken);
+    Task AcceptPermissionsRequest([Path] Guid requestId, [Body] AcceptPermissionsRequest request, CancellationToken cancellationToken);
 
     [Post("/requests/{requestId}/addaccount/accepted")]
-    Task AcceptAddAccountRequest([Path] Guid requestId, [Body] AcceptAddAccountRequestModel model, CancellationToken cancellationToken);
+    Task AcceptAddAccountRequest([Path] Guid requestId, [Body] AcceptAddAccountRequest request, CancellationToken cancellationToken);
 
     [Post("/requests/{requestId}/permission/declined")]
-    Task DeclineRequest([Path] Guid requestId, [Body] DeclineRequestModel model, CancellationToken cancellationToken);
+    Task DeclineRequest([Path] Guid requestId, [Body] DeclinePermissionsRequest request, CancellationToken cancellationToken);
 
     [Post("/requests/{requestId}/createaccount/declined")]
-    Task DeclineCreateAccountRequest([Path] Guid requestId, [Body] DeclineRequestModel model, CancellationToken cancellationToken);
+    Task DeclineCreateAccountRequest([Path] Guid requestId, [Body] DeclinePermissionsRequest request, CancellationToken cancellationToken);
 
     [Get("/requests/{requestId}")]
     Task<GetPermissionRequestResponse> GetPermissionRequest([Path] Guid requestId, CancellationToken cancellationToken);

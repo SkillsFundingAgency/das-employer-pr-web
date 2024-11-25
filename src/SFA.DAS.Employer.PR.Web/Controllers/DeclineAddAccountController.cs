@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
@@ -38,7 +39,7 @@ public sealed class DeclineAddAccountController(IOuterApiClient _outerApiClient)
     {
         await _outerApiClient.DeclineRequest(
             requestId,
-            new Domain.OuterApi.Permissions.DeclineRequestModel(User.GetUserId().ToString()),
+            new DeclinePermissionsRequest(User.GetUserId().ToString()),
             cancellationToken
         );
 

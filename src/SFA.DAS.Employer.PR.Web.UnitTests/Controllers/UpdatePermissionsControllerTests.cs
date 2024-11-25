@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
@@ -206,7 +206,7 @@ public class UpdatePermissionsControllerTests
         _outerApiClientMock.Verify(
             x => x.AcceptPermissionsRequest(
                 requestId,
-                It.Is<AcceptPermissionsRequestModel>(model => model.ActionedBy == user.GetUserId().ToString()),
+                It.Is<AcceptPermissionsRequest>(model => model.ActionedBy == user.GetUserId().ToString()),
                 It.IsAny<CancellationToken>()),
             Times.Once
         );
@@ -248,7 +248,7 @@ public class UpdatePermissionsControllerTests
         _outerApiClientMock.Verify(
             x => x.DeclineRequest(
                 requestId,
-                It.Is<DeclineRequestModel>(model => model.ActionedBy == user.GetUserId().ToString()),
+                It.Is<DeclinePermissionsRequest>(model => model.ActionedBy == user.GetUserId().ToString()),
                 It.IsAny<CancellationToken>()),
             Times.Once
         );
