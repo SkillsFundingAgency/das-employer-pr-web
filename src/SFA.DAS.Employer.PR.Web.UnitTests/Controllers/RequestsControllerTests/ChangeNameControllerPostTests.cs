@@ -43,6 +43,30 @@ public class ChangeNameControllerPostTests
         sessionServiceMock.Verify(s => s.Set(It.Is<AccountCreationSessionModel>(x => x.FirstName == firstName && x.LastName == lastName)), Times.Once);
     }
 
+    [Test, MoqAutoData]
+    public void Post_Validated_TrimsNames(
+        [Frozen] Mock<IValidator<ChangeNamesViewModel>> validatorMock,
+        [Frozen] Mock<IOuterApiClient> outerApiClientMock,
+        [Frozen] Mock<ISessionService> sessionServiceMock,
+        [Greedy] ChangeNameController sut,
+        Guid requestId,
+        string firstName,
+        string lastName,
+        CancellationToken cancellationToken)
+    {
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangeNamesViewModel>())).Returns(new ValidationResult());
+
+        sut.AddDefaultContext();
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.CreateAccountCheckDetails, CreateAccountCheckDetailsLink);
+
+        ChangeNamesViewModel submitModel = new() { EmployerContactFirstName = $" {firstName}", EmployerContactLastName = $"{lastName} " };
+
+        var result = sut.Index(requestId, submitModel, cancellationToken);
+
+        sessionServiceMock.Verify(s => s.Set(It.Is<AccountCreationSessionModel>(x => x.FirstName == firstName && x.LastName == lastName)), Times.Once);
+    }
+
 
     [Test, MoqAutoData]
     public void Post_Validated_IfSessionIsNull_RedirectsToCreateAccountCheckDetails(
@@ -94,6 +118,36 @@ public class ChangeNameControllerPostTests
         sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.CreateAccountCheckDetails, CreateAccountCheckDetailsLink);
 
         ChangeNamesViewModel submitViewModel = new ChangeNamesViewModel { EmployerContactFirstName = firstName, EmployerContactLastName = lastName };
+
+        var result = sut.Index(requestId, submitViewModel, cancellationToken);
+
+        ViewResult? viewResult = result.As<ViewResult>();
+        var viewModel = viewResult.Model as ChangeNamesViewModel;
+        viewModel!.EmployerContactFirstName.Should().Be(firstName);
+        viewModel.EmployerContactLastName.Should().Be(lastName);
+    }
+
+    [Test, MoqAutoData]
+    public void Post_ValidationFailed_FirstAndLastNamesAreTrimmedInSessionModel(
+        [Frozen] Mock<IValidator<ChangeNamesViewModel>> validatorMock,
+        [Greedy] ChangeNameController sut,
+        GetPermissionRequestResponse permissionRequest,
+        string firstName,
+        string lastName,
+        CancellationToken cancellationToken)
+    {
+        var requestId = permissionRequest.RequestId;
+
+        validatorMock.Setup(v => v.Validate(It.IsAny<ChangeNamesViewModel>())).Returns(new ValidationResult(new List<ValidationFailure>()
+        {
+            new("TestField","Test Message") { ErrorCode = "1001"}
+        }));
+
+        sut.AddDefaultContext();
+
+        sut.AddUrlHelperMock().AddUrlForRoute(RouteNames.CreateAccountCheckDetails, CreateAccountCheckDetailsLink);
+
+        ChangeNamesViewModel submitViewModel = new ChangeNamesViewModel { EmployerContactFirstName = $" {firstName}", EmployerContactLastName = $"{lastName} " };
 
         var result = sut.Index(requestId, submitViewModel, cancellationToken);
 
