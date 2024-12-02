@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
@@ -49,7 +50,7 @@ public class DeclineCreateAccountController(IOuterApiClient _outerApiClient, ISe
 
         await _outerApiClient.DeclineCreateAccountRequest(
             requestId,
-            new Domain.OuterApi.Permissions.DeclineRequestModel(User.GetUserId().ToString()),
+            new DeclinePermissionsRequest(User.GetUserId().ToString()),
             cancellationToken
         );
 

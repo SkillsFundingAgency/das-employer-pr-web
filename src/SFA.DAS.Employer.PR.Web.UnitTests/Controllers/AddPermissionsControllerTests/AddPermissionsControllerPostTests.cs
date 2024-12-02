@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers;
@@ -170,7 +170,7 @@ public class AddPermissionsControllerPostTests
         /// action
         await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
-        outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsCommand>(
+        outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsRequest>(
             c => c.UserRef == UsersForTesting.EmployerUserRef
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId

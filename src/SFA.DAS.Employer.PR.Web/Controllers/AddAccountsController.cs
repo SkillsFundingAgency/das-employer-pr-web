@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
@@ -81,7 +81,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
     {
         if (acceptRequest)
         {
-            await _outerApiClient.AcceptAddAccountRequest(requestId, new AcceptAddAccountRequestModel(userId), cancellationToken);
+            await _outerApiClient.AcceptAddAccountRequest(requestId, new AcceptAddAccountRequest(userId), cancellationToken);
             TempData[TempDataKeys.RequestAction] = RequestAction.Accepted.ToString();
 
             return RedirectToRoute(RouteNames.YourTrainingProviders, new { employerAccountId });

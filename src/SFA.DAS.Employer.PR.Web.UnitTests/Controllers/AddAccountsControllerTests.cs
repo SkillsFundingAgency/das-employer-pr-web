@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
@@ -14,7 +14,6 @@ using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
@@ -254,7 +253,7 @@ public class AddAccountsControllerTests
         _outerApiClientMock.Verify(
             x => x.AcceptAddAccountRequest(
                 requestId,
-                It.Is<AcceptAddAccountRequestModel>(model => model.ActionedBy == user.GetUserId().ToString()),
+                It.Is<AcceptAddAccountRequest>(model => model.ActionedBy == user.GetUserId().ToString()),
                 It.IsAny<CancellationToken>()),
             Times.Once
         );

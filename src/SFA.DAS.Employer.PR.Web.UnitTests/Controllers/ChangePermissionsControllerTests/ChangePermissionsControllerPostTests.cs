@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using RestEase;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.Employer.PR.Web.Constants;
@@ -226,10 +226,10 @@ public class ChangePermissionsControllerPostTests
 
         await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
-        var command = new PostPermissionsCommand(UsersForTesting.EmployerUserRef, ukprn, legalEntityId,
+        var command = new PostPermissionsRequest(UsersForTesting.EmployerUserRef, ukprn, legalEntityId,
             expectedOperations);
 
-        outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsCommand>(
+        outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsRequest>(
             c => c.UserRef == UsersForTesting.EmployerUserRef
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId
@@ -283,10 +283,10 @@ public class ChangePermissionsControllerPostTests
 
         await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
-        var command = new PostPermissionsCommand(UsersForTesting.EmployerUserRef, ukprn, legalEntityId,
+        var command = new PostPermissionsRequest(UsersForTesting.EmployerUserRef, ukprn, legalEntityId,
             expectedOperations);
 
-        outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsCommand>(
+        outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsRequest>(
             c => c.UserRef == UsersForTesting.EmployerUserRef
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId

@@ -1,7 +1,7 @@
 ﻿using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.OuterApi.Permissions;
+using SFA.DAS.Employer.PR.Domain.OuterApi.Requests;
 using SFA.DAS.Employer.PR.Web.Controllers.Requests;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
@@ -33,7 +33,7 @@ public sealed class DeclineCreateAccountControllerPostTests
 
         outerApiClientMock.Verify(x => x.DeclineCreateAccountRequest(
                  requestId,
-                 It.IsAny<DeclineRequestModel>(),
+                 It.IsAny<DeclinePermissionsRequest>(),
                  CancellationToken.None
              ),
              Times.Once
@@ -70,7 +70,7 @@ public sealed class DeclineCreateAccountControllerPostTests
 
         outerApiClientMock.Verify(x => x.DeclineRequest(
                 requestId,
-                It.IsAny<DeclineRequestModel>(),
+                It.IsAny<DeclinePermissionsRequest>(),
                 CancellationToken.None
             ),
             Times.Never
