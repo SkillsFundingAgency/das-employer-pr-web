@@ -6,6 +6,7 @@ using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers.Requests;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.DataProtection;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models.Requests;
 using SFA.DAS.Employer.PR.Web.Models.Session;
@@ -45,7 +46,7 @@ public class RequestsControllerCreateAccountConfirmationTests
         _accountsHomeLink = fixture.Create<string>();
         accountsLinkServiceMock.Setup(a => a.GetAccountsHomeLink()).Returns(_accountsHomeLink);
 
-        _sut = new(Mock.Of<IOuterApiClient>(), _sessionServiceMock.Object, Mock.Of<IValidator<EmployerAccountCreationSubmitModel>>(), accountsLinkServiceMock.Object, encodingServiceMock.Object);
+        _sut = new(Mock.Of<IOuterApiClient>(), _sessionServiceMock.Object, Mock.Of<IValidator<EmployerAccountCreationSubmitModel>>(), accountsLinkServiceMock.Object, encodingServiceMock.Object, Mock.Of<IDataProtectorServiceFactory>());
 
         _manageProvidersLink = fixture.Create<string>();
         _sut

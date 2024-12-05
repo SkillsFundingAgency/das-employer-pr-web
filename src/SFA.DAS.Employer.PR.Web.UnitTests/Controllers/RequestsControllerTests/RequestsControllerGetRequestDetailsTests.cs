@@ -8,6 +8,7 @@ using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers.Requests;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.DataProtection;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models.Requests;
 using SFA.DAS.Employer.PR.Web.Models.Session;
@@ -188,8 +189,11 @@ public class RequestsControllerGetRequestDetailsTests
     public async Task GetRequestDetails_ValidRequests_ReturnsCorrectAgreementLink(
         [Frozen] Mock<IOuterApiClient> outerApiClientMock,
         [Frozen] Mock<IAccountsLinkService> accountsLinkServiceMock,
+        [Frozen] Mock<IDataProtectorServiceFactory> dataProtectionServiceFactoryMock,
         [Frozen] UrlBuilder builder,
         [Greedy] RequestsController sut,
+        Mock<IDataProtectorService> dataProtectorServiceMock,
+        string encryptedName,
         Guid requestId,
         GetPermissionRequestResponse permissionRequest,
         CancellationToken cancellationToken)
@@ -211,6 +215,9 @@ public class RequestsControllerGetRequestDetailsTests
         accountsLinkServiceMock.Setup(o => o.GetAccountsHomeLink()).Returns(accountsHomeLink);
         var createAccountCheckDetailsLink = "https://relationships/requests";
 
+        dataProtectorServiceMock.Setup(i => i.Protect(permissionRequest.EmployerOrganisationName)).Returns(encryptedName);
+        dataProtectionServiceFactoryMock.Setup(o => o.Create(DataProtectionKeys.EmployerName)).Returns(dataProtectorServiceMock.Object);
+
         sut
             .AddDefaultContext()
             .AddUrlHelperMock()
@@ -227,7 +234,7 @@ public class RequestsControllerGetRequestDetailsTests
             viewModel.EmployerAgreementLink.Should().StartWith(accountsHomeLink);
             viewModel.EmployerAgreementLink.Should().Contain("agreements/preview");
             viewModel.EmployerAgreementLink.Should().Contain($"returnUrl={HttpUtility.UrlEncode(createAccountCheckDetailsLink)}");
-            viewModel.EmployerAgreementLink.Should().Contain($"legalEntityName={HttpUtility.UrlEncode(accountName)}");
+            viewModel.EmployerAgreementLink.Should().Contain($"legalEntityName={HttpUtility.UrlEncode(encryptedName)}");
         }
     }
 
