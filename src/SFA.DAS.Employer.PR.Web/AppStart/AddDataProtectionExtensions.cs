@@ -1,30 +1,41 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.DataProtection;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Configuration;
+using SFA.DAS.Employer.PR.Web.Infrastructure.DataProtection;
 using StackExchange.Redis;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Employer.PR.Web.AppStart;
 
 [ExcludeFromCodeCoverage]
 public static class AddDataProtectionExtensions
 {
-    public static void AddDataProtection(this IServiceCollection services, IConfiguration configuration)
+    private const string ApplicationName = "das-employer";
+
+    public static IServiceCollection AddDataProtection(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
     {
-        var config = configuration.GetSection(nameof(ApplicationSettings)).Get<ApplicationSettings>();
+        var applicationSettings = configuration.GetSection(nameof(ApplicationSettings)).Get<ApplicationSettings>()!;
 
-        if (config != null
-            && !string.IsNullOrWhiteSpace(config.DataProtectionKeysDatabase)
-            && !string.IsNullOrWhiteSpace(config.RedisConnectionString))
+        if (isDevelopment)
         {
-            var redisConnectionString = config.RedisConnectionString;
-            var dataProtectionKeysDatabase = config.DataProtectionKeysDatabase;
+            services
+                .AddDataProtection()
+                .SetApplicationName(ApplicationName)
+                .PersistKeysToFileSystem(new DirectoryInfo(@"C:\Esfa\SharedKeys"));
+        }
+        else
+        {
+            var redisConnectionString = applicationSettings.RedisConnectionString;
+            var dataProtectionKeysDatabase = applicationSettings.DataProtectionKeysDatabase;
 
-            var redis = ConnectionMultiplexer
-                .Connect($"{redisConnectionString},{dataProtectionKeysDatabase}");
+            var redis = ConnectionMultiplexer.Connect($"{redisConnectionString},{dataProtectionKeysDatabase}");
 
             services.AddDataProtection()
-                .SetApplicationName("das-employer")
+                .SetApplicationName(ApplicationName)
                 .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
         }
+
+        services.AddTransient<IDataProtectorServiceFactory, DataProtectorServiceFactory>();
+
+        return services;
     }
 }

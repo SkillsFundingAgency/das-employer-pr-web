@@ -11,9 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration.LoadConfiguration(builder.Services);
 
 builder.Services
-    .AddOptions()
     .AddLogging()
     .AddApplicationInsightsTelemetry()
+    .AddOptions()
+    .AddDataProtection(configuration, builder.Environment.IsDevelopment())
     .AddHttpContextAccessor()
     .AddServiceRegistrations(configuration)
     .AddAuthenticationServices(configuration)
@@ -35,11 +36,6 @@ builder.Services
 #if DEBUG
 builder.Services.AddControllersWithViews().AddControllersAsServices().AddRazorRuntimeCompilation();
 #endif
-
-if (!builder.Environment.IsDevelopment())
-{
-    builder.Services.AddDataProtection(configuration);
-}
 
 var app = builder.Build();
 

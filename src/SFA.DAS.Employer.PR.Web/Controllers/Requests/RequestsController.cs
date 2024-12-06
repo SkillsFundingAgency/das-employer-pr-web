@@ -10,6 +10,7 @@ using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
+using SFA.DAS.Employer.PR.Web.Infrastructure.DataProtection;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models.Requests;
 using SFA.DAS.Employer.PR.Web.Models.Session;
@@ -19,7 +20,7 @@ using SFA.DAS.Encoding;
 namespace SFA.DAS.Employer.PR.Web.Controllers.Requests;
 
 [Route("[controller]")]
-public class RequestsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<EmployerAccountCreationSubmitModel> _validator, IAccountsLinkService _accountsLinkService, IEncodingService _encodingService) : Controller
+public class RequestsController(IOuterApiClient _outerApiClient, ISessionService _sessionService, IValidator<EmployerAccountCreationSubmitModel> _validator, IAccountsLinkService _accountsLinkService, IEncodingService _encodingService, IDataProtectorServiceFactory _dataProtectorServiceFactory) : Controller
 {
     public const string PageNotFoundViewPath = "~/Views/Error/PageNotFound.cshtml";
     public const string InvalidRequestStatusShutterPageViewPath = "~/Views/Requests/InvalidRequestStatusShutterPage.cshtml";
@@ -157,12 +158,6 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
     {
         var changeNameLink = Url.RouteUrl(RouteNames.CreateAccountChangeName, new { permissionRequest.RequestId });
         var declineCreateAccountLink = Url.RouteUrl(RouteNames.DeclineCreateAccount, new { permissionRequest.RequestId });
-        var requestLink = Url.RouteUrl(
-            routeName: RouteNames.CreateAccountCheckDetails,
-            values: new { permissionRequest.RequestId },
-            protocol: Request.Scheme,
-            host: Request.Host.ToString());
-        var agreementLink = $"{_accountsLinkService.GetAccountsHomeLink()}agreements/preview?legalEntityName={HttpUtility.UrlEncode(permissionRequest.EmployerOrganisationName)}&returnUrl={HttpUtility.UrlEncode(requestLink)}";
 
         return new EmployerAccountCreationViewModel
         {
@@ -178,7 +173,22 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
             Operations = permissionRequest.Operations,
             ChangeNameLink = changeNameLink,
             DeclineCreateAccountLink = declineCreateAccountLink,
-            EmployerAgreementLink = agreementLink,
+            EmployerAgreementLink = GetAgreementLink(permissionRequest.EmployerOrganisationName!, permissionRequest.RequestId)
         };
+    }
+
+    private string GetAgreementLink(string employerName, Guid requestId)
+    {
+        var requestLink = Url.RouteUrl(
+            routeName: RouteNames.CreateAccountCheckDetails,
+            values: new { requestId },
+            protocol: Request.Scheme,
+            host: Request.Host.ToString());
+
+        IDataProtectorService employerNameDataProtectorService = _dataProtectorServiceFactory.Create(DataProtectionKeys.EmployerName);
+
+        var protectedEmployerName = employerNameDataProtectorService.Protect(employerName);
+
+        return $"{_accountsLinkService.GetAccountsHomeLink()}agreements/preview?legalEntityName={protectedEmployerName}&returnUrl={HttpUtility.UrlEncode(requestLink)}";
     }
 }
