@@ -27,9 +27,9 @@
                     <p class="govuk-body">@ukprnHint</p>
                     <span asp-validation-for="SearchTerm" class="govuk-error-message"></span>
                     <div data-module="govuk-input">
-                        <label id="search-term-label" for="search-term-input" class="govuk-visually-hidden">@enterUkprnText</label>
-                        <label id="search-term-hint" for="search-term-input" class="govuk-visually-hidden">@ukprnHint</label>
-                        <input id="search-term-input" aria-describedby="search-term-label search-term-hint" type="text" asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete" />
+                        <label id="search-term-label" for="SearchTerm" class="govuk-visually-hidden">@enterUkprnText</label>
+                        <label id="search-term-hint" for="SearchTerm" class="govuk-visually-hidden">@ukprnHint</label>
+                        <input id="SearchTerm" aria-describedby="search-term-label search-term-hint" type="text" asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete" />
 
                         <label class="govuk-visually-hidden" for="search-term-input-select">Search Result: @Model.Name, @Model.Ukprn</label>
                     </div>
