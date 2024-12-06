@@ -7,6 +7,10 @@
 @section breadcrumb {
     <a class="das-js-back-link">Back</a>
 }
+@{
+    var enterUkprnText = "Enter your training provider's name or reference number (UKPRN)";
+    var ukprnHint = "A UKPRN is the unique, 8 digit number we use to identify a training provider. Ask your training provider if you do not know it.";
+}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="_validationSummary" />
@@ -15,19 +19,19 @@
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <h1 class="govuk-fieldset__heading">
-                            Enter your training provider's name or reference number (UKPRN)
+                            @enterUkprnText
                         </h1>
                     </legend>
                     <input asp-for="Name" id="Name" type="hidden"/>
                     <input asp-for="Ukprn" id="Ukprn" type="hidden" />
-                    <p class="govuk-body">
-                        A UKPRN is the unique, 8 digit number we use to identify a training provider. Ask your training provider if you do not know it.
-                    </p>
+                    <p class="govuk-body">@ukprnHint</p>
                     <span asp-validation-for="SearchTerm" class="govuk-error-message"></span>
                     <div data-module="govuk-input">
-                        <input id="SearchTerm" type="text" asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete"/>
+                        <label id="search-term-label" for="search-term-input" class="govuk-visually-hidden">@enterUkprnText</label>
+                        <label id="search-term-hint" for="search-term-input" class="govuk-visually-hidden">@ukprnHint</label>
+                        <input id="search-term-input" aria-describedby="search-term-label search-term-hint" type="text" asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete" />
 
-                        <label class="govuk-visually-hidden">Search Result: @Model.Name, @Model.Ukprn</label>
+                        <label class="govuk-visually-hidden" for="search-term-input-select">Search Result: @Model.Name, @Model.Ukprn</label>
                     </div>
                 </fieldset>
             </div>
