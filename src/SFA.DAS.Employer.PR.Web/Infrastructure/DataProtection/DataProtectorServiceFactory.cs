@@ -13,7 +13,7 @@ public class DataProtectorServiceFactory(IDataProtectionProvider _provider) : ID
         public string Protect(string plainText)
         {
             return WebEncoders.Base64UrlEncode(_dataProtector.Protect(
-                System.Text.Encoding.UTF8.GetBytes($"{plainText}")));
+                System.Text.Encoding.UTF8.GetBytes(plainText)));
         }
 
         public string? Unprotect(string? cipherText)
