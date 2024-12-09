@@ -3,7 +3,6 @@
 public class ChangePermissionsViewModel : ChangePermissionsSubmitModel
 {
     public string BackLink { get; set; }
-    public string CancelLink { get; set; }
     public string ProviderName { get; set; }
     public string LegalName { get; set; }
 
@@ -14,7 +13,6 @@ public class ChangePermissionsViewModel : ChangePermissionsSubmitModel
         ProviderName = providerName;
         Ukprn = ukprn;
         BackLink = backLink;
-        CancelLink = backLink;
         PermissionToAddCohorts = permissionToAddCohorts;
         PermissionToAddCohortsOriginal = permissionToAddCohorts;
         PermissionToRecruit = permissionToRecruit;
