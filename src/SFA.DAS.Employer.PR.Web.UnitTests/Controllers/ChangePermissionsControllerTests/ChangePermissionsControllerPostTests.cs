@@ -347,7 +347,6 @@ public class ChangePermissionsControllerPostTests
         viewModel.LegalEntityId.Should().Be(legalEntityId);
         viewModel.LegalName.Should().Be(legalName);
         viewModel.ProviderName.Should().Be(providerName);
-        viewModel.CancelLink.Should().Be(YourTrainingProvidersLink);
         viewModel.BackLink.Should().Be(YourTrainingProvidersLink);
     }
 }
