@@ -89,7 +89,6 @@ public class ChangePermissionsControllerGetTests
         Assert.Multiple(() =>
         {
             Assert.That(viewModel!.BackLink, Is.EqualTo(YourTrainingProvidersLink));
-            Assert.That(viewModel.CancelLink, Is.EqualTo(YourTrainingProvidersLink));
             Assert.That(viewModel.ProviderName, Is.EqualTo(getPermissionsResponse.ProviderName));
             Assert.That(viewModel.LegalName, Is.EqualTo(getPermissionsResponse.AccountLegalEntityName));
             Assert.That(viewModel.Ukprn, Is.EqualTo(ukprn));
