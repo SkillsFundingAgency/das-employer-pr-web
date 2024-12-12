@@ -40,6 +40,7 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
     public async Task<IActionResult> Index([FromRoute] string employerAccountId,
         ChangePermissionsSubmitModel submitViewModel, CancellationToken cancellationToken)
     {
+        
         var model = await GetViewModel(employerAccountId, submitViewModel.LegalEntityId, submitViewModel.Ukprn, cancellationToken);
 
         if (model == null)

@@ -14,23 +14,19 @@
         <partial name="_validationSummary" />
         <form asp-route="@RouteNames.ChangePermissions" method="POST">
             <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                        <h1 class="govuk-fieldset__heading">
-                            Set permissions for @Model.ProviderName.ToUpper()
-                        </h1>
-                    </legend>
-                    <input asp-for="LegalEntityId" id="legalEntityId" type="hidden" />
-                    @* <input asp-for="LegalName" id="legalName" type="hidden" /> *@
-                    @* <input asp-for="ProviderName" id="providerName" type="hidden" /> *@
-                    <input asp-for="Ukprn" id="ukprn" type="hidden" />
-                    <input asp-for="PermissionToAddCohortsOriginal" id="AddRecordsOriginal" type="hidden" />
-                    <input asp-for="PermissionToRecruitOriginal" id="RecruitApprenticesOriginal" type="hidden" />
-                    <p class="govuk-body">
-                        Select what permissions you want this training provider to have for @(Model.LegalName.ToUpper()). You can change these permissions at any time.
-                    </p>
-                    <partial name="_PermissionChoices" />
-                </fieldset>
+                <h1 class="govuk-heading-l">
+                    Set permissions for @Model.ProviderName.ToUpper()
+                </h1>
+                <input asp-for="LegalEntityId" id="legalEntityId" type="hidden" />
+                @* <input asp-for="LegalName" id="legalName" type="hidden" /> *@
+                @* <input asp-for="ProviderName" id="providerName" type="hidden" /> *@
+                <input asp-for="Ukprn" id="ukprn" type="hidden" />
+                <input asp-for="PermissionToAddCohortsOriginal" id="AddRecordsOriginal" type="hidden" />
+                <input asp-for="PermissionToRecruitOriginal" id="RecruitApprenticesOriginal" type="hidden" />
+                <p class="govuk-body">
+                    Select what permissions you want this training provider to have for @(Model.LegalName.ToUpper()). You can change these permissions at any time.
+                </p>
+                <partial name="_PermissionChoices" />
             </div>
             <div class="govuk-button-group">
                 <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Confirm</button>
