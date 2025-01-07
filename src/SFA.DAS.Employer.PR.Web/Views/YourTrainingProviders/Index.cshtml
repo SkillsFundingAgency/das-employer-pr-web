@@ -89,7 +89,7 @@
                     @if (@Model.IsOwner && permissionDetails.HasOutstandingRequest)
                     {
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell govuk-!-padding-bottom-0 govuk-!-padding-top-3 border-bottom-override" colspan="4">
+                            <td scope="row" class="govuk-table__cell govuk-!-padding-bottom-0 govuk-!-padding-top-3 border-bottom-override" colspan="4">
                                 <strong class="govuk-tag govuk-tag--orange">
                                     Request pending
                                 </strong>
@@ -97,12 +97,12 @@
                         </tr>
                     }
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.ProviderName.ToUpper()</td>
-                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToAddRecords</td>
-                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToRecruitApprentices</td>
+                        <td headers="training-provider" class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.ProviderName.ToUpper()</td>
+                        <td headers="add-records" class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToAddRecords</td>
+                        <td headers="recruit-apprentices" class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToRecruitApprentices</td>
                         @if (@Model.IsOwner)
                         {
-                            <td class="govuk-table__cell"><a class="govuk-link" href="@permissionDetails.ActionLink">@permissionDetails.ActionLinkText</a></td>
+                            <td headers="permissions" class="govuk-table__cell"><a class="govuk-link" href="@permissionDetails.ActionLink">@permissionDetails.ActionLinkText</a></td>
                         }
                     </tr>
                 }
