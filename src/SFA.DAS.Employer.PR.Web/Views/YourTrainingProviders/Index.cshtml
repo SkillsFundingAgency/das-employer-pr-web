@@ -74,12 +74,12 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-third">Training provider</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to add apprentice records</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to recruit apprentices</th>
+                    <th id="training-provider" scope="col" class="govuk-table__header govuk-!-width-one-third">Training provider</th>
+                    <th id="add-records" scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to add apprentice records</th>
+                    <th id="recruit-apprentices" scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to recruit apprentices</th>
                     @if (@Model.IsOwner)
                     {
-                        <th scope="col" class="govuk-table__header">Permissions</th>
+                        <th id="permissions" scope="col" class="govuk-table__header">Permissions</th>
                     }
                 </tr>
             </thead>
@@ -89,7 +89,7 @@
                     @if (@Model.IsOwner && permissionDetails.HasOutstandingRequest)
                     {
                         <tr class="govuk-table__row">
-                            <td scope="row" class="govuk-table__cell govuk-!-padding-bottom-0 govuk-!-padding-top-3 border-bottom-override" colspan="4">
+                            <td class="govuk-table__cell govuk-!-padding-bottom-0 govuk-!-padding-top-3 border-bottom-override" colspan="4">
                                 <strong class="govuk-tag govuk-tag--orange">
                                     Request pending
                                 </strong>
