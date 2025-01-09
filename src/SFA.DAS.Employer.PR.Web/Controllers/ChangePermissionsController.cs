@@ -23,7 +23,6 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
     public async Task<IActionResult> Index([FromRoute] string employerAccountId, [FromQuery] string legalEntityPublicHashedId,
          [FromRoute] long ukprn, CancellationToken cancellationToken)
     {
-
         var legalEntityId = _encodingService.Decode(legalEntityPublicHashedId, EncodingType.PublicAccountLegalEntityId);
 
         var viewModel = await GetViewModel(employerAccountId, legalEntityId, ukprn, cancellationToken);
