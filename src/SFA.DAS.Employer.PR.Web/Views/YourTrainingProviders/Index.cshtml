@@ -8,7 +8,7 @@
         {
             <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__header">
-                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title" aria-live="polite">
                         Success
                     </h2>
                 </div>
@@ -72,12 +72,12 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-third">Training provider</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to add apprentice records</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to recruit apprentices</th>
+                    <th id="training-provider" scope="col" class="govuk-table__header govuk-!-width-one-third">Training provider</th>
+                    <th id="add-records" scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to add apprentice records</th>
+                    <th id="recruit-apprentices" scope="col" class="govuk-table__header govuk-!-width-one-quarter">Permission to recruit apprentices</th>
                     @if (@Model.IsOwner)
                     {
-                        <th scope="col" class="govuk-table__header">Permissions</th>
+                        <th id="permissions" scope="col" class="govuk-table__header">Permissions</th>
                     }
                 </tr>
             </thead>
@@ -95,12 +95,12 @@
                         </tr>
                     }
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.ProviderName.ToUpper()</td>
-                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToAddRecords</td>
-                        <td class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToRecruitApprentices</td>
+                        <td headers="training-provider" class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.ProviderName.ToUpper()</td>
+                        <td headers="add-records" class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToAddRecords</td>
+                        <td headers="recruit-apprentices" class="govuk-table__cell govuk-!-padding-bottom-4">@permissionDetails.PermissionToRecruitApprentices</td>
                         @if (@Model.IsOwner)
                         {
-                            <td class="govuk-table__cell"><a class="govuk-link" href="@permissionDetails.ActionLink">@permissionDetails.ActionLinkText</a></td>
+                            <td headers="permissions" class="govuk-table__cell"><a class="govuk-link" href="@permissionDetails.ActionLink">@permissionDetails.ActionLinkText</a></td>
                         }
                     </tr>
                 }
