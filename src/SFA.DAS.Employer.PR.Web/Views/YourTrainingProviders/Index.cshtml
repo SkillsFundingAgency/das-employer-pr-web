@@ -61,9 +61,12 @@
                     </p>
                 </div>
             </details>
-            <div class="govuk-button-group">
-                <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Add a training provider</button>
-            </div>
+            if(@Model!.IsOwner)
+            {
+                <div class="govuk-button-group">
+                    <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Add a training provider</button>
+                </div>
+            }
         </form>
     </div>
 </div>
