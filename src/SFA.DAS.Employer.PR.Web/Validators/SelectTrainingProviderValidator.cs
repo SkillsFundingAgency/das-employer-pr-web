@@ -5,7 +5,7 @@ namespace SFA.DAS.Employer.PR.Web.Validators;
 
 public class SelectTrainingProviderValidator : AbstractValidator<SelectTrainingProviderViewModel>
 {
-    public const string NoTrainingProviderSelectedErrorMessage = "Select a training provider";
+    public const string NoTrainingProviderSelectedErrorMessage = "Type a name or UKPRN and select a provider";
 
     public SelectTrainingProviderValidator()
     {
