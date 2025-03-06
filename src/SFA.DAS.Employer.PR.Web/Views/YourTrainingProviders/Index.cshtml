@@ -25,35 +25,44 @@
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
                 Manage training providers
             </h1>
-            <p class="govuk-body govuk-!-font-size-19">
-                View your training providers and the permissions you currently have with them. Accept or decline permissions requests from training providers, or change their permissions yourself. You can also add a new training provider.
-            </p>
             @if (@Model!.IsOwner)
             {
-                <details class="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">View details about permissions and how they work</span>
-                    </summary>
-                    <div class="govuk-details__text" id="details-content-0" aria-hidden="false">
-                        <p class="govuk-body">
-                            Permissions refer to what a training provider can do on your behalf.
-                        </p>
-                        <p class="govuk-body">
-                            There are 2 training provider permissions in the Apprenticeship service:
-                        </p>
-                        <ul class="govuk-list govuk-list--bullet">
-                            <li><strong>Add apprentice records</strong> means the training provider can add details of new apprentices and reserve funding for them if needed. Apprentice records will not be added to your account until you approve them.</li>
+                <p class="govuk-body govuk-!-font-size-19">
+                    View your training providers and the permissions you currently have with them. Accept or decline permissions requests from training providers, or change their permissions yourself. You can also add a new training provider.
+                </p>
+            }
+            else
+            {
+                <p class="govuk-body govuk-!-font-size-19">
+                    View your training providers and the permissions you currently have with them. You can see if there are pending permissions requests but only account owners can accept or decline them.
+                </p>
+            }
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">View how permissions work</span>
+                </summary>
+                <div class="govuk-details__text" id="details-content-0" aria-hidden="false">
+                    <p class="govuk-body">
+                        Permissions refer to what a training provider can do on your behalf.
+                    </p>
+                    <p class="govuk-body">
+                        There are 2 training provider permissions in the Apprenticeship service:
+                    </p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li><strong>Add apprentice records</strong> means the training provider can add details of new apprentices and reserve funding for them if needed. Apprentice records will not be added to your account until you approve them.</li>
 
-                            <li><strong>Recruit apprentices</strong> means the training provider can advertise apprenticeships and review applications. You can choose to approve adverts before they're published.</li>
-                        </ul>
-                        <p class="govuk-body">
-                            You’ll be emailed when you need to approve any records or adverts.
-                        </p>
-                        <p class="govuk-body">
-                            You can change training provider permissions at any time from your account.
-                        </p>
-                    </div>
-                </details>
+                        <li><strong>Recruit apprentices</strong> means the training provider can advertise apprenticeships and review applications. You can choose to approve adverts before they're published.</li>
+                    </ul>
+                    <p class="govuk-body">
+                        You’ll be emailed when you need to approve any records or adverts.
+                    </p>
+                    <p class="govuk-body">
+                        You can change training provider permissions at any time from your account.
+                    </p>
+                </div>
+            </details>
+            @if(Model!.IsOwner)
+            {
                 <div class="govuk-button-group">
                     <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Add a training provider</button>
                 </div>
@@ -84,7 +93,7 @@
             <tbody class="govuk-table__body">
                 @foreach (var permissionDetails in ale.PermissionDetails)
                 {
-                    @if (@Model.IsOwner && permissionDetails.HasOutstandingRequest)
+                    @if (permissionDetails.HasOutstandingRequest)
                     {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell govuk-!-padding-bottom-0 govuk-!-padding-top-3 border-bottom-override" colspan="4">
