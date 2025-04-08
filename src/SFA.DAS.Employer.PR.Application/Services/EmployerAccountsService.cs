@@ -28,7 +28,7 @@ public class EmployerAccountsService : IGovAuthEmployerAccountService
                 Role = c.Role,
                 AccountId = c.EncodedAccountId,
                 ApprenticeshipEmployerType = Enum.Parse<ApprenticeshipEmployerType>(c.ApprenticeshipEmployerType.ToString()),
-                EmployerName = c.EmployerName,
+                EmployerName = c.DasAccountName,
             }).ToList() : [],
             FirstName = response.FirstName,
             IsSuspended = response.IsSuspended,
