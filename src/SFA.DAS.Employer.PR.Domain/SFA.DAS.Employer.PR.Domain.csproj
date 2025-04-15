@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="RestEase" Version="1.6.4" />
     <PackageReference Include="RestEase.HttpClientFactory" Version="1.6.4" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.139" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.141" />
   </ItemGroup>
 
 </Project>
