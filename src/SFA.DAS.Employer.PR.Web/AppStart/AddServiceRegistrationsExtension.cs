@@ -26,7 +26,6 @@ public static class AddServiceRegistrationsExtension
         var encodingConfig = JsonSerializer.Deserialize<EncodingConfig>(encodingsConfiguration!);
         services.AddSingleton(encodingConfig!);
 
-        services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
         services.AddTransient<ISessionService, SessionService>();
         services.AddTransient<IEncodingService, EncodingService>();
         services.AddTransient<ICacheStorageService, CacheStorageService>();

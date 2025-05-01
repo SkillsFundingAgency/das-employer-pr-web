@@ -1,9 +1,10 @@
 ﻿using SFA.DAS.Employer.PR.Domain.Interfaces;
-using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
+using SFA.DAS.GovUK.Auth.Employer;
+using EmployerUserAccountItem = SFA.DAS.GovUK.Auth.Employer.EmployerUserAccountItem;
 
 namespace SFA.DAS.Employer.PR.Application.Services;
-public class EmployerAccountsService : IEmployerAccountsService
+public class EmployerAccountsService : IGovAuthEmployerAccountService
 {
     private readonly IOuterApiClient _outerApiClient;
 
@@ -12,12 +13,27 @@ public class EmployerAccountsService : IEmployerAccountsService
         _outerApiClient = outerApiClient;
     }
 
-    public async Task<EmployerUserAccounts> GetEmployerUserAccounts(string userId, string email)
+    public async Task<EmployerUserAccounts> GetUserAccounts(string userId, string email)
     {
         var result = await _outerApiClient.GetUserAccounts(userId, email, CancellationToken.None);
         return Transform(result);
     }
 
-    private static EmployerUserAccounts Transform(GetEmployerUserAccountsResponse response) =>
-        new(response.IsSuspended, response.FirstName, response.LastName, response.EmployerUserId, response.UserAccounts.Select(u => new EmployerIdentifier { AccountId = u.EncodedAccountId, EmployerName = u.DasAccountName, Role = u.Role! }).ToList());
+    private static EmployerUserAccounts Transform(GetEmployerUserAccountsResponse response)
+    {
+        return new EmployerUserAccounts
+        {
+            EmployerAccounts = response.UserAccounts != null? response.UserAccounts.Select(c => new EmployerUserAccountItem
+            {
+                Role = c.Role,
+                AccountId = c.EncodedAccountId,
+                ApprenticeshipEmployerType = Enum.Parse<ApprenticeshipEmployerType>(c.ApprenticeshipEmployerType.ToString()),
+                EmployerName = c.DasAccountName,
+            }).ToList() : [],
+            FirstName = response.FirstName,
+            IsSuspended = response.IsSuspended,
+            LastName = response.LastName,
+            EmployerUserId = response.EmployerUserId,
+        };
+    }
 }

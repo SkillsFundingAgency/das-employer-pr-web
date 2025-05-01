@@ -10,4 +10,8 @@
     <ProjectReference Include="..\SFA.DAS.Employer.PR.Domain\SFA.DAS.Employer.PR.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.141" />
+  </ItemGroup>
+
 </Project>
