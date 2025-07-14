@@ -23,10 +23,8 @@
                         A UKPRN is the unique, 8 digit number we use to identify a training provider. Ask your training provider if you do not know it.
                     </p>
                     <span asp-validation-for="SearchTerm" class="govuk-error-message"></span>
-                    <div data-module="govuk-input">
-                        <input id="SearchTerm" type="text" asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete"/>
-                        <span class="govuk-visually-hidden">Search Result: @Model.Name, @Model.Ukprn</span>
-                    </div>
+                    <input id="SearchTerm" type="text" asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete"/>
+                    <span class="govuk-visually-hidden">Search Result: @Model.Name, @Model.Ukprn</span>
             </div>
             <div class="govuk-button-group">
                 <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Continue</button>
