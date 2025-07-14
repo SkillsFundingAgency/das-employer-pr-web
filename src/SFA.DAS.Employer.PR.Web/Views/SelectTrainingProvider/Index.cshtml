@@ -12,12 +12,11 @@
         <partial name="_validationSummary" />
         <form asp-route="@RouteNames.SelectTrainingProvider" method="POST">
             <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                        <h1 class="govuk-fieldset__heading">
-                            Enter your training provider's name or reference number (UKPRN)
-                        </h1>
-                    </legend>
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="SearchTerm">
+                      Enter your training provider's name or reference number (UKPRN)
+                    </label>
+                  </h1>
                     <input asp-for="Name" id="Name" type="hidden"/>
                     <input asp-for="Ukprn" id="Ukprn" type="hidden" />
                     <p class="govuk-body">
@@ -26,10 +25,8 @@
                     <span asp-validation-for="SearchTerm" class="govuk-error-message"></span>
                     <div data-module="govuk-input">
                         <input id="SearchTerm" type="text" asp-for="SearchTerm" class="govuk-input" sfa-validationerror-class="form-control-error" data-module="autoComplete"/>
-
-                        <label class="govuk-visually-hidden">Search Result: @Model.Name, @Model.Ukprn</label>
+                        <span class="govuk-visually-hidden">Search Result: @Model.Name, @Model.Ukprn</span>
                     </div>
-                </fieldset>
             </div>
             <div class="govuk-button-group">
                 <button type="submit" id="continue" class="govuk-button" data-disable-on-submit="true">Continue</button>
