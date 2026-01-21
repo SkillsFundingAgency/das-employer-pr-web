@@ -6,25 +6,25 @@
 
 @{
     var tagManagerCode = "GTM-KWQBWGJ";
-    string accountId = this.ViewContext.RouteData.Values["employerAccountId"]?.ToString() ?? "";
+    string accountHashedId = this.ViewContext.RouteData.Values["employerAccountId"]?.ToString() ?? "";
     ViewBag.HideHeaderBorder = true;
-    var footerModel = new FooterModel { AccountId = accountId, UsePrivacyV2 = true };
+    var footerModel = new FooterModel { AccountId = accountHashedId, UsePrivacyV2 = true };
 
     bool isAccountTasksJourney = Context.Items.ContainsKey(SessionKeys.AccountTasksKey);
     ViewBag.ShowNav = !isAccountTasksJourney;
 }
 <!DOCTYPE html>
-<html lang="en" class="govuk-template">
+<html lang="en" class="govuk-template govuk-template--rebranded">
 
 <head>
     <meta charset="utf-8" />
     <title>@(ViewData["Title"] ?? "Manage apprenticeships")</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0b0c0c" />
-    <link rel="icon" sizes="48x48" href="/assets/images/favicon.ico" />
-    <link rel="icon" sizes="any" href="/assets/images/favicon.svg" type="image/svg+xml" />
-    <link rel="mask-icon" href="/assets/images/govuk-icon-mask.svg" color="#0b0c0c" />
-    <link rel="apple-touch-icon" href="/assets/images/govuk-icon-180.png" />
+    <meta name="theme-color" content="#1d70b8" />
+    <link rel="icon" sizes="48x48" href="/assets/rebrand/images/favicon.ico" />
+    <link rel="icon" sizes="any" href="/assets/rebrand/images/favicon.svg" type="image/svg+xml" />
+    <link rel="mask-icon" href="/assets/rebrand/images/govuk-icon-mask.svg" color="#1d70b8" />
+    <link rel="apple-touch-icon" href="/assets/rebrand/images/govuk-icon-180.png" />
     <link href="/css/main.css" rel="stylesheet" />
     <link href="/css/app.css?v=1" rel="stylesheet" no-cdn />
     <!-- Google Tag Manager -->
@@ -47,12 +47,7 @@
     </script>
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
-    @* ReSharper disable once Mvc.PartialViewNotResolved *@
-    <partial name="_Header">
-        @* ReSharper disable once Mvc.PartialViewNotResolved *@
-        <partial name="_Menu" model="@accountId">
-        </partial>
-    </partial>
+    <partial name="_Header" model="@accountHashedId" />
 
     <div class="govuk-width-container">
         @RenderSection("breadcrumb", required: false)
