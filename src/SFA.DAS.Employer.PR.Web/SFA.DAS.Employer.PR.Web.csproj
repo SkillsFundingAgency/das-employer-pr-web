@@ -17,7 +17,7 @@
     <PackageReference Include="RestEase" Version="1.6.4" />
     <PackageReference Include="RestEase.HttpClientFactory" Version="1.6.4" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
-    <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.161" />
+    <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.163" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.141" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
