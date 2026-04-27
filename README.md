@@ -26,7 +26,7 @@ Also here the employer users manage permission requests raised by providers.
 * A clone of this repository
 * A storage emulator like Azurite
 * Visual studio 2022 or higher or similar IDE 
-* .NetCore 8.0
+* .Net 10
 
 ### Dependencies
 
@@ -66,7 +66,7 @@ In the SFA.DAS.Employer.PR.Web project, if not exist already, add appSettings.De
 
 ## Technologies
 
-* .NetCore 8.0
+* .Net 10
 * Azure Table Storage
 * NUnit
 * Moq
