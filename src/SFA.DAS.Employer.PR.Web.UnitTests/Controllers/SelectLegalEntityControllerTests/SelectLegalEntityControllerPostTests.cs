@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +14,7 @@ using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.SelectLegalEntityControllerTests;
+
 public class SelectLegalEntityControllerPostTests
 {
     static readonly string YourTrainingProvidersLink = Guid.NewGuid().ToString();

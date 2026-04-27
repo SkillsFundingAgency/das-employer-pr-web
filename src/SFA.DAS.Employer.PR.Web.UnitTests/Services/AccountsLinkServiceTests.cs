@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Configuration;
 using SFA.DAS.Employer.PR.Web.Services;

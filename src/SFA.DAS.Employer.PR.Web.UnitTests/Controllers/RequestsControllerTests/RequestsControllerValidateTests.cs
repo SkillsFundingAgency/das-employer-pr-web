@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
 using SFA.DAS.Employer.PR.Domain.Interfaces;

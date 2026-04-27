@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Models;
 

@@ -7,19 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="8.0.1" />
-    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.7" />
     
     <PackageReference Include="RestEase" Version="1.6.4" />
     <PackageReference Include="RestEase.HttpClientFactory" Version="1.6.4" />
-    <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
+    <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.165" />
     <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.165" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.93" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.141" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.177" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
     <PackageReference Include="WebEssentials.AspNetCore.CdnTagHelpers" Version="1.0.21" />
   </ItemGroup>

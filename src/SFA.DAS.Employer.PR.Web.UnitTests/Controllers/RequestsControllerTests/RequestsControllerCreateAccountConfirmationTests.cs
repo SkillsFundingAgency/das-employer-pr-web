@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using AutoFixture.NUnit3;
+using AutoFixture.NUnit4;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
@@ -16,6 +16,7 @@ using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.RequestsControllerTests;
+
 public class RequestsControllerCreateAccountConfirmationTests
 {
     private RequestsController _sut = null!;

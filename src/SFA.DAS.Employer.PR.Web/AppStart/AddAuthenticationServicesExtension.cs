@@ -4,10 +4,9 @@ using SFA.DAS.Employer.PR.Application.Services;
 using SFA.DAS.Employer.PR.Web.Authentication;
 using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Authentication;
-using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.GovUK.Auth.Models;
-using SFA.DAS.GovUK.Auth.Services;
 using EmployerClaims = SFA.DAS.Employer.PR.Web.Authentication.EmployerClaims;
+using PolicyNames = SFA.DAS.Employer.PR.Web.Authentication.PolicyNames;
 
 namespace SFA.DAS.Employer.PR.Web.AppStart;
 
@@ -48,7 +47,7 @@ public static class AddAuthenticationServicesExtension
             {
                 LocalStubLoginPath = "/service/account-details",
                 SignedOutRedirectUrl = ""
-            },null,
+            }, null,
             typeof(EmployerAccountsService));
 
         return services;
