@@ -22,17 +22,11 @@
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.177" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
     <PackageReference Include="WebEssentials.AspNetCore.CdnTagHelpers" Version="1.0.21" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.15.3" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
   </ItemGroup>
   
-  <!-- Transient dependencies -->
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.83.3" />
-    <PackageReference Include="Azure.Identity" Version="1.21.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="10.0.7" />
-    <PackageReference Include="System.Text.Json" Version="10.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.7" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Employer.PR.Application\SFA.DAS.Employer.PR.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.Employer.PR.Domain\SFA.DAS.Employer.PR.Domain.csproj" />
