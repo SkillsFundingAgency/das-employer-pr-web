@@ -76,7 +76,7 @@ public class EmployerAccountAuthorisationHandler(IHttpContextAccessor _httpConte
 
             var result = await _outerApiClient.GetUserAccounts(userId, email!, CancellationToken.None);
 
-            var accountsAsJson = JsonSerializer.Serialize(result.UserAccounts.ToDictionary(k => k.EncodedAccountId));
+            var accountsAsJson = JsonSerializer.Serialize(result.UserAccounts?.ToDictionary(k => k.EncodedAccountId));
             var associatedAccountsClaim = new Claim(EmployerClaims.AccountsClaimsTypeIdentifier, accountsAsJson, JsonClaimValueTypes.Json);
 
             var updatedEmployerAccounts = JsonSerializer.Deserialize<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);

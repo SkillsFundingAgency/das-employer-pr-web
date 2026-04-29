@@ -14,18 +14,17 @@ using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
 public class UpdatePermissionsControllerTests
 {
-    private Mock<IOuterApiClient> _outerApiClientMock;
-    private Mock<IValidator<ReviewPermissionsRequestSubmitViewModel>> _validatorMock;
-    private UpdatePermissionsController _controller;
+    private Mock<IOuterApiClient> _outerApiClientMock = null!;
+    private Mock<IValidator<ReviewPermissionsRequestSubmitViewModel>> _validatorMock = null!;
+    private UpdatePermissionsController _controller = null!;
     private const string employerAccountId = "V9PRXG";
     private const string YourTrainingProvidersUrl = "your-training-providers-url";
-    private ClaimsPrincipal user;
+    private ClaimsPrincipal user = null!;
 
     [SetUp]
     public void Setup()
