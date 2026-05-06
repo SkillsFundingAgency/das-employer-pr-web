@@ -7,7 +7,6 @@
 
 [![Build Status](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_apis/build/status%2Fdas-employer-pr-web?repoName=SkillsFundingAgency%2Fdas-employer-pr-web&branchName=main)](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_build/latest?definitionId=3708&repoName=SkillsFundingAgency%2Fdas-employer-pr-web&branchName=main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SkillsFundingAgency_das-employer-pr-web&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SkillsFundingAgency_das-employer-pr-web)
-[![Confluence Project](https://img.shields.io/badge/Confluence-Project-blue)](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/4368171030/Solution+Architecture+-+PR#Initial-view-of-solution-architecture-for--EP%2FPP)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?longCache=true&style=flat-square)](https://en.wikipedia.org/wiki/MIT_License)
 
 ## About
