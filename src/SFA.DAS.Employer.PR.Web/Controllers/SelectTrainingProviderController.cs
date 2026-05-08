@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Web.Authentication;
+using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
@@ -48,7 +48,7 @@ public class SelectTrainingProviderController(IOuterApiClient _outerApiClient, I
         if (!result.IsValid)
         {
             SelectTrainingProviderViewModel model = new();
-            result.AddToModelState(ModelState);
+            ModelState.AddValidationErrors(result.Errors);
             return View(model);
         }
 

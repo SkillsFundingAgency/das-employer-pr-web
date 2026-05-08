@@ -1,6 +1,5 @@
 ﻿using System.Web;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
@@ -91,7 +90,7 @@ public class RequestsController(IOuterApiClient _outerApiClient, ISessionService
             GetNamesFromSessionModel(sessionModel, permissionRequest);
 
             EmployerAccountCreationViewModel viewModel = GetViewModel(permissionRequest);
-            result.AddToModelState(ModelState);
+            ModelState.AddValidationErrors(result.Errors);
             return View(RequestsCheckDetailsViewPath, viewModel);
         }
 

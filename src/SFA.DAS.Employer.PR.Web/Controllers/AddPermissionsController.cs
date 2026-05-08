@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
@@ -47,7 +46,7 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
         if (!result.IsValid)
         {
             var model = GetViewModel(employerAccountId);
-            result.AddToModelState(ModelState);
+            ModelState.AddValidationErrors(result.Errors);
             return View(model);
         }
 

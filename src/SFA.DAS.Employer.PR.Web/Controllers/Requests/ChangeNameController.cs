@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
@@ -51,7 +50,7 @@ public class ChangeNameController(IOuterApiClient _outerApiClient, ISessionServi
         {
             ChangeNamesViewModel viewModel = GetChangeNamesViewModel(submitModel.EmployerContactFirstName,
                 submitModel.EmployerContactLastName);
-            result.AddToModelState(ModelState);
+            ModelState.AddValidationErrors(result.Errors);
             return View(RequestsChangeNameViewPath, viewModel);
         }
 
