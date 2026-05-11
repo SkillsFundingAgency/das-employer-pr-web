@@ -24,7 +24,7 @@ Also here the employer users manage permission requests raised by providers.
 
 * A clone of this repository
 * A storage emulator like Azurite
-* Visual studio 2022 or higher or similar IDE 
+* Visual studio or similar IDE 
 * .Net 10
 
 ### Dependencies
