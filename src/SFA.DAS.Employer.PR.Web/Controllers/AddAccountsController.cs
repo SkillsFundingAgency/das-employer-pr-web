@@ -1,6 +1,4 @@
-﻿using System.Net;
-using FluentValidation;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
@@ -97,7 +95,7 @@ public sealed class AddAccountsController(IOuterApiClient _outerApiClient, IVali
         var result = _validator.Validate(model);
         if (!result.IsValid)
         {
-            result.AddToModelState(ModelState);
+            ModelState.AddValidationErrors(result.Errors);
             return false;
         }
         return true;

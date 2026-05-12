@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Services;

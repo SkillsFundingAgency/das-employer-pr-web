@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.Employer.PR.Domain.Common;
@@ -19,6 +19,7 @@ using SFA.DAS.Testing.AutoFixture;
 using Operation = SFA.DAS.Employer.PR.Domain.Models.Operation;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
+
 public class YourTrainingProvidersControllerTests
 {
     static readonly string SelectLegalEntityUrl = Guid.NewGuid().ToString();

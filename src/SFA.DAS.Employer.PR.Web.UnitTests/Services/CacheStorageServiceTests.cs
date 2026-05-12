@@ -1,8 +1,8 @@
-﻿using AutoFixture.NUnit3;
+﻿using System.Text.Json;
+using AutoFixture.NUnit4;
 using Microsoft.Extensions.Caching.Distributed;
 using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Testing.AutoFixture;
-using System.Text.Json;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Services;
 

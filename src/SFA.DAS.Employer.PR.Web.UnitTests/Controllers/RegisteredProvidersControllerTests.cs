@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
@@ -9,6 +9,7 @@ using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
+
 public class RegisteredProvidersControllerTests
 {
     [Test, MoqAutoData]

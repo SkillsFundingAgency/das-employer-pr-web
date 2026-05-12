@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;
@@ -37,7 +36,7 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
     }
 
     [HttpPost]
-    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute]string employerAccountId, ReviewPermissionsRequestSubmitViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] Guid requestId, [FromRoute] string employerAccountId, ReviewPermissionsRequestSubmitViewModel model, CancellationToken cancellationToken)
     {
         GetPermissionRequestResponse? response = await _outerApiClient.GetRequest(requestId, cancellationToken);
 
@@ -95,7 +94,7 @@ public sealed class UpdatePermissionsController(IOuterApiClient _outerApiClient,
         var result = _validator.Validate(model);
         if (!result.IsValid)
         {
-            result.AddToModelState(ModelState);
+            ModelState.AddValidationErrors(result.Errors);
             return false;
         }
         return true;

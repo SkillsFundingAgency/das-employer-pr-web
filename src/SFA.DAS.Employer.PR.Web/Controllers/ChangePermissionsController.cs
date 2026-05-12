@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
+﻿using System.Net;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
@@ -11,7 +11,6 @@ using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
 using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Encoding;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.Controllers;
 
@@ -50,7 +49,7 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
 
         if (!result.IsValid)
         {
-            result.AddToModelState(ModelState);
+            ModelState.AddValidationErrors(result.Errors);
             return View(model);
         }
 

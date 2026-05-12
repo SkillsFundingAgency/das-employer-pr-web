@@ -1,5 +1,5 @@
 ﻿using System.Web;
-using AutoFixture.NUnit3;
+using AutoFixture.NUnit4;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Common;

@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using FluentAssertions.Execution;
 using FluentValidation;
 using FluentValidation.Results;
@@ -17,6 +17,7 @@ using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.RequestsControllerTests;
+
 public class RequestsControllerPostRequestDetailsTests
 {
     [Test, MoqAutoData]

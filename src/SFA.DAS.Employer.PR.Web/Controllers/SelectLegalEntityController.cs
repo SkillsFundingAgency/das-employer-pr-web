@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
+using SFA.DAS.Employer.PR.Web.Extensions;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Infrastructure.Services;
 using SFA.DAS.Employer.PR.Web.Models;
@@ -70,7 +70,7 @@ public class SelectLegalEntityController(IOuterApiClient _outerApiClient, ISessi
         if (!result.IsValid)
         {
             var model = GetViewModel(employerAccountId, sessionModel);
-            result.AddToModelState(ModelState);
+            ModelState.AddValidationErrors(result.Errors);
             return View(ViewPath, model);
         }
 

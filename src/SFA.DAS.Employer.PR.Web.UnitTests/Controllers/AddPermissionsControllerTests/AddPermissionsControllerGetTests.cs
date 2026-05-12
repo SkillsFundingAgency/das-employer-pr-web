@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.Employer.PR.Domain.Interfaces;
@@ -13,6 +13,7 @@ using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.AddPermissionsControllerTests;
+
 public class AddPermissionsControllerGetTests
 {
     static readonly string YourTrainingProvidersLink = Guid.NewGuid().ToString();

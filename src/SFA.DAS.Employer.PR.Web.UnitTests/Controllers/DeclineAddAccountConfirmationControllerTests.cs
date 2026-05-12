@@ -16,12 +16,12 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
 public sealed class DeclineAddAccountConfirmationControllerTests
 {
-    private Mock<IOuterApiClient> _outerApiClientMock;
+    private Mock<IOuterApiClient> _outerApiClientMock = null!;
     private readonly Mock<IAccountsLinkService> _accountsLinkServiceMock = new();
-    private DeclineAddAccountConfirmationController _controller;
+    private DeclineAddAccountConfirmationController _controller = null!;
     private const string employerAccountId = "V9PRXG";
     private const string YourTrainingProvidersUrl = "your-training-providers-url";
-    private ClaimsPrincipal user;
+    private ClaimsPrincipal user = null!;
     private readonly string _helpLink = Guid.NewGuid().ToString();
 
     [SetUp]

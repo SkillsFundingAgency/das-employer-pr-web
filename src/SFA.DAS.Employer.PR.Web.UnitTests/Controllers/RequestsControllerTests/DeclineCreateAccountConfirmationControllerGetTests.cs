@@ -1,4 +1,4 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit4;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Employer.PR.Web.Controllers.Requests;
 using SFA.DAS.Employer.PR.Web.Infrastructure;

@@ -19,12 +19,12 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
 public class AddAccountsControllerTests
 {
-    private Mock<IOuterApiClient> _outerApiClientMock;
-    private Mock<IValidator<ReviewAddAccountRequestSubmitViewModel>> _validatorMock;
-    private AddAccountsController _controller;
+    private Mock<IOuterApiClient> _outerApiClientMock = null!;
+    private Mock<IValidator<ReviewAddAccountRequestSubmitViewModel>> _validatorMock = null!;
+    private AddAccountsController _controller = null!;
     private const string employerAccountId = "V9PRXG";
     private const string YourTrainingProvidersUrl = "your-training-providers-url";
-    private ClaimsPrincipal user;
+    private ClaimsPrincipal user = null!;
 
     [SetUp]
     public void Setup()

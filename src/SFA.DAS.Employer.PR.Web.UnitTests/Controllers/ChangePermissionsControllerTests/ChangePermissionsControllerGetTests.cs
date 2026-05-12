@@ -1,4 +1,5 @@
-﻿using AutoFixture.NUnit3;
+﻿using System.Net;
+using AutoFixture.NUnit4;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RestEase;
@@ -6,7 +7,6 @@ using SFA.DAS.Employer.PR.Domain.Interfaces;
 using SFA.DAS.Employer.PR.Domain.Models;
 using SFA.DAS.Employer.PR.Domain.OuterApi.Responses;
 using SFA.DAS.Employer.PR.Web.Authentication;
-using SFA.DAS.Employer.PR.Web.Constants;
 using SFA.DAS.Employer.PR.Web.Controllers;
 using SFA.DAS.Employer.PR.Web.Infrastructure;
 using SFA.DAS.Employer.PR.Web.Models;
@@ -14,9 +14,9 @@ using SFA.DAS.Employer.PR.Web.Services;
 using SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 using SFA.DAS.Encoding;
 using SFA.DAS.Testing.AutoFixture;
-using System.Net;
 
 namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers.ChangePermissionsControllerTests;
+
 public class ChangePermissionsControllerGetTests
 {
     static readonly string YourTrainingProvidersLink = Guid.NewGuid().ToString();

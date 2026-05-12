@@ -16,13 +16,13 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.Controllers;
 
 public sealed class DeclineAddAccountControllerTests
 {
-    private Mock<IOuterApiClient> _outerApiClientMock;
-    private Mock<IValidator<ReviewAddAccountRequestSubmitViewModel>> _validatorMock;
-    private DeclineAddAccountController _controller;
+    private Mock<IOuterApiClient> _outerApiClientMock = null!;
+    private Mock<IValidator<ReviewAddAccountRequestSubmitViewModel>> _validatorMock = null!;
+    private DeclineAddAccountController _controller = null!;
     private const string employerAccountId = "V9PRXG";
     private const string RequestsUrl = "requests-url";
     private const string AddAccountsUrl = "add-accounts-url";
-    private ClaimsPrincipal user;
+    private ClaimsPrincipal user = null!;
 
     [SetUp]
     public void Setup()
