@@ -57,10 +57,7 @@ public class ChangePermissionsController(IOuterApiClient _outerApiClient, IEncod
 
         var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
-
-        var userRef = User.GetUserId();
-
-        var command = new PostPermissionsRequest(userRef, submitViewModel.Ukprn, submitViewModel.LegalEntityId, operationsToSet);
+        var command = new PostPermissionsRequest(User.GetUserId(), submitViewModel.Ukprn, submitViewModel.LegalEntityId, operationsToSet, User.GetEmail());
 
         await _outerApiClient.PostPermissions(command, cancellationToken);
 
