@@ -6,6 +6,7 @@ namespace SFA.DAS.Employer.PR.Web.UnitTests.TestHelpers;
 public static class UsersForTesting
 {
     public static readonly Guid EmployerUserRef = Guid.NewGuid();
+    public static readonly string EmployerUserEmail = "valid_email";
     public static ClaimsPrincipal GetUserWithClaims(string employerAccountId, EmployerUserRole? roleToUse)
     {
         var familyName = "validFamilyName";
@@ -15,7 +16,8 @@ public static class UsersForTesting
         var givenNameClaim = new Claim(EmployerClaims.GivenName, givenName);
         var nameClaim = new Claim(EmployerClaims.UserDisplayNameClaimTypeIdentifier, $"{givenName} {familyName}");
 
-        var emailClaim = new Claim(ClaimTypes.Email, "valid_email");
+        var emailClaim = new Claim(ClaimTypes.Email, EmployerUserEmail);
+        var userEmailClaim = new Claim(EmployerClaims.UserEmailClaimTypeIdentifier, EmployerUserEmail);
         var userIdClaimTypeIdentifier = new Claim(EmployerClaims.UserIdClaimTypeIdentifier, EmployerUserRef.ToString());
 
         var role = roleToUse != null ? roleToUse.ToString() : "role";
@@ -33,6 +35,7 @@ public static class UsersForTesting
                 familyNameClaim,
                 nameClaim,
                 emailClaim,
+                userEmailClaim,
                 userIdClaimTypeIdentifier,
                 accountsClaim
             ], "Test")

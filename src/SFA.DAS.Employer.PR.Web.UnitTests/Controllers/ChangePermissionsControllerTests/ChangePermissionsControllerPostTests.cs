@@ -226,11 +226,9 @@ public class ChangePermissionsControllerPostTests
 
         await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
-        var command = new PostPermissionsRequest(UsersForTesting.EmployerUserRef, ukprn, legalEntityId,
-            expectedOperations);
-
         outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsRequest>(
             c => c.UserRef == UsersForTesting.EmployerUserRef
+                 && c.Email == UsersForTesting.EmployerUserEmail
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId
                  && c.Operations.Count == expectedOperations.Count
@@ -283,11 +281,9 @@ public class ChangePermissionsControllerPostTests
 
         await sut.Index(employerAccountId, submitViewModel, cancellationToken);
 
-        var command = new PostPermissionsRequest(UsersForTesting.EmployerUserRef, ukprn, legalEntityId,
-            expectedOperations);
-
         outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsRequest>(
             c => c.UserRef == UsersForTesting.EmployerUserRef
+                 && c.Email == UsersForTesting.EmployerUserEmail
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId
                  && c.Operations.Count == 0

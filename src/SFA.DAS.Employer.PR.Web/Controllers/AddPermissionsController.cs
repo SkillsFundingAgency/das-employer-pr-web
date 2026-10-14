@@ -54,9 +54,7 @@ public class AddPermissionsController(IOuterApiClient _outerApiClient, ISessionS
 
         var operationsToSet = OperationsMappingService.MapDescriptionsToOperations(permissionDescriptions);
 
-        var userRef = User.GetUserId();
-
-        var command = new PostPermissionsRequest(userRef, sessionModel.Ukprn.Value, sessionModel.SelectedLegalEntityId.Value, operationsToSet);
+        var command = new PostPermissionsRequest(User.GetUserId(), sessionModel.Ukprn.Value, sessionModel.SelectedLegalEntityId.Value, operationsToSet, User.GetEmail());
 
         await _outerApiClient.PostPermissions(command, cancellationToken);
 
