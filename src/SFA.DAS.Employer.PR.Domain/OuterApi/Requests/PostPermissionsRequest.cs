@@ -10,12 +10,14 @@ public class PostPermissionsRequest
     public long AccountLegalEntityId { get; }
 
     public List<Operation> Operations { get; }
+    public string Email { get; }
 
-    public PostPermissionsRequest(Guid userRef, long ukprn, long accountLegalEntityId, List<Operation> operations)
+    public PostPermissionsRequest(Guid userRef, long ukprn, long accountLegalEntityId, List<Operation> operations, string email)
     {
         UserRef = userRef;
         Ukprn = ukprn;
         AccountLegalEntityId = accountLegalEntityId;
         Operations = operations;
+        Email = email;
     }
 }

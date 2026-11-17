@@ -172,6 +172,7 @@ public class AddPermissionsControllerPostTests
 
         outerApiClientMock.Verify(o => o.PostPermissions(It.Is<PostPermissionsRequest>(
             c => c.UserRef == UsersForTesting.EmployerUserRef
+                 && c.Email == UsersForTesting.EmployerUserEmail
                  && c.Ukprn == ukprn
                  && c.AccountLegalEntityId == legalEntityId
                  && c.Operations.Count == expectedOperations.Count
